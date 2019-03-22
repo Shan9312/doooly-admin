@@ -422,7 +422,7 @@
     .el-dialog__headerbtn .el-dialog__close {
       color: #A4A6A5; }
     .el-dialog__headerbtn:focus .el-dialog__close, .el-dialog__headerbtn:hover .el-dialog__close {
-      color: #499FF8; }
+      color: #409EFF; }
   .el-dialog__title {
     line-height: 24px;
     font-size: 18px;

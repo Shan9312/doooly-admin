@@ -28,7 +28,6 @@
         if (first && first.name !== 'home') {
           matched = [{ path: '/home', meta: { title: 'Home' } }].concat(matched)
         }
-
         this.levelList = matched.filter(item => item.meta && item.meta.title && item.meta.breadcrumb !== false)
       },
       pathCompile(path) {

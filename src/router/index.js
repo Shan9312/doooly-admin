@@ -36,24 +36,31 @@ export const constantRouterMap = [{
     meta: { title: 'Home', icon: 'form' }
   }]
 },
+// {
+//   path: '/form',
+//   component: Layout,
+//   children: [{
+//     path: '/index',
+//     name: 'Form',
+//     component: () => import( /* webpackChunkName: "form" */ '@/views/form'),
+//     meta: { title: 'Form', icon: 'form' }
+//   }]
+// }, 
 {
-  path: '/form',
+  path: '/account-manage',
   component: Layout,
+  alwaysShow: true,
+  name: 'AccountManage',
+  redirect: '/account-manage/account-entry',
+  meta: {
+    title: '对账管理',
+    icon: 'nested'
+  },
   children: [{
-    path: '/index',
-    name: 'Form',
-    component: () => import( /* webpackChunkName: "form" */ '@/views/form'),
-    meta: { title: 'Form', icon: 'form' }
-  }]
-}, 
-{
-  path: '/test-table',
-  component: Layout,
-  children: [{
-    path: '/test-table',
-    name: 'TestTable',
-    component: () => import( /* webpackChunkName: "form" */ '@/views/test-table'),
-    meta: { title: 'Table', icon: 'table' }
+    path: '/account-entry',
+    name: 'AccountEntry',
+    component: () => import( /* webpackChunkName: "form" */ '@/views/account-manage/account-entry/index'),
+    meta: { title: '入账流水对账列表', icon: 'table' }
   }]
 }, {
   path: '/404',
@@ -66,14 +73,16 @@ export const constantRouterMap = [{
   name: 'Page401',
   hidden: true,
   component: () => import( /* webpackChunkName: "error-page" */ '@/views/error-page/401')
+}, { 
+  path: '*', redirect: '/404', hidden: true 
 }]
 
-import tableRouter from './modules/table'
-import nestedRouter from './modules/nested'
+
+// import tableRouter from './modules/table'
+// import nestedRouter from './modules/nested'
 
 export const asyncRouterMap = [
-  tableRouter,
-  nestedRouter
+
 ]
 
 export default new VueRouter({
