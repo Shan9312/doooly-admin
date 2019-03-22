@@ -33,7 +33,7 @@ const ajax = (method, url, data, options = {}) => {
     .catch(err => {
       console.log('err' + err)
       Message({
-        message: err.message,
+        message: err.message || '服务器请求出错了~',
         type: 'error',
         duration: 5 * 1000
       })
