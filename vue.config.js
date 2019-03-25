@@ -2,6 +2,7 @@ const path = require('path')
 const resolve = (dir) => {
   return path.join(__dirname, '.', dir)
 }
+const env = require('./env')
 
 module.exports = {
   chainWebpack: config => {
@@ -29,5 +30,7 @@ module.exports = {
   },
   devServer: {
     open: true,
-  }
+  },
+  publicPath: process.env.NODE_ENV === 'production' ?
+    env.publicPath : '/',
 }
