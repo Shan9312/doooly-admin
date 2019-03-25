@@ -87,7 +87,6 @@ export const asyncRouterMap = [
 
 export default new VueRouter({
   mode: 'history',
-  base: process.env.NODE_ENV === 'production' ? '/doooly-admin/dist/' : '/',
   routes: constantRouterMap,
   scrollBehavior: () => ({
     y: 0
