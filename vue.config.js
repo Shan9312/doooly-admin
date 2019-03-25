@@ -2,6 +2,7 @@ const path = require('path')
 const resolve = (dir) => {
   return path.join(__dirname, '.', dir)
 }
+const env = require('./env.local')
 
 module.exports = {
   chainWebpack: config => {
@@ -37,7 +38,6 @@ module.exports = {
       },
     }
   },
-  publicPath: process.env.NODE_ENV === 'production'
-    ? '/doooly-admin/dist/'
-    : '/'
+  publicPath: process.env.NODE_ENV === 'production' ?
+    env.publicPath : '/',
 }
