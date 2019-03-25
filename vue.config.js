@@ -2,7 +2,7 @@ const path = require('path')
 const resolve = (dir) => {
   return path.join(__dirname, '.', dir)
 }
-const env = require('./env')
+const env = require('./env.local')
 
 module.exports = {
   chainWebpack: config => {
