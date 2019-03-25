@@ -29,5 +29,15 @@ module.exports = {
   },
   devServer: {
     open: true,
-  }
+    proxy: {
+      '/': {
+        target: 'http://192.168.1.139:8080',
+        ws: false,
+        changeOrigin: true
+      },
+    }
+  },
+  publicPath: process.env.NODE_ENV === 'production'
+    ? '/doooly-admin/dist/'
+    : '/'
 }

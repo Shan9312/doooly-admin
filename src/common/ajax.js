@@ -5,7 +5,7 @@ import {
 import { Auth, Utils } from '@/common'
 
 const settings = {
-  baseURL: 'https://api-dev',
+  baseURL: '/',
   headers: { 'Content-Type': 'application/json' }
 }
 
