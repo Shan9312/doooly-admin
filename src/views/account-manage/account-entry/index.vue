@@ -529,7 +529,7 @@
         } else {
           this.$message({
             message: data.info || "修改失败",
-            type: "success",
+            type: "error",
             duration: 1500
           });
         }

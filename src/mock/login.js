@@ -3,8 +3,8 @@ import { Utils } from '@/common'
 const userMap = [
 {
   id: 1,
-  name: 'nemo',
-  pwd: 'abc123',
+  name: 'admin',
+  pwd: '123456',
   token: 'token123',
   age: 18,
   avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
