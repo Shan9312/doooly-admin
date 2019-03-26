@@ -12,7 +12,7 @@
             <el-form-item label="下单时间">
               <el-date-picker
                 :editable="false"
-                v-model="search.createDate"
+                v-model="createDate"
                 type="datetimerange"
                 range-separator="至"
                 start-placeholder="开始日期"
@@ -25,7 +25,7 @@
             <el-form-item label="支付时间">
               <el-date-picker
                 :editable="false"
-                v-model="search.flowDate"
+                v-model="flowDate"
                 type="datetimerange"
                 range-separator="至"
                 start-placeholder="开始日期"
@@ -154,10 +154,13 @@
         <el-form-item
           label="金额修改为"
           prop="price"
-          v-show="dialogStatus !== 'abnormal' && (temp.state == 3 || temp.state == 4)"
+          v-show="
+            dialogStatus !== 'abnormal' && (temp.state == 3 || temp.state == 4)
+          "
         >
           <el-input
             style="width: 200px;"
+            type="number"
             v-model="temp.orderAmount"
           />元（精确小数后两位）
         </el-form-item>
@@ -167,6 +170,7 @@
           v-show="dialogStatus !== 'abnormal' && temp.state == 5"
         >
           <el-input
+            type="number"
             style="width: 200px;"
             v-model="temp.flowAmount"
           />元（精确小数后两位）
@@ -204,7 +208,7 @@
   import { Utils } from "@/common";
   const title = [
     // 表格title
-    { label: "业务类型", value: "id" },
+    { label: "业务类型", value: "type" },
     { label: "支付时间", value: "flowDate" },
     { label: "下单时间", value: "createDate" },
     { label: "订单编号", value: "orderNumber" },
@@ -212,7 +216,7 @@
     { label: "订单应付总金额", value: "orderAmount" },
     { label: "流水总金额", value: "flowAmount" },
     { label: "对账状态", value: "status" },
-    { label: "差异金额", value: "address" }
+    { label: "差异金额", value: "differences" }
   ];
   const tabs = [
     // tabs切换
@@ -251,8 +255,12 @@
         default:
           break;
       }
-      item.createDate = Utils.formatTime(item.createDate);
-      item.flowDate = Utils.formatTime(item.flowDate);
+      if (item.orderAmount && item.flowAmount) {
+        item['differences'] = item.orderAmount - item.flowAmount
+      }
+      item['type'] = '入款'
+      // item.createDate = Utils.formatTime(item.createDate);
+      // item.flowDate = Utils.formatTime(item.flowDate);
       list.push(item);
     });
     return list;
@@ -262,14 +270,18 @@
     name: "AccountEntry",
     data() {
       return {
+        createDate: "", // 筛选条件v-model绑定的下单时间
+        flowDate: "", //筛选条件v-model绑定的支付时间
         search: {
           // 列表筛选
-          createDate: "",
-          flowDate: "",
-          businessName: "",
-          state: ""
-          // page: 1,
-          // size: 10
+          startOrderDate: "", // 下单开始日期
+          endOrderDate: "",  // 下单结束日期
+          startFlowDate: "", // 支付开始日期
+          endFlowDate: "", // 支付结束日期
+          businessName: "", // 商户名称
+          state: "", // 对账状态
+          page: 1, // 分页
+          size: 10 // 每页显示的条数
         },
         tabs, // tabs切换
         activeName: "0", // 当前选中的tabs
@@ -291,25 +303,14 @@
           id: undefined,
           status: "", // 对账状态
           remark: "", // 备注
-          orderAmount: '', // 修改的订单总金额
-          flowAmount: '', // 修改的流水总金额
+          orderAmount: "", // 修改的订单总金额
+          flowAmount: "" // 修改的流水总金额
         },
         rules: {
           // 表单验证
-          prices: [
-            // 价格验证
-            { required: true, message: "type is required", trigger: "blur" }
-          ],
-          mobile: [
-            {
-              type: "date",
-              required: true,
-              message: "timestamp is required",
-              trigger: "change"
-            }
-          ],
-          address: [
-            { required: true, message: "title is required", trigger: "blur" }
+          price: [
+            // 金额验证
+            { required: true, message: "请输入正确的金额", trigger: "blur" }
           ]
         }
       };
@@ -319,11 +320,9 @@
     },
     methods: {
       // 初始化列表
-      async getList(value) {
+      async getList() {
         this.listLoading = true;
-        const { data } = await OrderService.orderList(
-          value ? value : this.search
-        );
+        const { data } = await OrderService.orderList(this.search);
         this.listLoading = false;
         if (data.code == 200 && data.data) {
           this.list = format(data.data);
@@ -339,33 +338,33 @@
 
       // 搜索订单
       searchOrder() {
-        const { createDate, flowDate, businessName, state } = this.search;
-        let data = {
-          businessName: businessName,
-          state: state
-        };
+        const { createDate, flowDate } = this
         if (createDate) {
           // 判断有没有选择下单时间，有的话格式化时间并添加到data对象下
-          data["startOrderDate"] = Utils.formatTime(createDate[0]);
-          data["endOrderDate"] = Utils.formatTime(createDate[1]);
+          this.search["startOrderDate"] = Utils.formatTime(createDate[0]);
+          this.search["endOrderDate"] = Utils.formatTime(createDate[1]);
         }
         if (flowDate) {
           // 判断有没有选择支付时间，有的话格式化时间并添加到data对象下
-          data["startFlowDate"] = Utils.formatTime(flowDate[0]);
-          data["endFlowDate"] = Utils.formatTime(flowDate[1]);
+          this.search["startFlowDate"] = Utils.formatTime(flowDate[0]);
+          this.search["endFlowDate"] = Utils.formatTime(flowDate[1]);
         }
-        this.getList(data);
+        this.getList();
       },
 
       // 重置搜索
       reset() {
+        this.createDate = ""
+        this.flowDate = ""
         this.search = {
-          createDate: "",
-          flowDate: "",
           businessName: "",
-          state: ""
-          // page: 1,
-          // size: 10
+          state: "",
+          startOrderDate: "",
+          endOrderDate: "",
+          startFlowDate: "",
+          endFlowDate: "",
+          page: 1,
+          size: 10
         };
         this.getList();
       },
@@ -384,22 +383,22 @@
         const start = new Date(new Date().toLocaleDateString()); // 获取今天的0时0分0秒
         switch (tab.index) {
           case "0":
-            this.search["flowDate"] = "";
+            this.flowDate = "";
             break;
           case "1":
             // 昨天的00:00:00到昨天的23:59:59
             start.setTime(start - 3600 * 1000 * 24);
-            this.search["flowDate"] = [start, end];
+            this.flowDate = [start, end];
             break;
           case "2":
             // 前7天的00:00:00到昨天的23:59:59
             start.setTime(start - 3600 * 1000 * 24 * 7);
-            this.search["flowDate"] = [start, end];
+            this.flowDate = [start, end];
             break;
           case "3":
             // 前30天的00:00:00到昨天的23:59:59
             start.setTime(start - 3600 * 1000 * 24 * 30);
-            this.search["flowDate"] = [start, end];
+            this.flowDate = [start, end];
             break;
           default:
             break;
@@ -409,7 +408,7 @@
       // 修改订单
       handleUpdate(row) {
         this.temp = Object.assign({}, row);
-        this.temp['status'] = row.state;
+        this.temp["status"] = row.state;
         if (row.state == 3) {
           // 金额不一致
           this.dialogStatus = "discrepancy";
@@ -431,10 +430,10 @@
       onChangeStatus(e) {
         const { orderAmount, flowAmount } = this.temp;
         if (e == 4 || e == 3) {
-          this.temp['price'] = orderAmount
+          this.temp["price"] = orderAmount;
         }
         if (e == 5) {
-          this.temp['price'] = flowAmount
+          this.temp["price"] = flowAmount;
         }
       },
 
@@ -448,15 +447,22 @@
       // 更新订单流水
       async updateData() {
         console.log(this.temp);
-        const {data} = await OrderService.orderUpdate(this.temp)
+        const { data } = await OrderService.orderUpdate(this.temp);
         if (data && data.code == 200) {
+          this.getList();
           this.$message({
             message: data.info || "修改成功",
             type: "success",
             duration: 1500
           });
+        } else {
+          this.$message({
+            message: data.info || "修改失败",
+            type: "success",
+            duration: 1500
+          });
         }
-        console.log(data)
+        console.log(data);
       },
 
       // 导出excel
