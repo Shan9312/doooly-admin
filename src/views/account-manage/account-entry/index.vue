@@ -1,5 +1,5 @@
 <template>
-  <div class="table app-container">
+  <div class="order app-container">
     <div class="form">
       <el-form
         label-position="left"
@@ -81,49 +81,57 @@
       </el-form>
     </div>
     <div class="table-list">
-      <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane
-          v-for="(item, index) in tabs"
+      <el-row>
+        <el-col :span="11" :offset="1">
+          <el-button
+            v-for="(item, index) in tabs"
+            class="filter-item"
+            type="primary"
+            @click="handleClick(item.value)"
+            >{{ item.label }}</el-button
+          >
+        </el-col>
+      </el-row>
+      <el-table
+        :data="list"
+        v-loading="listLoading"
+        style="width: 100%"
+        :row-class-name="tableRowClassName"
+      >
+        <el-table-column
+          v-for="(item, index) in title"
+          :min-width="item.width"
+          align="center"
+          :prop="item.value"
           :label="item.label"
-          :name="item.value"
+        ></el-table-column>
+        <el-table-column
+          label="操作"
+          align="center"
+          class-name="small-padding fixed-width"
         >
-          <el-table :data="list" v-loading="listLoading" style="width: 100%">
-            <el-table-column
-              v-for="(item, index) in title"
-              :prop="item.value"
-              :label="item.label"
-            ></el-table-column>
-            <el-table-column
-              label="操作"
-              align="center"
-              width="230"
-              class-name="small-padding fixed-width"
+          <template slot-scope="scope">
+            <el-button
+              v-if="scope.row.state >= 3"
+              type="danger"
+              size="small"
+              @click="handleUpdate(scope.row)"
+              >异常处理</el-button
             >
-              <template slot-scope="scope">
-                <el-button
-                  v-if="scope.row.state >= 3"
-                  type="danger"
-                  size="small"
-                  @click="handleUpdate(scope.row)"
-                  >异常处理</el-button
-                >
-                <el-button
-                  v-if="scope.row.state == 2"
-                  size="small"
-                  @click="handlePreview(scope.row)"
-                  >查看
-                </el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-        </el-tab-pane>
-      </el-tabs>
-
+            <el-button
+              v-if="scope.row.state == 2"
+              size="small"
+              @click="handlePreview(scope.row)"
+              >查看
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
       <pagination
         v-show="total > 0"
         :total="total"
-        :page.sync="search.page"
-        :limit.sync="search.size"
+        :page.sync="search.pageNum"
+        :limit.sync="search.pageSize"
         @pagination="getList"
       />
     </div>
@@ -153,7 +161,7 @@
         </el-form-item>
         <el-form-item
           label="金额修改为"
-          prop="price"
+          prop="orderAmount"
           v-show="
             dialogStatus !== 'abnormal' && (temp.state == 3 || temp.state == 4)
           "
@@ -166,7 +174,7 @@
         </el-form-item>
         <el-form-item
           label="金额修改为"
-          prop="price"
+          prop="flowAmount"
           v-show="dialogStatus !== 'abnormal' && temp.state == 5"
         >
           <el-input
@@ -177,8 +185,16 @@
         </el-form-item>
         <el-form-item v-show="dialogStatus === 'abnormal'">
           <h3>异常类型：金额不一致</h3>
-          <div>【订单应付总金额】原值：345.56元，现值：1234.56元</div>
-          <div>【流水总金额】原值：1234.56元，现值：1234.56元</div>
+          <div>
+            【订单应付总金额】原值：{{ temp.orderAmountOld }}元，现值：{{
+              temp.orderAmount
+            }}元
+          </div>
+          <div>
+            【流水总金额】原值：{{ temp.flowAmountOld }}元，现值：{{
+              temp.flowAmount
+            }}元
+          </div>
         </el-form-item>
         <el-form-item label="备注">
           <el-input
@@ -208,22 +224,20 @@
   import { Utils } from "@/common";
   const title = [
     // 表格title
-    { label: "业务类型", value: "type" },
-    { label: "支付时间", value: "flowDate" },
-    { label: "下单时间", value: "createDate" },
-    { label: "订单编号", value: "orderNumber" },
-    { label: "商户名称", value: "businessName" },
-    { label: "订单应付总金额", value: "orderAmount" },
-    { label: "流水总金额", value: "flowAmount" },
-    { label: "对账状态", value: "status" },
-    { label: "差异金额", value: "differences" }
+    { label: "业务类型", value: "type", width: "80px" },
+    { label: "订单编号", value: "orderNumber", width: "180px" },
+    { label: "支付时间", value: "orderDate", width: "160px" },
+    { label: "下单时间", value: "createDate", width: "160px" },
+    { label: "商户名称", value: "businessName", width: "100px" },
+    { label: "订单应付总金额", value: "orderAmount", width: "100px" },
+    { label: "流水总金额", value: "flowAmount", width: "100px" },
+    { label: "对账状态", value: "status", width: "100px" },
+    { label: "差异金额", value: "differences", width: "100px" }
   ];
   const tabs = [
-    // tabs切换
-    { label: "全部", value: "0" },
-    { label: "前一天", value: "1" },
-    { label: "近一周（7天）", value: "2" },
-    { label: "近一月（30天）", value: "3" }
+    { label: "前一天", value: 1 },
+    { label: "前一周", value: 2 },
+    { label: "前一月", value: 3 }
   ];
   const status = [
     { label: "全部", value: "" },
@@ -256,11 +270,9 @@
           break;
       }
       if (item.orderAmount && item.flowAmount) {
-        item['differences'] = item.orderAmount - item.flowAmount
+        item["differences"] = (item.orderAmount - item.flowAmount).toFixed(2);
       }
-      item['type'] = '入款'
-      // item.createDate = Utils.formatTime(item.createDate);
-      // item.flowDate = Utils.formatTime(item.flowDate);
+      item["type"] = "入款";
       list.push(item);
     });
     return list;
@@ -269,22 +281,49 @@
   export default {
     name: "AccountEntry",
     data() {
+      // 验证订单总额
+      var orderAmount = (rule, value, callback) => {
+        const myreg = /^[1-9]\d*(\.\d{1,2})?$|^[0]\.\d{1,2}$/g;
+        const { flowAmount } = this.rowData;
+        if (value === "") {
+          callback(new Error("请输入金额"));
+        } else if (!myreg.test(value)) {
+          callback(new Error("请输入正确的金额"));
+        } else if (value < flowAmount) {
+          callback(new Error("输入的订单总金额不能小于流水总金额"));
+        } else {
+          callback();
+        }
+      };
+      // 验证流水总额
+      var flowAmount = (rule, value, callback) => {
+        const myreg = /^[1-9]\d*(\.\d{1,2})?$|^[0]\.\d{1,2}$/g;
+        const { orderAmount } = this.rowData;
+        if (value === "") {
+          callback(new Error("请输入金额"));
+        } else if (!myreg.test(value)) {
+          callback(new Error("请输入正确的金额"));
+        } else if (value > orderAmount) {
+          callback(new Error("输入的流水总金额不能大于订单总金额"));
+        } else {
+          callback();
+        }
+      };
       return {
         createDate: "", // 筛选条件v-model绑定的下单时间
         flowDate: "", //筛选条件v-model绑定的支付时间
         search: {
           // 列表筛选
           startOrderDate: "", // 下单开始日期
-          endOrderDate: "",  // 下单结束日期
+          endOrderDate: "", // 下单结束日期
           startFlowDate: "", // 支付开始日期
           endFlowDate: "", // 支付结束日期
           businessName: "", // 商户名称
           state: "", // 对账状态
-          page: 1, // 分页
-          size: 10 // 每页显示的条数
+          pageNum: 1, // 分页
+          pageSize: 20 // 每页显示的条数
         },
-        tabs, // tabs切换
-        activeName: "0", // 当前选中的tabs
+        tabs, // 按钮切换筛选数据
         title, // 表格title
         list: [], // 表格数据列表
         total: 0, // 返回的列表总数
@@ -299,18 +338,22 @@
           abnormal: " 查看异常处理内容"
         },
         temp: {
-          // 存储需要修改的某一条列表数据
           id: undefined,
           status: "", // 对账状态
           remark: "", // 备注
           orderAmount: "", // 修改的订单总金额
           flowAmount: "" // 修改的流水总金额
         },
+        rowData: {}, // // 存储需要修改的某一条列表数据
         rules: {
           // 表单验证
-          price: [
+          orderAmount: [
             // 金额验证
-            { required: true, message: "请输入正确的金额", trigger: "blur" }
+            { validator: orderAmount, trigger: "blur" }
+          ],
+          flowAmount: [
+            // 金额验证
+            { validator: flowAmount, trigger: "blur" }
           ]
         }
       };
@@ -324,9 +367,9 @@
         this.listLoading = true;
         const { data } = await OrderService.orderList(this.search);
         this.listLoading = false;
-        if (data.code == 200 && data.data) {
-          this.list = format(data.data);
-          this.total = 10;
+        if (data.code == 200 && data.data && data.data.list) {
+          this.list = format(data.data.list);
+          this.total = data.data.total;
         } else {
           this.$message({
             message: data.info || "内部错误",
@@ -336,26 +379,52 @@
         }
       },
 
+      // 异常数据标红
+      tableRowClassName({ row }) {
+        if (row.state === 3 || row.state === 4 || row.state === 5) {
+          return "warning-row";
+        }
+        return "";
+      },
+
       // 搜索订单
-      searchOrder() {
-        const { createDate, flowDate } = this
+      searchOrder(value) {
+        // 切换按钮筛选数据，除了支付时间其他条件置空
+        if (value === "flowDate") {
+          this.createDate = "";
+          this.search = {
+            businessName: "",
+            state: "",
+            startOrderDate: "",
+            endOrderDate: "",
+            startFlowDate: "",
+            endFlowDate: "",
+            pageNum: 1,
+            pageSize: 20
+          };
+        }
+        const { createDate, flowDate } = this;
         if (createDate) {
-          // 判断有没有选择下单时间，有的话格式化时间并添加到data对象下
-          this.search["startOrderDate"] = Utils.formatTime(createDate[0]);
-          this.search["endOrderDate"] = Utils.formatTime(createDate[1]);
+          // 判断有没有选择下单时间，有的话格式化时间并添加到search对象下
+          Object.assign(this.search, {
+            startOrderDate: Utils.formatTime(createDate[0]),
+            endOrderDate: Utils.formatTime(createDate[1])
+          });
         }
         if (flowDate) {
-          // 判断有没有选择支付时间，有的话格式化时间并添加到data对象下
-          this.search["startFlowDate"] = Utils.formatTime(flowDate[0]);
-          this.search["endFlowDate"] = Utils.formatTime(flowDate[1]);
+          // 判断有没有选择支付时间，有的话格式化时间并添加到search对象下
+          Object.assign(this.search, {
+            startFlowDate: Utils.formatTime(flowDate[0]),
+            endFlowDate: Utils.formatTime(flowDate[1])
+          });
         }
         this.getList();
       },
 
       // 重置搜索
-      reset() {
-        this.createDate = ""
-        this.flowDate = ""
+      reset(value) {
+        this.flowDate = "";
+        this.createDate = "";
         this.search = {
           businessName: "",
           state: "",
@@ -363,14 +432,14 @@
           endOrderDate: "",
           startFlowDate: "",
           endFlowDate: "",
-          page: 1,
-          size: 10
+          pageNum: 1,
+          pageSize: 20
         };
         this.getList();
       },
 
-      // 切换tabs
-      handleClick(tab, event) {
+      // 切换按钮,筛选前一天，前7天，前一个月的数据
+      handleClick(index) {
         const end = new Date(
           new Date(
             new Date(
@@ -381,24 +450,24 @@
             1
         ); // 获取昨天的23时59分59秒
         const start = new Date(new Date().toLocaleDateString()); // 获取今天的0时0分0秒
-        switch (tab.index) {
-          case "0":
-            this.flowDate = "";
-            break;
-          case "1":
+        switch (index) {
+          case 1:
             // 昨天的00:00:00到昨天的23:59:59
             start.setTime(start - 3600 * 1000 * 24);
             this.flowDate = [start, end];
+            this.searchOrder("flowDate"); // 切换按钮之后清空支付时间以外的搜索条件并请求数据
             break;
-          case "2":
+          case 2:
             // 前7天的00:00:00到昨天的23:59:59
             start.setTime(start - 3600 * 1000 * 24 * 7);
             this.flowDate = [start, end];
+            this.searchOrder("flowDate"); // 切换按钮之后清空支付时间以外的搜索条件并请求数据
             break;
-          case "3":
+          case 3:
             // 前30天的00:00:00到昨天的23:59:59
             start.setTime(start - 3600 * 1000 * 24 * 30);
             this.flowDate = [start, end];
+            this.searchOrder("flowDate"); // 切换按钮之后清空支付时间以外的搜索条件并请求数据
             break;
           default:
             break;
@@ -409,6 +478,7 @@
       handleUpdate(row) {
         this.temp = Object.assign({}, row);
         this.temp["status"] = row.state;
+        this.rowData = Object.assign({}, row);
         if (row.state == 3) {
           // 金额不一致
           this.dialogStatus = "discrepancy";
@@ -428,12 +498,11 @@
 
       // 切换修改的金额
       onChangeStatus(e) {
-        const { orderAmount, flowAmount } = this.temp;
         if (e == 4 || e == 3) {
-          this.temp["price"] = orderAmount;
+          this.temp["orderAmount"] = this.rowData["orderAmount"];
         }
         if (e == 5) {
-          this.temp["price"] = flowAmount;
+          this.temp["flowAmount"] = this.rowData["flowAmount"];
         }
       },
 
@@ -447,9 +516,11 @@
       // 更新订单流水
       async updateData() {
         console.log(this.temp);
+        this.temp["state"] = 2;
         const { data } = await OrderService.orderUpdate(this.temp);
         if (data && data.code == 200) {
           this.getList();
+          this.dialogFormVisible = false;
           this.$message({
             message: data.info || "修改成功",
             type: "success",
@@ -510,8 +581,13 @@
   };
 </script>
 
-<style lang="less" scoped>
-  .line {
-    text-align: center;
+<style lang="less">
+  .order {
+    .line {
+      text-align: center;
+    }
+    .el-table .warning-row {
+      color: red;
+    }
   }
 </style>
