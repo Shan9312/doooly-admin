@@ -36,7 +36,7 @@ module.exports = {
         ws: false,
         changeOrigin: true
       },
-    }
+    },
   },
   publicPath: process.env.NODE_ENV === 'production' ?
     env.publicPath : '/',

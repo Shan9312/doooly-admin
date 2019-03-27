@@ -24,8 +24,6 @@ const ajax = (method, url, data, options = {}) => {
     options.headers['x-token'] = token
   }
 
-  // console.log(options)
-
   return axios.request(options).then(res => {
       // console.log(res)
       return Promise.resolve(res)
@@ -33,7 +31,7 @@ const ajax = (method, url, data, options = {}) => {
     .catch(err => {
       console.log('err' + err)
       Message({
-        message: err.message || '服务器请求出错了~',
+        message: '服务器请求出错了~',
         type: 'error',
         duration: 5 * 1000
       })

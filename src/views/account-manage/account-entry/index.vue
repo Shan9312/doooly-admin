@@ -66,7 +66,7 @@
             <el-form-item>
               <el-button type="primary" @click="reset">重置</el-button>
             </el-form-item>
-            <el-form-item>
+            <!-- <el-form-item>
               <el-button
                 :loading="downloadLoading"
                 class="filter-item"
@@ -75,7 +75,7 @@
                 @click="handleDownload"
                 >导出</el-button
               >
-            </el-form-item>
+            </el-form-item> -->
           </el-col>
         </el-row>
       </el-form>
@@ -152,7 +152,7 @@
       >
         <el-form-item v-show="dialogStatus !== 'abnormal'">
           <el-radio-group v-model="temp.state" @change="onChangeStatus">
-            <el-radio v-if="temp.status == 3" :label="3"
+            <el-radio v-if="rowData.state == 3" :label="3"
               >修改订单应付总金额</el-radio
             >
             <el-radio v-else :label="4">修改订单应付总金额</el-radio>
@@ -163,7 +163,8 @@
           label="金额修改为"
           prop="orderAmount"
           v-show="
-            dialogStatus !== 'abnormal' && (temp.state == 3 || temp.state == 4)
+            dialogStatus !== 'abnormal' &&
+              (rowData.state == 3 || rowData.state == 4)
           "
         >
           <el-input
@@ -175,7 +176,7 @@
         <el-form-item
           label="金额修改为"
           prop="flowAmount"
-          v-show="dialogStatus !== 'abnormal' && temp.state == 5"
+          v-show="dialogStatus !== 'abnormal' && rowData.state == 5"
         >
           <el-input
             type="number"
@@ -186,13 +187,13 @@
         <el-form-item v-show="dialogStatus === 'abnormal'">
           <h3>异常类型：金额不一致</h3>
           <div>
-            【订单应付总金额】原值：{{ temp.orderAmountOld }}元，现值：{{
-              temp.orderAmount
+            【订单应付总金额】原值：{{ rowData.orderAmountOld }}元，现值：{{
+              rowData.orderAmount
             }}元
           </div>
           <div>
-            【流水总金额】原值：{{ temp.flowAmountOld }}元，现值：{{
-              temp.flowAmount
+            【流水总金额】原值：{{ rowData.flowAmountOld }}元，现值：{{
+              rowData.flowAmount
             }}元
           </div>
         </el-form-item>
@@ -270,7 +271,7 @@
           break;
       }
       if (item.orderAmount && item.flowAmount) {
-        item["differences"] = (item.orderAmount - item.flowAmount).toFixed(2);
+        item["differences"] = (item.orderAmount - item.flowAmount).toFixed(2); // 计算差异金额
       }
       item["type"] = "入款";
       list.push(item);
@@ -282,7 +283,7 @@
     name: "AccountEntry",
     data() {
       // 验证订单总额
-      var orderAmount = (rule, value, callback) => {
+      const orderAmount = (rule, value, callback) => {
         const myreg = /^[1-9]\d*(\.\d{1,2})?$|^[0]\.\d{1,2}$/g;
         const { flowAmount } = this.rowData;
         if (value === "") {
@@ -296,7 +297,7 @@
         }
       };
       // 验证流水总额
-      var flowAmount = (rule, value, callback) => {
+      const flowAmount = (rule, value, callback) => {
         const myreg = /^[1-9]\d*(\.\d{1,2})?$|^[0]\.\d{1,2}$/g;
         const { orderAmount } = this.rowData;
         if (value === "") {
@@ -379,7 +380,7 @@
         }
       },
 
-      // 异常数据标红
+      // 表格异常数据标红
       tableRowClassName({ row }) {
         if (row.state === 3 || row.state === 4 || row.state === 5) {
           return "warning-row";
@@ -476,9 +477,8 @@
 
       // 修改订单
       handleUpdate(row) {
-        this.temp = Object.assign({}, row);
-        this.temp["status"] = row.state;
-        this.rowData = Object.assign({}, row);
+        this.temp = Object.assign({}, row); // 表单数据回显
+        this.rowData = Object.assign({}, row); // 存储数据用于逻辑控制
         if (row.state == 3) {
           // 金额不一致
           this.dialogStatus = "discrepancy";
@@ -499,84 +499,90 @@
       // 切换修改的金额
       onChangeStatus(e) {
         if (e == 4 || e == 3) {
+          // 切换radio后订单总额数据恢复至初始值
           this.temp["orderAmount"] = this.rowData["orderAmount"];
         }
         if (e == 5) {
+          // 切换radio后流水总额数据恢复至初始值
           this.temp["flowAmount"] = this.rowData["flowAmount"];
         }
       },
 
       // 查看异常处理内容
       handlePreview(row) {
-        this.temp = Object.assign({}, row);
+        this.rowData = Object.assign({}, row);
         this.dialogStatus = "abnormal";
         this.dialogFormVisible = true;
       },
 
       // 更新订单流水
-      async updateData() {
-        console.log(this.temp);
-        this.temp["state"] = 2;
-        const { data } = await OrderService.orderUpdate(this.temp);
-        if (data && data.code == 200) {
-          this.getList();
-          this.dialogFormVisible = false;
-          this.$message({
-            message: data.info || "修改成功",
-            type: "success",
-            duration: 1500
-          });
-        } else {
-          this.$message({
-            message: data.info || "修改失败",
-            type: "error",
-            duration: 1500
-          });
-        }
-        console.log(data);
-      },
-
-      // 导出excel
-      handleDownload() {
-        this.downloadLoading = true;
-        import("@/vendor/Export2Excel").then(excel => {
-          const tHeader = [
-            "id",
-            "日期",
-            "姓名",
-            "性别",
-            "年龄",
-            "手机号码",
-            "地址"
-          ];
-          const filterVal = [
-            "id",
-            "date",
-            "name",
-            "sex",
-            "age",
-            "mobile",
-            "address"
-          ];
-          const list = this.list;
-          const data = this.formatJson(filterVal, list);
-          excel.export_json_to_excel({
-            header: tHeader,
-            data,
-            filename: "table-list"
-          });
-          this.downloadLoading = false;
+      updateData() {
+        this.temp["state"] = 2; // 更改数据时需要把状态改为2，财务确认
+        this.$refs["dataForm"].validate(async valid => {
+          if (valid) {
+            const { data } = await OrderService.orderUpdate(this.temp);
+            this.dialogFormVisible = false;
+            if (data && data.code == 200) {
+              this.getList();
+              this.$message({
+                message: data.info || "修改成功",
+                type: "success",
+                duration: 1500
+              });
+            } else {
+              this.$message({
+                message: data.info || "修改失败",
+                type: "error",
+                duration: 1500
+              });
+            }
+          } else {
+            return false;
+          }
         });
-      },
-
-      // 格式化需要导出的数据
-      formatJson(filterVal, jsonData) {
-        return jsonData.map(v =>
-          filterVal.map(j => {
-            return v[j];
-          })
-        );
       }
+
+      // // 导出excel 目前后端来做
+      // handleDownload() {
+      //   this.downloadLoading = true;
+      //   import("@/vendor/Export2Excel").then(excel => {
+      //     const tHeader = [
+      //       "id",
+      //       "日期",
+      //       "姓名",
+      //       "性别",
+      //       "年龄",
+      //       "手机号码",
+      //       "地址"
+      //     ];
+      //     const filterVal = [
+      //       "id",
+      //       "date",
+      //       "name",
+      //       "sex",
+      //       "age",
+      //       "mobile",
+      //       "address"
+      //     ];
+      //     const list = this.list;
+      //     const data = this.formatJson(filterVal, list);
+      //     excel.export_json_to_excel({
+      //       header: tHeader,
+      //       data,
+      //       filename: "table-list"
+      //     });
+      //     this.downloadLoading = false;
+      //   });
+      // },
+
+      // // 格式化需要导出的数据
+      // formatJson(filterVal, jsonData) {
+      //   return jsonData.map(v =>
+      //     filterVal.map(j => {
+      //       return v[j];
+      //     })
+      //   );
+      // }
     }
   };
 </script>
