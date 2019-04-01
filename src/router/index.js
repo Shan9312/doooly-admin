@@ -61,6 +61,17 @@ export const constantRouterMap = [{
     name: 'AccountEntry',
     component: () => import( /* webpackChunkName: "form" */ '@/views/account-manage/account-entry/index'),
     meta: { title: '入账流水对账列表', icon: 'table' }
+  },{
+    path: '/merchants-order',
+    name: 'MerchantsOrder',
+    component: () => import( /* webpackChunkName: "form" */ '@/views/account-manage/merchants-order/index'),
+    meta: { title: '商户订单入款列表', icon: 'table' }
+  },{
+    path: '/order-detail/:id',
+    name: 'OrderDetail',
+    hidden: true,
+    component: () => import( /* webpackChunkName: "form" */ '@/views/account-manage/order-detail/index'),
+    meta: { title: '订单详情', icon: 'table' }
   }]
 }, {
   path: '/404',

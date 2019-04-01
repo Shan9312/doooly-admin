@@ -1,5 +1,5 @@
 <template>
-  <div class="order app-container">
+  <div class="account-entry app-container">
     <div class="form">
       <el-form
         label-position="left"
@@ -52,12 +52,12 @@
                 v-model="search.state"
                 placeholder="请选择"
               >
-                <el-option label="全部" value=""></el-option>
-                <el-option label="系统成功" value="1"></el-option>
-                <el-option label="财务确认" value="2"></el-option>
-                <el-option label="金额不一致" value="3"></el-option>
-                <el-option label="流水缺失" value="4"></el-option>
-                <el-option label="订单缺失" value="5"></el-option>
+                <el-option
+                  v-for="(item, index) in checkState"
+                  :label="item.label"
+                  :value="item.value"
+                  :key="index"
+                ></el-option>
               </el-select>
             </el-form-item>
             <el-form-item>
@@ -100,7 +100,6 @@
       >
         <el-table-column
           v-for="(item, index) in title"
-          :min-width="item.width"
           align="center"
           :prop="item.value"
           :label="item.label"
@@ -148,32 +147,59 @@
         :model="temp"
         label-position="top"
         label-width="70px"
-        style="width: 400px; margin-left:50px;"
       >
-        <el-form-item v-show="dialogStatus !== 'abnormal'">
-          <el-radio-group v-model="temp.state" @change="onChangeStatus">
+        <el-row class="dialog-order">
+          <el-col :span="2" class="order-title">订单：</el-col>
+          <el-col :span="10">
+            积分支付总额：900000.00元
+          </el-col>
+          <el-col :span="10">
+            非积分支付总额：.99999.99元
+          </el-col>
+        </el-row>
+        <el-row class="dialog-flow">
+          <el-col :span="2" class="flow-title">流水：</el-col>
+          <el-col :span="10">
+            积分支付总额：900000.00元
+          </el-col>
+          <el-col :span="10">
+            非积分支付总额：.99999.99元
+          </el-col>
+        </el-row>
+        <el-form-item prop="state" v-show="dialogStatus !== 'abnormal'">
+          <!-- <el-radio-group v-model="temp.state">
             <el-radio v-if="rowData.state == 3" :label="3"
               >修改订单应付总金额</el-radio
             >
             <el-radio v-else :label="4">修改订单应付总金额</el-radio>
             <el-radio :label="5">修改流水总金额</el-radio>
-          </el-radio-group>
+          </el-radio-group> -->
+          <el-select
+            v-model="temp.state"
+            placeholder="请选择需要修改的金额类型"
+            @change="onChangeStatus"
+            style="width:300px;margin-top: 14px;"
+          >
+            <el-option
+              v-for="item in priceList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            >
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item
           label="金额修改为"
-          prop="orderAmount"
-          v-show="
-            dialogStatus !== 'abnormal' &&
-              (rowData.state == 3 || rowData.state == 4)
-          "
-        >
+          prop="price"
+          v-show="dialogStatus !== 'abnormal'">
           <el-input
-            style="width: 200px;"
+            style="width: 350px;"
             type="number"
-            v-model="temp.orderAmount"
+            v-model="temp.price"
           />元（精确小数后两位）
         </el-form-item>
-        <el-form-item
+        <!-- <el-form-item
           label="金额修改为"
           prop="flowAmount"
           v-show="dialogStatus !== 'abnormal' && rowData.state == 5"
@@ -183,7 +209,7 @@
             style="width: 200px;"
             v-model="temp.flowAmount"
           />元（精确小数后两位）
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item v-show="dialogStatus === 'abnormal'">
           <h3>异常类型：金额不一致</h3>
           <div>
@@ -221,26 +247,35 @@
   </div>
 </template>
 <script>
-  import { OrderService } from "@/service";
+  import { AccountEntryService } from "@/service";
   import { Utils } from "@/common";
   const title = [
-    // 表格title
+    // 表格title 0pingtai 1 非平台
     { label: "业务类型", value: "type", width: "80px" },
-    { label: "订单编号", value: "orderNumber", width: "180px" },
-    { label: "支付时间", value: "orderDate", width: "160px" },
     { label: "下单时间", value: "createDate", width: "160px" },
+    { label: "订单编号", value: "orderNumber", width: "180px" },
     { label: "商户名称", value: "businessName", width: "100px" },
-    { label: "订单应付总金额", value: "orderAmount", width: "100px" },
+    { label: "收款类型", value: "receiptType", width: "100px" },
+    { label: "订单应付金额", value: "orderAmountsss", width: "160px" },
+    { label: "订单实付金额", value: "orderAmount", width: "160px" },
+    { label: "积分支付总额", value: "flowAmount", width: "160px" },
+    { label: "非积分支付总额", value: "flowAmount", width: "160px" },
     { label: "流水总金额", value: "flowAmount", width: "100px" },
+    { label: "积分流水总额", value: "flowAmount", width: "100px" },
+    { label: "非积分流水总额", value: "flowAmount", width: "100px" },
     { label: "对账状态", value: "status", width: "100px" },
     { label: "差异金额", value: "differences", width: "100px" }
   ];
+
+  // 筛选按钮
   const tabs = [
     { label: "前一天", value: 1 },
     { label: "前一周", value: 2 },
     { label: "前一月", value: 3 }
   ];
-  const status = [
+
+  // 对账状态
+  const checkState = [
     { label: "全部", value: "" },
     { label: "系统成功", value: "1" },
     { label: "财务确认", value: "2" },
@@ -248,6 +283,15 @@
     { label: "流水缺失", value: "4" },
     { label: "订单缺失", value: "5" }
   ];
+
+  // 修改的金额类型
+  const priceList = [
+    { label: "订单积分支付金额", value: "0" },
+    { label: "订单非积分支付金额", value: "1" },
+    { label: "积分流水支付金额", value: "2" },
+    { label: "非积分流水支付金额", value: "3" }
+  ];
+
   const format = data => {
     let list = [];
     data.map(item => {
@@ -282,34 +326,6 @@
   export default {
     name: "AccountEntry",
     data() {
-      // 验证订单总额
-      const orderAmount = (rule, value, callback) => {
-        const myreg = /^[1-9]\d*(\.\d{1,2})?$|^[0]\.\d{1,2}$/g;
-        const { flowAmount } = this.rowData;
-        if (value === "") {
-          callback(new Error("请输入金额"));
-        } else if (!myreg.test(value)) {
-          callback(new Error("请输入正确的金额"));
-        } else if (value < flowAmount) {
-          callback(new Error("输入的订单总金额不能小于流水总金额"));
-        } else {
-          callback();
-        }
-      };
-      // 验证流水总额
-      const flowAmount = (rule, value, callback) => {
-        const myreg = /^[1-9]\d*(\.\d{1,2})?$|^[0]\.\d{1,2}$/g;
-        const { orderAmount } = this.rowData;
-        if (value === "") {
-          callback(new Error("请输入金额"));
-        } else if (!myreg.test(value)) {
-          callback(new Error("请输入正确的金额"));
-        } else if (value > orderAmount) {
-          callback(new Error("输入的流水总金额不能大于订单总金额"));
-        } else {
-          callback();
-        }
-      };
       return {
         createDate: "", // 筛选条件v-model绑定的下单时间
         flowDate: "", //筛选条件v-model绑定的支付时间
@@ -328,7 +344,9 @@
         title, // 表格title
         list: [], // 表格数据列表
         total: 0, // 返回的列表总数
-        downloadLoading: false, // 表格数据加载的loading
+        checkState, // 对账状态
+        priceList, // 修改的金额类型
+        listLoading: false, // 表格数据加载的loading
         dialogFormVisible: false, // 编辑修改弹框显示与隐藏
         dialogStatus: "", // 点击按钮显示不同的弹框内容
         textMap: {
@@ -342,19 +360,19 @@
           id: undefined,
           status: "", // 对账状态
           remark: "", // 备注
-          orderAmount: "", // 修改的订单总金额
-          flowAmount: "" // 修改的流水总金额
+          price: '', // 修改的金额
         },
         rowData: {}, // // 存储需要修改的某一条列表数据
         rules: {
           // 表单验证
-          orderAmount: [
+          price: [
             // 金额验证
-            { validator: orderAmount, trigger: "blur" }
+            { required: true, message: '请输入金额', trigger: 'blur' },
+            { pattern: /^[1-9]\d*(\.\d{1,2})?$|^[0]\.\d{1,2}$/g, message: '请输入正确的金额', trigger: "blur" }
           ],
-          flowAmount: [
-            // 金额验证
-            { validator: flowAmount, trigger: "blur" }
+          state: [
+            // 选择状态验证
+            { required: true, message: '请选择内容', trigger: 'change' },
           ]
         }
       };
@@ -366,7 +384,7 @@
       // 初始化列表
       async getList() {
         this.listLoading = true;
-        const { data } = await OrderService.orderList(this.search);
+        const { data } = await AccountEntryService.orderList(this.search);
         this.listLoading = false;
         if (data.code == 200 && data.data && data.data.list) {
           this.list = format(data.data.list);
@@ -498,14 +516,26 @@
 
       // 切换修改的金额
       onChangeStatus(e) {
-        if (e == 4 || e == 3) {
-          // 切换radio后订单总额数据恢复至初始值
-          this.temp["orderAmount"] = this.rowData["orderAmount"];
+        if (e == 0) {
+          console.log(this.rowData)
         }
-        if (e == 5) {
-          // 切换radio后流水总额数据恢复至初始值
-          this.temp["flowAmount"] = this.rowData["flowAmount"];
+        if (e == 1) {
+          console.log(this.rowData)
         }
+        if (e == 2) {
+          console.log(this.rowData)
+        }
+        if (e == 3) {
+          console.log(this.rowData)
+        }
+        // if (e == 4 || e == 3) {
+        //   // 切换radio后订单总额数据恢复至初始值
+        //   this.temp["orderAmount"] = this.rowData["orderAmount"];
+        // }
+        // if (e == 5) {
+        //   // 切换radio后流水总额数据恢复至初始值
+        //   this.temp["flowAmount"] = this.rowData["flowAmount"];
+        // }
       },
 
       // 查看异常处理内容
@@ -517,10 +547,9 @@
 
       // 更新订单流水
       updateData() {
-        this.temp["state"] = 2; // 更改数据时需要把状态改为2，财务确认
         this.$refs["dataForm"].validate(async valid => {
           if (valid) {
-            const { data } = await OrderService.orderUpdate(this.temp);
+            const { data } = await AccountEntryService.orderUpdate(this.temp);
             this.dialogFormVisible = false;
             if (data && data.code == 200) {
               this.getList();
@@ -588,12 +617,21 @@
 </script>
 
 <style lang="less">
-  .order {
+  .account-entry {
     .line {
       text-align: center;
     }
     .el-table .warning-row {
       color: red;
+    }
+    .dialog-order,
+    .dialog-flow {
+      padding: 10px 0;
+      .order-title,
+      .flow-title {
+        color: #333;
+        font-weight: bold;
+      }
     }
   }
 </style>
