@@ -1,5 +1,5 @@
 <template>
-  <div class="order-detail app-container">
+  <div class="merchants-order app-container">
     <div class="order-form">
       <el-form
         label-position="left"
@@ -45,12 +45,12 @@
             <el-form-item label="收款类型">
               <el-select
                 style="width: 120px;"
-                v-model="search.paymentType"
+                v-model="search.receiptType"
                 placeholder="请选择"
               >
                 <el-option label="全部" value=""></el-option>
-                <el-option label="平台收款" value="1"></el-option>
-                <el-option label="非平台收款" value="2"></el-option>
+                <el-option label="平台收款" value="0"></el-option>
+                <el-option label="非平台收款" value="1"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -95,15 +95,14 @@
         v-loading="listLoading"
         style="width: 100%"
         tooltip-effect="dark"
-        @row-key="getRowKeys"
+        :row-key="getRowKey"
         @selection-change="handleSelectionChange"
-        @cell-click="getRowFun"
       >
-        <el-table-column type="selection" width="55"> </el-table-column>
+        <el-table-column type="selection" :reserve-selection="true" width="55">
+        </el-table-column>
         <el-table-column
           v-for="(item, index) in title"
           :min-width="item.width"
-          :reserve-selection="true"
           align="center"
           :prop="item.value"
           :label="item.label"
@@ -114,7 +113,15 @@
             }}</span>
             <router-link
               style="color:#409EFF"
-              :to="`/order-detail/${scope.row.orderNumber}`"
+              :to="
+                `/order-detail/${scope.row.orderNumber}/${scope.row.userId}/${
+                  scope.row.businessId
+                }?storeId=${scope.row.storeId}&receiptType=${
+                  scope.row.receiptType
+                }&orderIntegral=${scope.row.orderIntegral}&orderNotIntegral=${
+                  scope.row.orderNotIntegral
+                }`
+              "
               v-if="item.value == 'orderNumber'"
               >{{ scope.row[item.value] }}</router-link
             >
@@ -133,22 +140,61 @@
 </template>
 <script>
   import { MerchantsOrder } from "@/service";
+  import { Utils } from "@/common";
   const title = [
     // 表格title
-    { label: "商户名称", value: "id", width: "80px" },
+    { label: "商户名称", value: "businessName", width: "80px" },
     { label: "订单编号", value: "orderNumber", width: "180px" },
-    { label: "下单时间", value: "date", width: "160px" },
-    { label: "收款类型", value: "importance", width: "100px" },
-    { label: "订单应付总金额", value: "pageviews", width: "100px" },
-    { label: "订单实付总金额", value: "pageviews", width: "100px" },
-    { label: "积分支付总额", value: "pageviews", width: "100px" },
-    { label: "其他支付总额", value: "pageviews", width: "100px" },
+    { label: "下单时间", value: "createDate", width: "160px" },
+    { label: "收款类型", value: "receiptType", width: "100px" },
+    { label: "订单应付总金额", value: "orderAmountPlan", width: "100px" },
+    { label: "订单实付总金额", value: "orderAmount", width: "100px" },
+    { label: "积分支付总额", value: "orderIntegral", width: "100px" },
+    { label: "其他支付总额", value: "orderNotIntegral", width: "100px" },
     { label: "对账状态", value: "status", width: "100px" }
   ];
+
+  const format = data => {
+    let list = [];
+    data.map(item => {
+      switch (item.state) {
+        case 1:
+          item.status = "系统成功";
+          break;
+        case 2:
+          item.status = "财务确认";
+          break;
+        case 3:
+          item.status = "金额不一致";
+          break;
+        case 4:
+          item.status = "订单缺失";
+          break;
+        case 5:
+          item.status = "流水缺失";
+          break;
+        default:
+          break;
+      }
+      switch (item.receiptType) {
+        case 0:
+          item.receiptType = "平台收款";
+          break;
+        case 1:
+          item.receiptType = "非平台收款";
+          break;
+        default:
+          break;
+      }
+      list.push(item);
+    });
+    return list;
+  };
   export default {
-    name: "OrderDetail",
+    name: "MerchantsOrder",
     data() {
       return {
+        createDate: "", // 筛选条件v-model绑定的下单时间
         search: {
           // 列表筛选
           startOrderDate: "", // 下单开始日期
@@ -156,7 +202,7 @@
           businessName: "", // 商户名称
           orderNumber: "", // 订单编号
           state: "", // 对账状态
-          paymentType: "", // 收款类型
+          receiptType: "", // 收款类型
           pageNum: 1, // 分页
           pageSize: 20 // 每页显示的条数
         },
@@ -167,7 +213,7 @@
         listLoading: false, // table列表加载的loading
         title, // 表格的title
         multipleSelection: [], // 选中的数据
-        getRowKeys(row) {
+        getRowKey(row) {
           return row.id;
         }
       };
@@ -178,40 +224,96 @@
     methods: {
       // 获取列表数据
       async getList() {
-        // this.listLoading = true;
+        this.listLoading = true;
         const { data } = await MerchantsOrder.orderList(this.search);
-        this.list = data.items;
+        this.listLoading = false;
+        this.list = format(data.list);
         this.total = data.total;
-        console.log(this.list);
-        // this.listLoading = false;
-        // if (data.code == 200 && data.data && data.data.list) {
-        //   this.list = format(data.data.list);
-        //   this.total = data.data.total;
-        // } else {
-        //   this.$message({
-        //     message: data.info || "内部错误",
-        //     type: "error",
-        //     duration: 5 * 1000
-        //   });
-        // }
       },
       // 搜索订单
-      searchOrder() {},
+      searchOrder() {
+        if (this.createDate) {
+          // 判断有没有选择下单时间，有的话格式化时间并添加到search对象下
+          Object.assign(this.search, {
+            startOrderDate: Utils.formatTime(this.createDate[0]),
+            endOrderDate: Utils.formatTime(this.createDate[1])
+          });
+        }
+        this.getList();
+      },
 
       // 重置
-      reset() {},
+      reset() {
+        this.createDate = "";
+        this.search = {
+          // 列表筛选
+          startOrderDate: "", // 下单开始日期
+          endOrderDate: "", // 下单结束日期
+          businessName: "", // 商户名称
+          orderNumber: "", // 订单编号
+          state: "", // 对账状态
+          receiptType: "", // 收款类型
+          pageNum: 1, // 分页
+          pageSize: 20 // 每页显示的条数
+        };
+        this.getList();
+      },
 
       handleSelectionChange(val) {
         this.multipleSelection = val;
-        console.log(this.multipleSelection);
-      },
-
-      getRowFun(row, column, cell, event) {
-        console.log(row);
       },
 
       // 导出
-      handleDownload() {}
+      handleDownload() {
+        this.downloadLoading = true;
+        if (this.multipleSelection.length > 0) {
+          import("@/vendor/Export2Excel").then(excel => {
+            const tHeader = [
+              "商户名称",
+              "订单编号",
+              "下单时间",
+              "收款类型",
+              "订单应付总金额",
+              "订单实付总金额",
+              "积分支付总额",
+              "其他支付总额",
+              "对账状态"
+            ];
+            const filterVal = [
+              "businessName",
+              "orderNumber",
+              "createDate",
+              "receiptType",
+              "orderAmountPlan",
+              "orderAmount",
+              "orderIntegral",
+              "orderNotIntegral",
+              "status"
+            ];
+            const list = this.multipleSelection;
+            const data = this.formatJson(filterVal, list);
+            excel.export_json_to_excel({
+              header: tHeader,
+              data,
+              filename: "商户订单入款明细" + new Date().toLocaleDateString()
+            });
+            this.downloadLoading = false;
+          });
+        } else {
+          let params = Utils.obj2Param(this.search)
+          this.downloadLoading = false;
+          window.location.href = `/api/reconciliInfo/exportExcel?${params}`
+        }
+      },
+
+      // 格式化需要导出的数据
+      formatJson(filterVal, jsonData) {
+        return jsonData.map(v =>
+          filterVal.map(j => {
+            return v[j];
+          })
+        );
+      }
     }
   };
 </script>

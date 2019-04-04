@@ -33,19 +33,9 @@ export const constantRouterMap = [{
   children: [{
     path: 'home',
     component: () => import( /* webpackChunkName: "main" */ '@/views/home'),
-    meta: { title: 'Home', icon: 'form' }
+    meta: { title: '主页', icon: 'example' }
   }]
 },
-// {
-//   path: '/form',
-//   component: Layout,
-//   children: [{
-//     path: '/index',
-//     name: 'Form',
-//     component: () => import( /* webpackChunkName: "form" */ '@/views/form'),
-//     meta: { title: 'Form', icon: 'form' }
-//   }]
-// }, 
 {
   path: '/account-manage',
   component: Layout,
@@ -54,24 +44,24 @@ export const constantRouterMap = [{
   redirect: '/account-manage/account-entry',
   meta: {
     title: '对账管理',
-    icon: 'nested'
+    icon: 'table'
   },
   children: [{
     path: '/account-entry',
     name: 'AccountEntry',
     component: () => import( /* webpackChunkName: "form" */ '@/views/account-manage/account-entry/index'),
-    meta: { title: '入账流水对账列表', icon: 'table' }
-  },{
+    meta: { title: '入账流水对账列表', icon: 'nested' }
+  }, {
     path: '/merchants-order',
     name: 'MerchantsOrder',
     component: () => import( /* webpackChunkName: "form" */ '@/views/account-manage/merchants-order/index'),
-    meta: { title: '商户订单入款列表', icon: 'table' }
-  },{
-    path: '/order-detail/:id',
+    meta: { title: '商户订单入款列表', icon: 'tree' }
+  }, {
+    path: '/order-detail/:orderNumber/:userId/:businessId',
     name: 'OrderDetail',
     hidden: true,
     component: () => import( /* webpackChunkName: "form" */ '@/views/account-manage/order-detail/index'),
-    meta: { title: '订单详情', icon: 'table' }
+    meta: { title: '订单详情', icon: 'tree' }
   }]
 }, {
   path: '/404',
@@ -84,8 +74,8 @@ export const constantRouterMap = [{
   name: 'Page401',
   hidden: true,
   component: () => import( /* webpackChunkName: "error-page" */ '@/views/error-page/401')
-}, { 
-  path: '*', redirect: '/404', hidden: true 
+}, {
+  path: '*', redirect: '/404', hidden: true
 }]
 
 
@@ -93,7 +83,7 @@ export const constantRouterMap = [{
 // import nestedRouter from './modules/nested'
 
 export const asyncRouterMap = [
-  
+
 ]
 
 export default new VueRouter({

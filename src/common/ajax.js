@@ -25,15 +25,23 @@ const ajax = (method, url, data, options = {}) => {
   }
 
   return axios.request(options).then(res => {
-      // console.log(res)
-      return Promise.resolve(res)
-    })
+    const data = res.data;
+    if (data.code == 200 && data.data) {
+      return Promise.resolve(data)
+    } else {
+      Message({
+        message: data.info || '服务器出错了',
+        type: 'error',
+        duration: 2 * 1000
+      })
+    }
+  })
     .catch(err => {
       console.log('err' + err)
       Message({
-        message: '服务器请求出错了~',
+        message: '网络请求出错了，请刷新重试~',
         type: 'error',
-        duration: 5 * 1000
+        duration: 2 * 1000
       })
       return Promise.reject(err)
     })

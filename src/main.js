@@ -13,6 +13,7 @@ import 'normalize.css/normalize.css'
 // import 'element-ui/lib/theme-chalk/index.css'
 import '../theme/index.css'
 import '@/styles/index.less'
+import './assets/css/icon.css';
 
 /**注册全局组件  */
 import Components from './components'

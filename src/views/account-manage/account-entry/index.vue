@@ -103,7 +103,27 @@
           align="center"
           :prop="item.value"
           :label="item.label"
-        ></el-table-column>
+        >
+          <template slot-scope="scope">
+            <span v-if="item.value !== 'orderNumber'">{{
+              scope.row[item.value]
+            }}</span>
+            <router-link
+              style="color:#409EFF"
+              :to="
+                `/order-detail/${scope.row.orderNumber}/${scope.row.userId}/${
+                  scope.row.businessId
+                }?storeId=${scope.row.storeId}&receiptType=${
+                  scope.row.receiptType
+                }&orderIntegral=${scope.row.orderIntegral}&orderNotIntegral=${
+                  scope.row.orderNotIntegral
+                }`
+              "
+              v-if="item.value == 'orderNumber'"
+              >{{ scope.row[item.value] }}</router-link
+            >
+          </template>
+        </el-table-column>
         <el-table-column
           label="操作"
           align="center"
@@ -142,6 +162,7 @@
       center
     >
       <el-form
+        v-show="dialogStatus !== 'abnormal'"
         ref="dataForm"
         :rules="rules"
         :model="temp"
@@ -151,31 +172,24 @@
         <el-row class="dialog-order">
           <el-col :span="2" class="order-title">订单：</el-col>
           <el-col :span="10">
-            积分支付总额：900000.00元
+            积分支付总额：{{ rowData.orderIntegral }}元
           </el-col>
           <el-col :span="10">
-            非积分支付总额：.99999.99元
+            非积分支付总额：{{ rowData.orderNotIntegral }}元
           </el-col>
         </el-row>
         <el-row class="dialog-flow">
           <el-col :span="2" class="flow-title">流水：</el-col>
           <el-col :span="10">
-            积分支付总额：900000.00元
+            积分支付总额：{{ rowData.flowIntegral }}元
           </el-col>
           <el-col :span="10">
-            非积分支付总额：.99999.99元
+            非积分支付总额：{{ rowData.flowNotIntegral }}元
           </el-col>
         </el-row>
-        <el-form-item prop="state" v-show="dialogStatus !== 'abnormal'">
-          <!-- <el-radio-group v-model="temp.state">
-            <el-radio v-if="rowData.state == 3" :label="3"
-              >修改订单应付总金额</el-radio
-            >
-            <el-radio v-else :label="4">修改订单应付总金额</el-radio>
-            <el-radio :label="5">修改流水总金额</el-radio>
-          </el-radio-group> -->
+        <el-form-item prop="value" v-show="dialogStatus !== 'abnormal'">
           <el-select
-            v-model="temp.state"
+            v-model="temp.value"
             placeholder="请选择需要修改的金额类型"
             @change="onChangeStatus"
             style="width:300px;margin-top: 14px;"
@@ -192,36 +206,13 @@
         <el-form-item
           label="金额修改为"
           prop="price"
-          v-show="dialogStatus !== 'abnormal'">
+          v-show="dialogStatus !== 'abnormal'"
+        >
           <el-input
             style="width: 350px;"
             type="number"
             v-model="temp.price"
           />元（精确小数后两位）
-        </el-form-item>
-        <!-- <el-form-item
-          label="金额修改为"
-          prop="flowAmount"
-          v-show="dialogStatus !== 'abnormal' && rowData.state == 5"
-        >
-          <el-input
-            type="number"
-            style="width: 200px;"
-            v-model="temp.flowAmount"
-          />元（精确小数后两位）
-        </el-form-item> -->
-        <el-form-item v-show="dialogStatus === 'abnormal'">
-          <h3>异常类型：金额不一致</h3>
-          <div>
-            【订单应付总金额】原值：{{ rowData.orderAmountOld }}元，现值：{{
-              rowData.orderAmount
-            }}元
-          </div>
-          <div>
-            【流水总金额】原值：{{ rowData.flowAmountOld }}元，现值：{{
-              rowData.flowAmount
-            }}元
-          </div>
         </el-form-item>
         <el-form-item label="备注">
           <el-input
@@ -232,6 +223,39 @@
           />
         </el-form-item>
       </el-form>
+      <div v-show="dialogStatus === 'abnormal'">
+        <h3>异常类型：{{rowData.status}}</h3>
+        <div class="apply-total">
+          支付总金额：{{rowData.orderAmountPlan}}
+        </div>
+        <el-row class="apply-table">
+          <el-col :span="2">&nbsp</el-col>
+          <el-col :span="6">订单积分支付</el-col>
+          <el-col :span="6">流水积分支付</el-col>
+          <el-col :span="5">订单非积分支付</el-col>
+          <el-col :span="5">流水非积分支付</el-col>
+        </el-row>
+        <el-row class="apply-table">
+          <el-col :span="2">原值</el-col>
+          <el-col :span="6">{{rowData.orderIntegralOld}}</el-col>
+          <el-col :span="6">{{rowData.flowIntegralOld}}</el-col>
+          <el-col :span="5">{{rowData.orderNotIntegralOld}}</el-col>
+          <el-col :span="5">{{rowData.flowNotIntegralOld}}</el-col>
+        </el-row>
+        <el-row class="apply-table">
+          <el-col :span="2">现值</el-col>
+          <el-col :span="6">{{rowData.orderIntegral}}</el-col>
+          <el-col :span="6">{{rowData.flowIntegral}}</el-col>
+          <el-col :span="5">{{rowData.orderNotIntegral}}</el-col>
+          <el-col :span="5">{{rowData.flowNotIntegral}}</el-col>
+        </el-row>
+        <div class="apply-remark">
+          <h3>备注：</h3>
+          <p>
+            {{rowData.remark}}
+          </p>
+        </div>
+      </div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">{{
           dialogStatus !== "abnormal" ? "取消" : "关闭"
@@ -251,18 +275,18 @@
   import { Utils } from "@/common";
   const title = [
     // 表格title 0pingtai 1 非平台
-    { label: "业务类型", value: "type", width: "80px" },
+    { label: "业务类型", value: "businessType", width: "80px" },
     { label: "下单时间", value: "createDate", width: "160px" },
     { label: "订单编号", value: "orderNumber", width: "180px" },
     { label: "商户名称", value: "businessName", width: "100px" },
     { label: "收款类型", value: "receiptType", width: "100px" },
-    { label: "订单应付金额", value: "orderAmountsss", width: "160px" },
+    { label: "订单应付金额", value: "orderAmountPlan", width: "160px" },
     { label: "订单实付金额", value: "orderAmount", width: "160px" },
-    { label: "积分支付总额", value: "flowAmount", width: "160px" },
-    { label: "非积分支付总额", value: "flowAmount", width: "160px" },
+    { label: "积分支付总额", value: "orderIntegral", width: "160px" },
+    { label: "非积分支付总额", value: "orderNotIntegral", width: "160px" },
     { label: "流水总金额", value: "flowAmount", width: "100px" },
-    { label: "积分流水总额", value: "flowAmount", width: "100px" },
-    { label: "非积分流水总额", value: "flowAmount", width: "100px" },
+    { label: "积分流水总额", value: "flowIntegral", width: "100px" },
+    { label: "非积分流水总额", value: "flowNotIntegral", width: "100px" },
     { label: "对账状态", value: "status", width: "100px" },
     { label: "差异金额", value: "differences", width: "100px" }
   ];
@@ -280,16 +304,16 @@
     { label: "系统成功", value: "1" },
     { label: "财务确认", value: "2" },
     { label: "金额不一致", value: "3" },
-    { label: "流水缺失", value: "4" },
-    { label: "订单缺失", value: "5" }
+    { label: "订单缺失", value: "4" },
+    { label: "流水缺失", value: "5" },
   ];
 
   // 修改的金额类型
   const priceList = [
-    { label: "订单积分支付金额", value: "0" },
-    { label: "订单非积分支付金额", value: "1" },
-    { label: "积分流水支付金额", value: "2" },
-    { label: "非积分流水支付金额", value: "3" }
+    { label: "订单积分支付金额", value: "orderIntegral" },
+    { label: "订单非积分支付金额", value: "orderNotIntegral" },
+    { label: "积分流水支付金额", value: "flowIntegral" },
+    { label: "非积分流水支付金额", value: "flowNotIntegral" }
   ];
 
   const format = data => {
@@ -317,7 +341,17 @@
       if (item.orderAmount && item.flowAmount) {
         item["differences"] = (item.orderAmount - item.flowAmount).toFixed(2); // 计算差异金额
       }
-      item["type"] = "入款";
+      switch (item.receiptType) {
+        case 0:
+          item.receiptType = "平台收款";
+          break;
+        case 1:
+          item.receiptType = "非平台收款";
+          break;
+        default:
+          break;
+      }
+      item["businessType"] = "入款";
       list.push(item);
     });
     return list;
@@ -357,22 +391,25 @@
           abnormal: " 查看异常处理内容"
         },
         temp: {
-          id: undefined,
-          status: "", // 对账状态
+          value: "", // 对账状态
           remark: "", // 备注
-          price: '', // 修改的金额
+          price: "" // 修改的金额
         },
         rowData: {}, // // 存储需要修改的某一条列表数据
         rules: {
           // 表单验证
           price: [
             // 金额验证
-            { required: true, message: '请输入金额', trigger: 'blur' },
-            { pattern: /^[1-9]\d*(\.\d{1,2})?$|^[0]\.\d{1,2}$/g, message: '请输入正确的金额', trigger: "blur" }
+            { required: true, message: "请输入金额", trigger: "blur" },
+            {
+              pattern: /^[1-9]\d*(\.\d{1,2})?$|^[0]\.\d{1,2}$/g,
+              message: "请输入正确的金额",
+              trigger: "blur"
+            }
           ],
-          state: [
+          value: [
             // 选择状态验证
-            { required: true, message: '请选择内容', trigger: 'change' },
+            { required: true, message: "请选择内容", trigger: "change" }
           ]
         }
       };
@@ -386,16 +423,8 @@
         this.listLoading = true;
         const { data } = await AccountEntryService.orderList(this.search);
         this.listLoading = false;
-        if (data.code == 200 && data.data && data.data.list) {
-          this.list = format(data.data.list);
-          this.total = data.data.total;
-        } else {
-          this.$message({
-            message: data.info || "内部错误",
-            type: "error",
-            duration: 5 * 1000
-          });
-        }
+        this.list = format(data.list);
+        this.total = data.total;
       },
 
       // 表格异常数据标红
@@ -495,8 +524,8 @@
 
       // 修改订单
       handleUpdate(row) {
-        this.temp = Object.assign({}, row); // 表单数据回显
-        this.rowData = Object.assign({}, row); // 存储数据用于逻辑控制
+        this.temp["remark"] = row.remark; // 回显备注信息
+        this.rowData = Object.assign({}, row); // 存储需要修改的某一行数据
         if (row.state == 3) {
           // 金额不一致
           this.dialogStatus = "discrepancy";
@@ -516,26 +545,18 @@
 
       // 切换修改的金额
       onChangeStatus(e) {
-        if (e == 0) {
-          console.log(this.rowData)
+        if (e == "orderIntegral") {
+          this.temp["price"] = this.rowData["orderIntegral"];
         }
-        if (e == 1) {
-          console.log(this.rowData)
+        if (e == "orderNotIntegral") {
+          this.temp["price"] = this.rowData["orderNotIntegral"];
         }
-        if (e == 2) {
-          console.log(this.rowData)
+        if (e == "flowIntegral") {
+          this.temp["price"] = this.rowData["flowIntegral"];
         }
-        if (e == 3) {
-          console.log(this.rowData)
+        if (e == "flowNotIntegral") {
+          this.temp["price"] = this.rowData["flowNotIntegral"];
         }
-        // if (e == 4 || e == 3) {
-        //   // 切换radio后订单总额数据恢复至初始值
-        //   this.temp["orderAmount"] = this.rowData["orderAmount"];
-        // }
-        // if (e == 5) {
-        //   // 切换radio后流水总额数据恢复至初始值
-        //   this.temp["flowAmount"] = this.rowData["flowAmount"];
-        // }
       },
 
       // 查看异常处理内容
@@ -549,19 +570,16 @@
       updateData() {
         this.$refs["dataForm"].validate(async valid => {
           if (valid) {
-            const { data } = await AccountEntryService.orderUpdate(this.temp);
+            const { price, value, remark } = this.temp;
+            this.rowData[value] = price;
+            this.rowData["remark"] = remark;
+            const { data } = await AccountEntryService.orderUpdate(this.rowData);
+            this.getList()
             this.dialogFormVisible = false;
-            if (data && data.code == 200) {
-              this.getList();
+            if (data) {
               this.$message({
-                message: data.info || "修改成功",
+                message: "修改成功",
                 type: "success",
-                duration: 1500
-              });
-            } else {
-              this.$message({
-                message: data.info || "修改失败",
-                type: "error",
                 duration: 1500
               });
             }
@@ -570,48 +588,6 @@
           }
         });
       }
-
-      // // 导出excel 目前后端来做
-      // handleDownload() {
-      //   this.downloadLoading = true;
-      //   import("@/vendor/Export2Excel").then(excel => {
-      //     const tHeader = [
-      //       "id",
-      //       "日期",
-      //       "姓名",
-      //       "性别",
-      //       "年龄",
-      //       "手机号码",
-      //       "地址"
-      //     ];
-      //     const filterVal = [
-      //       "id",
-      //       "date",
-      //       "name",
-      //       "sex",
-      //       "age",
-      //       "mobile",
-      //       "address"
-      //     ];
-      //     const list = this.list;
-      //     const data = this.formatJson(filterVal, list);
-      //     excel.export_json_to_excel({
-      //       header: tHeader,
-      //       data,
-      //       filename: "table-list"
-      //     });
-      //     this.downloadLoading = false;
-      //   });
-      // },
-
-      // // 格式化需要导出的数据
-      // formatJson(filterVal, jsonData) {
-      //   return jsonData.map(v =>
-      //     filterVal.map(j => {
-      //       return v[j];
-      //     })
-      //   );
-      // }
     }
   };
 </script>
@@ -632,6 +608,16 @@
         color: #333;
         font-weight: bold;
       }
+    }
+    .apply-total {
+      font-size: 18px;
+      color: #666;
+      font-weight: bold;
+      line-height: 28px;
+    }
+    .apply-table {
+      text-align: center;
+      padding: 5px 8px;
     }
   }
 </style>

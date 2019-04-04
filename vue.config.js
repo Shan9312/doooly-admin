@@ -31,11 +31,18 @@ module.exports = {
   devServer: {
     open: true,
     proxy: {
+      '/api': {
+        target: 'http://39.98.195.15:8780/pro_reconcili',
+        // target: 'http://192.168.1.222:8780/reconcili/',
+        ws: false,
+        changeOrigin: true,
+        pathRewrite: { "^/api": "" }
+      },
       '/': {
-        target: 'http://192.168.1.222:8080',
+        target: 'http://192.168.1.245:8082',
         ws: false,
         changeOrigin: true
-      },
+      }
     },
   },
   publicPath: process.env.NODE_ENV === 'production' ?
