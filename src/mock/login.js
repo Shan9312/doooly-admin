@@ -31,7 +31,7 @@ export default {
     const { username, password } = JSON.parse(config.body)
     const users = userMap.filter(user => user.name == username && user.pwd == password)
     data.data = users[0]
-    return users.length > 0 ? data : {}
+    return users.length > 0 ? data : {code: 201, info: '请输入正确的用户名和密码'}
   },
   getUserInfo: config => {
     const { token } = Utils.param2Obj(config.url)

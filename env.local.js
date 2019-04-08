@@ -1,3 +1,3 @@
 module.exports = {
-  publicPath: '/recon-admin/'
+  publicPath: '/reconcili/'
 }
