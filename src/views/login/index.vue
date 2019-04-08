@@ -18,7 +18,7 @@
           name="username"
           type="text"
           auto-complete="on"
-          placeholder="username"
+          placeholder="请输入用户名"
         />
       </el-form-item>
       <el-form-item prop="password">
@@ -30,7 +30,7 @@
           v-model="loginForm.password"
           name="password"
           auto-complete="on"
-          placeholder="password"
+          placeholder="请输入密码"
           @keyup.enter.native="handleLogin"
         />
         <span class="show-pwd" @click="showPwd">
@@ -118,11 +118,6 @@
                 });
               })
               .catch(err => {
-                this.$message({
-                  message: err,
-                  type: "error",
-                  duration: 1500
-                });
                 this.loading = false;
               });
           } else {

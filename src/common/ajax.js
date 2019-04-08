@@ -3,9 +3,10 @@ import {
   Message
 } from 'element-ui'
 import { Auth, Utils } from '@/common'
+console.log(process.env.NODE_ENV)
 
 const settings = {
-  baseURL: '/',
+  baseURL: '//39.98.195.15:8780',
   headers: { 'Content-Type': 'application/json' }
 }
 
@@ -14,7 +15,7 @@ const ajax = (method, url, data, options = {}) => {
     method,
     url,
     data,
-    baseURL: options.baseURL || settings.baseURL,
+    baseURL: process.env.NODE_ENV == 'production' ? settings.baseURL : '',
     headers: options.headers || settings.headers,
     timeout: 5000
   })
