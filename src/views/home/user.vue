@@ -13,7 +13,7 @@
               <el-date-picker
                 :editable="false"
                 v-model="search.date"
-                type="datetimerange"
+                type="daterange"
                 range-separator="至"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
@@ -56,30 +56,19 @@
         >
         </el-table-column>
       </el-table>
-      <pagination
-        v-show="total > 0"
-        :total="total"
-        :page.sync="search.pageNum"
-        :limit.sync="search.pageSize"
-        @pagination="getUsers"
-      />
     </div>
   </div>
 </template>
 <script>
   import { HomeService } from "@/service";
-  // import { Utils } from "@/common";
+  import { Utils } from "@/common";
   const title = [
     // 表格title
-    { label: "商户名称", value: "businessName", width: "80px" },
-    { label: "订单编号", value: "orderNumber", width: "180px" },
-    { label: "下单时间", value: "createDate", width: "160px" },
-    { label: "收款类型", value: "receiptType", width: "100px" },
-    { label: "订单应付总金额", value: "orderAmountPlan", width: "100px" },
-    { label: "订单实付总金额", value: "orderAmount", width: "100px" },
-    { label: "积分支付总额", value: "orderIntegral", width: "100px" },
-    { label: "其他支付总额", value: "orderNotIntegral", width: "100px" },
-    { label: "对账状态", value: "status", width: "100px" }
+    { label: "当前用户总数", value: "currentUser", width: "80px" },
+    { label: "当前激活用户数", value: "currentActivate", width: "180px" },
+    { label: "当期新增用户数", value: "currentPerAdd", width: "160px" },
+    { label: "当期激活用户数", value: "currentPerAct", width: "100px" },
+    { label: "当期新增并激活用户数", value: "currentPerActAdd", width: "100px" }
   ];
 
   // 快捷查询按钮
@@ -103,15 +92,12 @@
       return {
         search: {
           // 列表筛选
-          date: "", // 搜索日期
-          pageNum: 1,
-          pageSize: 20,
+          date: "" // 搜索日期
         },
         listLoading: false,
         title,
-        list:[],
-        total: 0,
-        tabs,
+        list: [],
+        tabs
       };
     },
     created() {
@@ -121,23 +107,53 @@
       // 获取列表数据
       async getUsers() {
         this.listLoading = true;
-        const { data } = await getUsers.getUsers(this.search);
+        const data = await HomeService.getUsers(this.search);
         this.listLoading = false;
-        console.log(data)
-        // this.list = format(data.list);
-        // this.total = data.total;
+        if (
+          data.data01 &&
+          data.data02 &&
+          data.data04 &&
+          data.data05 &&
+          data.data06
+        ) {
+          this.list = [
+            ...this.list,
+            {
+              currentUser: data.data01["infoData"],
+              currentActivate: data.data02["infoData"],
+              currentPerAdd: data.data04['infoData'],
+              currentPerAct: data.data05['infoData'],
+              currentPerActAdd: data.data06['infoData']
+            }
+          ];
+        }
       },
       // 搜索订单
       searchUser() {
-        if (this.createDate) {
+        const { date } = this.search;
+        if (date) {
           // 判断有没有选择下单时间，有的话格式化时间并添加到search对象下
           Object.assign(this.search, {
-            startOrderDate: Utils.formatTime(this.createDate[0]),
-            endOrderDate: Utils.formatTime(this.createDate[1])
+            startDate: date[0].toLocaleDateString(),
+            endDate: date[1].toLocaleDateString()
           });
         }
-        // this.getList();
+        // console.log(date[0].toLocaleDateString())
+        this.getUsers();
       },
+
+      // 快捷搜索
+      handleClick(value) {
+        console.log(value)
+        switch (value) {
+          case "1":
+            
+            break;
+        
+          default:
+            break;
+        }
+      }
     }
   };
 </script>
