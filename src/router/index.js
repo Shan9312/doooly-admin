@@ -34,6 +34,12 @@ export const constantRouterMap = [{
     path: 'home',
     component: () => import( /* webpackChunkName: "main" */ '@/views/home'),
     meta: { title: '主页', icon: 'example' }
+  },{
+    path: 'user',
+    name: 'User',
+    hidden: true,
+    component: () => import( /* webpackChunkName: "main" */ '@/views/home/user'),
+    meta: { title: '用户列表', icon: 'example' }
   }]
 },
 {

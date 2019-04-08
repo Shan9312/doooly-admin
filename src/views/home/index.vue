@@ -3,34 +3,46 @@
     <div class="statistical">
       <el-row class="sta-row" v-for="item in list">
         <el-col class="sta-left" :span="7" :offset="1">
-          <el-card shadow="hover" :body-style="{ padding: '0px' }">
-            <div class="grid-content grid-con-1">
-              <i class="el-icon-lx-people grid-con-icon"></i>
-              <div class="grid-cont-right">
-                <div class="grid-num">
-                  {{ userTotal[4] ? userTotal[4].infoData : "" }}
-                </div>
-                <div>总用户数</div>
-                <div class="grid-access">
-                  <div>
-                    激活用户数：{{ userTotal[1] ? userTotal[1].infoData : "" }}
+          <router-link :to="'/user'">
+            <el-card shadow="hover" :body-style="{ padding: '0px' }">
+              <div class="grid-content grid-con-1">
+                <i class="el-icon-lx-people grid-con-icon"></i>
+                <div class="grid-cont-right">
+                  <div class="grid-num">
+                    {{ userTotal[4] ? userTotal[4].infoData : "" }}
                   </div>
-                  <div class="grid-prop">{{ userTotal | proportion }}</div>
+                  <div>总用户数</div>
+                  <div class="grid-access">
+                    <div>
+                      激活用户数：{{
+                        userTotal[1] ? userTotal[1].infoData : ""
+                      }}
+                    </div>
+                    <div class="grid-prop">
+                      激活比例：{{ userTotal | proportion }}
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </el-card>
+            </el-card>
+          </router-link>
         </el-col>
         <el-col class="sta-center" :span="7" :offset="1">
           <el-card shadow="hover" :body-style="{ padding: '0px' }">
             <div class="grid-content grid-con-2">
-              <i class="el-icon-lx-goods grid-con-icon"></i>
+              <i class="icondingdan grid-con-icon iconfont"></i>
               <div class="grid-cont-right">
-                <div class="grid-num">{{ orderTotal[0] ? orderTotal[0].infoData : "" }}</div>
+                <div class="grid-num">
+                  {{ orderTotal[0] ? orderTotal[0].infoData : "" }}
+                </div>
                 <div>总订单数</div>
                 <div class="grid-access">
-                  <div>GMV：{{orderTotal[2] ? orderTotal[2].infoData : "" }}</div>
-                  <div class="grid-prop">{{ userTotal | proportion }}</div>
+                  <div></div>
+                  <div class="grid-prop">
+                    平均客单价：{{
+                      orderTotal[3] ? orderTotal[3].infoData : ""
+                    }}元
+                  </div>
                 </div>
               </div>
             </div>
@@ -38,17 +50,21 @@
         </el-col>
         <el-col class="sta-right" :span="7" :offset="1">
           <el-card shadow="hover" :body-style="{ padding: '0px' }">
-            <!-- <div class="grid-content grid-con-3">
-              <i class="el-icon-lx-notice grid-con-icon"></i>
+            <div class="grid-content grid-con-3">
+              <i class="iconrenminbi iconfont grid-con-icon"></i>
               <div class="grid-cont-right">
-                <div class="grid-num">5000</div>
-                <div>数量</div>
+                <div class="grid-num">
+                  {{ orderTotal[2] ? orderTotal[2].infoData : "" }}元
+                </div>
+                <div>GMV</div>
                 <div class="grid-access">
-                  <div>用户访问量：788</div>
-                  <div class="grid-prop">78%</div>
+                  <div></div>
+                  <div class="grid-prop">
+                    人均消费:{{ orderTotal[4] ? orderTotal[4].infoData : "" }}元
+                  </div>
                 </div>
               </div>
-            </div> -->
+            </div>
           </el-card>
         </el-col>
       </el-row>
@@ -85,6 +101,19 @@
             );
           }
         }
+      },
+      integral(value) {
+        if (value.length > 0) {
+          if (value[7] && value[2]) {
+            return (
+              Math.round(
+                (Number(value[7].infoData) / Number(value[2].infoData)) * 10000
+              ) /
+                100.0 +
+              "%"
+            );
+          }
+        }
       }
     },
     methods: {
@@ -94,7 +123,7 @@
         this.loading = false;
         this.userTotal = userData.data;
         this.orderTotal = orderData.data;
-      },
+      }
     }
   };
 </script>
@@ -125,7 +154,7 @@
               font-weight: bold;
             }
             .grid-access {
-              padding: 20px 10px 0;
+              padding: 20px 3px 0;
               display: flex;
               .grid-prop {
                 flex: 1;
