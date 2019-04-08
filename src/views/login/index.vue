@@ -18,6 +18,7 @@
           name="username"
           type="text"
           auto-complete="on"
+          maxlength="10"
           placeholder="请输入用户名"
         />
       </el-form-item>
@@ -31,6 +32,7 @@
           name="password"
           auto-complete="on"
           placeholder="请输入密码"
+          maxlength="10"
           @keyup.enter.native="handleLogin"
         />
         <span class="show-pwd" @click="showPwd">
@@ -65,8 +67,8 @@
         }
       };
       const validatePass = (rule, value, callback) => {
-        if (value.length < 5) {
-          callback(new Error("密码不能小于5位"));
+        if (value.length < 6) {
+          callback(new Error("密码不能小于6位"));
         } else {
           callback();
         }
