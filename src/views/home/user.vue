@@ -12,7 +12,7 @@
             <el-form-item label="自定义日期查询">
               <el-date-picker
                 :editable="false"
-                v-model="createDate"
+                v-model="search.date"
                 type="datetimerange"
                 range-separator="至"
                 start-placeholder="开始日期"
@@ -31,7 +31,7 @@
     </div>
     <div class="user-table">
       <el-row>
-        <el-col :span="11" :offset="1">
+        <el-col :span="23" :offset="1">
           <el-button
             v-for="(item, index) in tabs"
             class="filter-item"
@@ -61,14 +61,14 @@
         :total="total"
         :page.sync="search.pageNum"
         :limit.sync="search.pageSize"
-        @pagination="getList"
+        @pagination="getUsers"
       />
     </div>
   </div>
 </template>
 <script>
-  import { MerchantsOrder } from "@/service";
-  import { Utils } from "@/common";
+  import { HomeService } from "@/service";
+  // import { Utils } from "@/common";
   const title = [
     // 表格title
     { label: "商户名称", value: "businessName", width: "80px" },
@@ -86,51 +86,49 @@
   const tabs = [
     { label: "1月", value: 1 },
     { label: "2月", value: 2 },
-    { label: "3月", value: 3 }
+    { label: "3月", value: 3 },
+    { label: "4月", value: 4 },
+    { label: "5月", value: 5 },
+    { label: "6月", value: 6 },
+    { label: "7月", value: 7 },
+    { label: "8月", value: 8 },
+    { label: "9月", value: 9 },
+    { label: "10月", value: 10 },
+    { label: "11月", value: 11 },
+    { label: "12月", value: 12 }
   ];
   export default {
     name: "User",
     data() {
       return {
-        createDate: "", // 筛选条件v-model绑定的下单时间
         search: {
           // 列表筛选
-          startOrderDate: "", // 下单开始日期
-          endOrderDate: "", // 下单结束日期
-          businessName: "", // 商户名称
-          orderNumber: "", // 订单编号
-          state: "", // 对账状态
-          receiptType: "", // 收款类型
-          pageNum: 1, // 分页
-          pageSize: 20 // 每页显示的条数
+          date: "", // 搜索日期
+          pageNum: 1,
+          pageSize: 20,
         },
+        listLoading: false,
+        title,
+        list:[],
+        total: 0,
         tabs,
-        downloadLoading: false, // 导出excel按钮loading
-        createDate: "", // 下单时间
-        list: [], // 表格数据
-        total: 0, // 返回的列表总数
-        listLoading: false, // table列表加载的loading
-        title, // 表格的title
-        multipleSelection: [], // 选中的数据
-        getRowKey(row) {
-          return row.id;
-        }
       };
     },
     created() {
-      this.getList();
+      // this.getUsers();
     },
     methods: {
       // 获取列表数据
-      async getList() {
+      async getUsers() {
         this.listLoading = true;
-        const { data } = await MerchantsOrder.orderList(this.search);
+        const { data } = await getUsers.getUsers(this.search);
         this.listLoading = false;
-        this.list = format(data.list);
-        this.total = data.total;
+        console.log(data)
+        // this.list = format(data.list);
+        // this.total = data.total;
       },
       // 搜索订单
-      searchOrder() {
+      searchUser() {
         if (this.createDate) {
           // 判断有没有选择下单时间，有的话格式化时间并添加到search对象下
           Object.assign(this.search, {
@@ -138,81 +136,8 @@
             endOrderDate: Utils.formatTime(this.createDate[1])
           });
         }
-        this.getList();
+        // this.getList();
       },
-
-      // 重置
-      reset() {
-        this.createDate = "";
-        this.search = {
-          // 列表筛选
-          startOrderDate: "", // 下单开始日期
-          endOrderDate: "", // 下单结束日期
-          businessName: "", // 商户名称
-          orderNumber: "", // 订单编号
-          state: "", // 对账状态
-          receiptType: "", // 收款类型
-          pageNum: 1, // 分页
-          pageSize: 20 // 每页显示的条数
-        };
-        this.getList();
-      },
-
-      handleSelectionChange(val) {
-        this.multipleSelection = val;
-      },
-
-      // 导出
-      handleDownload() {
-        this.downloadLoading = true;
-        if (this.multipleSelection.length > 0) {
-          import("@/vendor/Export2Excel").then(excel => {
-            const tHeader = [
-              "商户名称",
-              "订单编号",
-              "下单时间",
-              "收款类型",
-              "订单应付总金额",
-              "订单实付总金额",
-              "积分支付总额",
-              "其他支付总额",
-              "对账状态"
-            ];
-            const filterVal = [
-              "businessName",
-              "orderNumber",
-              "createDate",
-              "receiptType",
-              "orderAmountPlan",
-              "orderAmount",
-              "orderIntegral",
-              "orderNotIntegral",
-              "status"
-            ];
-            const list = this.multipleSelection;
-            const data = this.formatJson(filterVal, list);
-            excel.export_json_to_excel({
-              header: tHeader,
-              data,
-              filename: "商户订单入款明细" + new Date().toLocaleDateString()
-            });
-            this.downloadLoading = false;
-          });
-        } else {
-          let params = Utils.obj2Param(this.search)
-          this.downloadLoading = false;
-          window.location.href = `/api/reconciliInfo/exportExcel?${params}`
-        }
-      },
-
-      // 格式化需要导出的数据
-      formatJson(filterVal, jsonData) {
-        return jsonData.map(v =>
-          filterVal.map(j => {
-            return v[j];
-          })
-        );
-      }
     }
   };
 </script>
