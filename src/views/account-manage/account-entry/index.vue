@@ -42,6 +42,7 @@
                 style="width: 100%"
                 v-model="search.businessName"
                 placeholder="请输入商户名称"
+                maxlength="15"
               ></el-input>
             </el-form-item>
           </el-col>
@@ -435,6 +436,10 @@
         return "";
       },
 
+      // onChange(e) {
+      //   console.log(e)
+      // },
+
       // 搜索订单
       searchOrder(value) {
         // 切换按钮筛选数据，除了支付时间其他条件置空
@@ -588,7 +593,7 @@
           }
         });
       }
-    }
+    },
   };
 </script>
 

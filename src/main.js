@@ -33,6 +33,21 @@ import './permission'
 import './mock'
 
 Vue.config.productionTip = false
+// Vue.directive('filterSpecialChar', {
+//   // 当被绑定的元素插入到 DOM 中时……
+//   update: function (el, { value, modifiers }, vnode) {
+//     try {
+//       //此处可以debug看看el具体值是什么,这里演示的是原生控件input,如果是使用element中的<el-input />标签,需要通过 el.children[0] 拿到原生input.
+//       if (!el.children[0].value) {
+//         return false;
+//       }
+//       el.children[0].value = el.children[0].value.replace(/[!~@#$%*&()_+\s^]/g, '');
+//       console.log(el.children[0].value)
+//       el.dispatchEvent(new Event(modifiers.lazy ? 'change' : 'input'))
+//     } catch (e) {
+//     }
+//   }
+// })
 
 new Vue({
   router,
