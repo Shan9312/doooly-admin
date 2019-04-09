@@ -5,7 +5,7 @@ import {
 import { Auth, Utils } from '@/common'
 
 const settings = {
-  baseURL: '//39.98.195.15/api/',
+  baseURL: '//114.215.198.87:8780/test-reconcili/',
   headers: { 'Content-Type': 'application/json' }
 }
 

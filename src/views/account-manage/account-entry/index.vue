@@ -115,7 +115,7 @@
                 `/order-detail/${scope.row.orderNumber}/${scope.row.userId}/${
                   scope.row.businessId
                 }?storeId=${scope.row.storeId}&receiptType=${
-                  scope.row.receiptType
+                  scope.row.receiptTypeValue
                 }&orderIntegral=${scope.row.orderIntegral}&orderNotIntegral=${
                   scope.row.orderNotIntegral
                 }`
@@ -281,7 +281,7 @@
     { label: "下单时间", value: "createDate", width: "160px" },
     { label: "订单编号", value: "orderNumber", width: "180px" },
     { label: "商户名称", value: "businessName", width: "100px" },
-    { label: "收款类型", value: "receiptType", width: "100px" },
+    { label: "收款类型", value: "receiptTypeValue", width: "100px" },
     { label: "订单应付金额", value: "orderAmountPlan", width: "160px" },
     { label: "订单实付金额", value: "orderAmount", width: "160px" },
     { label: "积分支付总额", value: "orderIntegral", width: "160px" },
@@ -345,10 +345,10 @@
       }
       switch (item.receiptType) {
         case 0:
-          item.receiptType = "平台收款";
+          item.receiptTypeValue = "平台收款";
           break;
         case 1:
-          item.receiptType = "非平台收款";
+          item.receiptTypeValue = "非平台收款";
           break;
         default:
           break;

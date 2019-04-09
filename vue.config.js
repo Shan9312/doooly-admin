@@ -33,7 +33,7 @@ module.exports = {
     proxy: {
       '/pro_reconcili': {
         // target: 'http://39.98.195.15:8780/pro_reconcili',
-        target: 'http://192.168.1.222:8080/dev_reconcili/',
+        target: 'http://114.215.198.87:8780/test-reconcili/',
         ws: false,
         changeOrigin: true,
         pathRewrite: { "^/pro_reconcili": "" }
