@@ -43,6 +43,7 @@
                 v-model="search.businessName"
                 placeholder="请输入商户名称"
                 maxlength="15"
+                @keyup.native="onKeyup"
               ></el-input>
             </el-form-item>
           </el-col>
@@ -221,6 +222,7 @@
             v-model="temp.remark"
             type="textarea"
             placeholder="可输入该异常出现的原因（100字以内）"
+            maxlength="100"
           />
         </el-form-item>
       </el-form>
@@ -436,9 +438,9 @@
         return "";
       },
 
-      // onChange(e) {
-      //   console.log(e)
-      // },
+      onKeyup(e) {
+        e.target.value = e.target.value.replace(/[!~@#$%*&()_+\s^]/g, '')
+      },
 
       // 搜索订单
       searchOrder(value) {
