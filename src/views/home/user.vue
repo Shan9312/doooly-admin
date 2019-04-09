@@ -14,6 +14,7 @@
                 :editable="false"
                 v-model="search.date"
                 type="daterange"
+                :picker-options="pickerOptions"
                 range-separator="至"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
@@ -25,18 +26,26 @@
             <el-form-item>
               <el-button type="primary" @click="searchUser">查询</el-button>
             </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="reset">重置</el-button>
+            </el-form-item>
           </el-col>
         </el-row>
       </el-form>
     </div>
     <div class="user-table">
       <el-row>
-        <el-col :span="23" :offset="1">
+        <el-col :span="2" :offset="1" class="quick-label">
+          快捷查询:
+        </el-col>
+        <el-col :span="21">
           <el-button
             v-for="(item, index) in tabs"
             class="filter-item"
             type="primary"
-            @click="handleClick(item.value)"
+            :autofocus="item.focus"
+            :disabled="item.disabled"
+            @click="handleClick(item, index)"
             >{{ item.label }}</el-button
           >
         </el-col>
@@ -64,6 +73,7 @@
   import { Utils } from "@/common";
   const title = [
     // 表格title
+    { label: "日期范围", value: "dateRange", width: "160px" },
     { label: "当前用户总数", value: "currentUser", width: "80px" },
     { label: "当前激活用户数", value: "currentActivate", width: "180px" },
     { label: "当期新增用户数", value: "currentPerAdd", width: "160px" },
@@ -71,21 +81,37 @@
     { label: "当期新增并激活用户数", value: "currentPerActAdd", width: "100px" }
   ];
 
-  // 快捷查询按钮
-  const tabs = [
-    { label: "1月", value: 1 },
-    { label: "2月", value: 2 },
-    { label: "3月", value: 3 },
-    { label: "4月", value: 4 },
-    { label: "5月", value: 5 },
-    { label: "6月", value: 6 },
-    { label: "7月", value: 7 },
-    { label: "8月", value: 8 },
-    { label: "9月", value: 9 },
-    { label: "10月", value: 10 },
-    { label: "11月", value: 11 },
-    { label: "12月", value: 12 }
-  ];
+  // 获取当前月份以及近一年的月份时间
+  const getMonths = () => {
+    let d, // 设置的日
+      dataArr = [],
+      data = new Date(),
+      year = data.getFullYear();
+    data.setMonth(data.getMonth() + 1, 1); //获取到当前月份,设置本月月份
+    for (let i = 12; i > 0; i--) {
+      data.setMonth(data.getMonth() - 1); //每循环一次 月份值减1,并设置月份
+      let m = data.getMonth() + 1; // 然后取出设置的月份
+      if (m == 2) {
+        d = year % 4 == 0 ? "29" : "28"; // 平年的二月只有28号， 闰年的2月有29号
+      } else if (m == 4 || m == 6 || m == 9 || m == 11) {
+        d = 30; // 4，6，9，11月每月只有30号
+      } else {
+        d = 31; // 其他月份每月有31号
+      }
+      dataArr = [
+        ...dataArr,
+        {
+          label: `${data.getFullYear()}年${m}月`,
+          value: i,
+          startDate: `${data.getFullYear()}/${m}/1`, // 每月的开始日期
+          endDate: `${data.getFullYear()}/${m}/${d}`, // 每月的结束日期
+          disabled: false
+        }
+      ];
+    }
+    return dataArr.reverse();
+  };
+
   export default {
     name: "User",
     data() {
@@ -94,14 +120,26 @@
           // 列表筛选
           date: "" // 搜索日期
         },
+        pickerOptions: {
+          // 设置日期范围
+          disabledDate(time) {
+            return time.getTime() > Date.now() - 8.64e7;
+          }
+        },
         listLoading: false,
         title,
         list: [],
-        tabs
+        tabs: getMonths()
       };
     },
     created() {
-      // this.getUsers();
+      // 默认加载本月最新数据
+      this.tabs[11].disabled = true;
+      Object.assign(this.search, {
+        startDate: this.tabs[11].startDate,
+        endDate: this.tabs[11].endDate
+      });
+      this.getUsers();
     },
     methods: {
       // 获取列表数据
@@ -119,15 +157,25 @@
           this.list = [
             ...this.list,
             {
+              dateRange: `${this.search.startDate}~${this.search.endDate}`,
               currentUser: data.data01["infoData"],
               currentActivate: data.data02["infoData"],
-              currentPerAdd: data.data04['infoData'],
-              currentPerAct: data.data05['infoData'],
-              currentPerActAdd: data.data06['infoData']
+              currentPerAdd: data.data04["infoData"],
+              currentPerAct: data.data05["infoData"],
+              currentPerActAdd: data.data06["infoData"]
             }
           ];
         }
       },
+
+      // 重置搜索
+      reset() {
+        this.search = {
+          date: ""
+        };
+        // this.getUsers();
+      },
+
       // 搜索订单
       searchUser() {
         const { date } = this.search;
@@ -137,26 +185,31 @@
             startDate: date[0].toLocaleDateString(),
             endDate: date[1].toLocaleDateString()
           });
+          this.getUsers();
         }
-        // console.log(date[0].toLocaleDateString())
-        this.getUsers();
       },
 
       // 快捷搜索
-      handleClick(value) {
-        console.log(value)
-        switch (value) {
-          case "1":
-            
-            break;
-        
-          default:
-            break;
-        }
+      handleClick(data, index) {
+        this.tabs[index].disabled = true; // 筛选后此按钮不可再次点击
+        Object.assign(this.search, {
+          startDate: data.startDate,
+          endDate: data.endDate
+        });
+        this.getUsers();
       }
     }
   };
 </script>
 
 <style lang="less">
+  .user {
+    .quick-label {
+      height: 40px;
+      line-height: 40px;
+    }
+    .el-button {
+      margin: 0 10px 10px 0;
+    }
+  }
 </style>
