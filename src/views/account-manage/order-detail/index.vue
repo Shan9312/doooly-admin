@@ -2,7 +2,7 @@
   <div class="order-detail app-container" v-loading="loading">
     <el-row>
       <el-col :span="24"
-        >订单详情页（订单编号：{{ query.orderNumber }}）</el-col
+        >订单详情页（订单编号：{{ params.orderNumber }}）</el-col
       >
     </el-row>
     <!-- 基础信息 -->
@@ -289,6 +289,8 @@
 
 <style lang="less">
   .order-detail {
+    font-size: 14px;
+    color: #909399;
     .basis-info,
     .order-info,
     .flow-info {

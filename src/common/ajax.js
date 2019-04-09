@@ -3,10 +3,9 @@ import {
   Message
 } from 'element-ui'
 import { Auth, Utils } from '@/common'
-console.log(process.env.NODE_ENV)
 
 const settings = {
-  baseURL: '//39.98.195.15:8780',
+  baseURL: '//39.98.195.15/api/',
   headers: { 'Content-Type': 'application/json' }
 }
 

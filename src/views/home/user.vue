@@ -155,7 +155,6 @@
           data.data06
         ) {
           this.list = [
-            ...this.list,
             {
               dateRange: `${this.search.startDate}~${this.search.endDate}`,
               currentUser: data.data01["infoData"],
@@ -163,7 +162,8 @@
               currentPerAdd: data.data04["infoData"],
               currentPerAct: data.data05["infoData"],
               currentPerActAdd: data.data06["infoData"]
-            }
+            },
+            ...this.list
           ];
         }
       },
@@ -173,7 +173,12 @@
         this.search = {
           date: ""
         };
-        // this.getUsers();
+        this.tabs[11].disabled = true;
+        Object.assign(this.search, {
+          startDate: this.tabs[11].startDate,
+          endDate: this.tabs[11].endDate
+        });
+        this.getUsers();
       },
 
       // 搜索订单
