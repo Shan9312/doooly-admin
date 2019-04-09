@@ -14,6 +14,7 @@
                 :editable="false"
                 v-model="createDate"
                 type="datetimerange"
+                :picker-options="pickerOptions"
                 range-separator="至"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
@@ -22,16 +23,14 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="支付时间">
-              <el-date-picker
-                :editable="false"
-                v-model="flowDate"
-                type="datetimerange"
-                range-separator="至"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-              >
-              </el-date-picker>
+            <el-form-item label="订单编号">
+              <el-input
+                style="width: 100%"
+                v-model="search.orderNumber"
+                placeholder="请输入订单编号"
+                maxlength="30"
+                @keyup.native="onKeyup"
+              ></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -43,11 +42,7 @@
                 v-model="search.businessName"
                 placeholder="请输入商户名称"
                 maxlength="15"
-                @keyup.native="
-                  e => {
-                    console.log(e);
-                  }
-                "
+                @keyup.native="onKeyup"
               ></el-input>
             </el-form-item>
           </el-col>
@@ -231,8 +226,10 @@
         </el-form-item>
       </el-form>
       <div v-show="dialogStatus === 'abnormal'">
-        <h3>异常类型：{{ rowData.status }}</h3>
-        <div class="apply-total">支付总金额：{{ rowData.orderAmountPlan }}</div>
+        <h3>异常类型：{{rowData.status}}</h3>
+        <div class="apply-total">
+          支付总金额：{{rowData.orderAmountPlan}}
+        </div>
         <el-row class="apply-table">
           <el-col :span="2">&nbsp</el-col>
           <el-col :span="6">订单积分支付</el-col>
@@ -242,22 +239,22 @@
         </el-row>
         <el-row class="apply-table">
           <el-col :span="2">原值</el-col>
-          <el-col :span="6">{{ rowData.orderIntegralOld }}</el-col>
-          <el-col :span="6">{{ rowData.flowIntegralOld }}</el-col>
-          <el-col :span="5">{{ rowData.orderNotIntegralOld }}</el-col>
-          <el-col :span="5">{{ rowData.flowNotIntegralOld }}</el-col>
+          <el-col :span="6">{{rowData.orderIntegralOld}}</el-col>
+          <el-col :span="6">{{rowData.flowIntegralOld}}</el-col>
+          <el-col :span="5">{{rowData.orderNotIntegralOld}}</el-col>
+          <el-col :span="5">{{rowData.flowNotIntegralOld}}</el-col>
         </el-row>
         <el-row class="apply-table">
           <el-col :span="2">现值</el-col>
-          <el-col :span="6">{{ rowData.orderIntegral }}</el-col>
-          <el-col :span="6">{{ rowData.flowIntegral }}</el-col>
-          <el-col :span="5">{{ rowData.orderNotIntegral }}</el-col>
-          <el-col :span="5">{{ rowData.flowNotIntegral }}</el-col>
+          <el-col :span="6">{{rowData.orderIntegral}}</el-col>
+          <el-col :span="6">{{rowData.flowIntegral}}</el-col>
+          <el-col :span="5">{{rowData.orderNotIntegral}}</el-col>
+          <el-col :span="5">{{rowData.flowNotIntegral}}</el-col>
         </el-row>
         <div class="apply-remark">
           <h3>备注：</h3>
           <p>
-            {{ rowData.remark }}
+            {{rowData.remark}}
           </p>
         </div>
       </div>
@@ -299,8 +296,8 @@
   // 筛选按钮
   const tabs = [
     { label: "前一天", value: 1 },
-    { label: "前一周", value: 2 },
-    { label: "前一月", value: 3 }
+    { label: "近一周(7天)", value: 2 },
+    { label: "近一月(30天)", value: 3 }
   ];
 
   // 对账状态
@@ -310,7 +307,7 @@
     { label: "财务确认", value: "2" },
     { label: "金额不一致", value: "3" },
     { label: "订单缺失", value: "4" },
-    { label: "流水缺失", value: "5" }
+    { label: "流水缺失", value: "5" },
   ];
 
   // 修改的金额类型
@@ -372,12 +369,17 @@
           // 列表筛选
           startOrderDate: "", // 下单开始日期
           endOrderDate: "", // 下单结束日期
-          startFlowDate: "", // 支付开始日期
-          endFlowDate: "", // 支付结束日期
           businessName: "", // 商户名称
+          orderNumber: '', // 订单编号
           state: "", // 对账状态
           pageNum: 1, // 分页
           pageSize: 20 // 每页显示的条数
+        },
+        pickerOptions: {
+          // 设置日期范围
+          disabledDate(time) {
+            return time.getTime() > Date.now() - 8.64e7;
+          }
         },
         tabs, // 按钮切换筛选数据
         title, // 表格title
@@ -440,22 +442,19 @@
         return "";
       },
 
-      // onKeyup(e) {
-      //   e.target.value = e.target.value.replace(/[!~@#$%*&()_+\s^]/g, '')
-      // },
+      // 禁止输入特殊字符
+      onKeyup(e) {
+        e.target.value = e.target.value.replace(/[!~@#$%*&()_+\s^]/g, '')
+      },
 
       // 搜索订单
       searchOrder(value) {
         // 切换按钮筛选数据，除了支付时间其他条件置空
-        if (value === "flowDate") {
-          this.createDate = "";
+        if (value === "createDate") {
           this.search = {
             businessName: "",
             state: "",
-            startOrderDate: "",
-            endOrderDate: "",
-            startFlowDate: "",
-            endFlowDate: "",
+            orderNumber: '',
             pageNum: 1,
             pageSize: 20
           };
@@ -466,13 +465,6 @@
           Object.assign(this.search, {
             startOrderDate: Utils.formatTime(createDate[0]),
             endOrderDate: Utils.formatTime(createDate[1])
-          });
-        }
-        if (flowDate) {
-          // 判断有没有选择支付时间，有的话格式化时间并添加到search对象下
-          Object.assign(this.search, {
-            startFlowDate: Utils.formatTime(flowDate[0]),
-            endFlowDate: Utils.formatTime(flowDate[1])
           });
         }
         this.getList();
@@ -487,8 +479,7 @@
           state: "",
           startOrderDate: "",
           endOrderDate: "",
-          startFlowDate: "",
-          endFlowDate: "",
+          orderNumber: '',
           pageNum: 1,
           pageSize: 20
         };
@@ -511,20 +502,20 @@
           case 1:
             // 昨天的00:00:00到昨天的23:59:59
             start.setTime(start - 3600 * 1000 * 24);
-            this.flowDate = [start, end];
-            this.searchOrder("flowDate"); // 切换按钮之后清空支付时间以外的搜索条件并请求数据
+            this.createDate = [start, end];
+            this.searchOrder("createDate"); // 切换按钮之后清空支付时间以外的搜索条件并请求数据
             break;
           case 2:
             // 前7天的00:00:00到昨天的23:59:59
             start.setTime(start - 3600 * 1000 * 24 * 7);
-            this.flowDate = [start, end];
-            this.searchOrder("flowDate"); // 切换按钮之后清空支付时间以外的搜索条件并请求数据
+            this.createDate = [start, end];
+            this.searchOrder("createDate"); // 切换按钮之后清空支付时间以外的搜索条件并请求数据
             break;
           case 3:
             // 前30天的00:00:00到昨天的23:59:59
             start.setTime(start - 3600 * 1000 * 24 * 30);
-            this.flowDate = [start, end];
-            this.searchOrder("flowDate"); // 切换按钮之后清空支付时间以外的搜索条件并请求数据
+            this.createDate = [start, end];
+            this.searchOrder("createDate"); // 切换按钮之后清空支付时间以外的搜索条件并请求数据
             break;
           default:
             break;
@@ -583,7 +574,7 @@
             this.rowData[value] = price;
             this.rowData["remark"] = remark;
             const { data } = await AccountEntryService.orderUpdate(this.rowData);
-            this.getList();
+            this.getList()
             this.dialogFormVisible = false;
             if (data) {
               this.$message({
@@ -597,7 +588,7 @@
           }
         });
       }
-    }
+    },
   };
 </script>
 

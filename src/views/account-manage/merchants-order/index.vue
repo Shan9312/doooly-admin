@@ -14,6 +14,7 @@
                 style="width: 100%"
                 v-model="search.businessName"
                 placeholder="请输入商户名称"
+                @keyup.native="onKeyup"
               ></el-input>
             </el-form-item>
           </el-col>
@@ -23,6 +24,7 @@
                 :editable="false"
                 v-model="createDate"
                 type="datetimerange"
+                :picker-options="pickerOptions"
                 range-separator="至"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
@@ -36,6 +38,7 @@
                 style="width: 100%"
                 v-model="search.orderNumber"
                 placeholder="请输入订单编号"
+                @keyup.native="onKeyup"
               ></el-input>
             </el-form-item>
           </el-col>
@@ -194,6 +197,12 @@
     name: "MerchantsOrder",
     data() {
       return {
+        pickerOptions: {
+          // 设置日期范围
+          disabledDate(time) {
+            return time.getTime() > Date.now() - 8.64e7;
+          }
+        },
         createDate: "", // 筛选条件v-model绑定的下单时间
         search: {
           // 列表筛选
@@ -263,6 +272,11 @@
         this.multipleSelection = val;
       },
 
+      // 禁止输入特殊字符
+      onKeyup(e) {
+        e.target.value = e.target.value.replace(/[!~@#$%*&()_+\s^]/g, '')
+      },
+
       // 导出
       handleDownload() {
         this.downloadLoading = true;
@@ -302,7 +316,7 @@
         } else {
           let params = Utils.obj2Param(this.search)
           this.downloadLoading = false;
-          window.location.href = `/api/reconciliInfo/exportExcel?${params}`
+          window.location.href = `http://39.98.195.15/api/pro_reconcili/reconciliInfo/exportExcel?${params}`
         }
       },
 
