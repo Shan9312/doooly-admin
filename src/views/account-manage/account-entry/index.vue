@@ -43,7 +43,11 @@
                 v-model="search.businessName"
                 placeholder="请输入商户名称"
                 maxlength="15"
-                @keyup.native="onKeyup"
+                @keyup.native="
+                  e => {
+                    console.log(e);
+                  }
+                "
               ></el-input>
             </el-form-item>
           </el-col>
@@ -227,10 +231,8 @@
         </el-form-item>
       </el-form>
       <div v-show="dialogStatus === 'abnormal'">
-        <h3>异常类型：{{rowData.status}}</h3>
-        <div class="apply-total">
-          支付总金额：{{rowData.orderAmountPlan}}
-        </div>
+        <h3>异常类型：{{ rowData.status }}</h3>
+        <div class="apply-total">支付总金额：{{ rowData.orderAmountPlan }}</div>
         <el-row class="apply-table">
           <el-col :span="2">&nbsp</el-col>
           <el-col :span="6">订单积分支付</el-col>
@@ -240,22 +242,22 @@
         </el-row>
         <el-row class="apply-table">
           <el-col :span="2">原值</el-col>
-          <el-col :span="6">{{rowData.orderIntegralOld}}</el-col>
-          <el-col :span="6">{{rowData.flowIntegralOld}}</el-col>
-          <el-col :span="5">{{rowData.orderNotIntegralOld}}</el-col>
-          <el-col :span="5">{{rowData.flowNotIntegralOld}}</el-col>
+          <el-col :span="6">{{ rowData.orderIntegralOld }}</el-col>
+          <el-col :span="6">{{ rowData.flowIntegralOld }}</el-col>
+          <el-col :span="5">{{ rowData.orderNotIntegralOld }}</el-col>
+          <el-col :span="5">{{ rowData.flowNotIntegralOld }}</el-col>
         </el-row>
         <el-row class="apply-table">
           <el-col :span="2">现值</el-col>
-          <el-col :span="6">{{rowData.orderIntegral}}</el-col>
-          <el-col :span="6">{{rowData.flowIntegral}}</el-col>
-          <el-col :span="5">{{rowData.orderNotIntegral}}</el-col>
-          <el-col :span="5">{{rowData.flowNotIntegral}}</el-col>
+          <el-col :span="6">{{ rowData.orderIntegral }}</el-col>
+          <el-col :span="6">{{ rowData.flowIntegral }}</el-col>
+          <el-col :span="5">{{ rowData.orderNotIntegral }}</el-col>
+          <el-col :span="5">{{ rowData.flowNotIntegral }}</el-col>
         </el-row>
         <div class="apply-remark">
           <h3>备注：</h3>
           <p>
-            {{rowData.remark}}
+            {{ rowData.remark }}
           </p>
         </div>
       </div>
@@ -308,7 +310,7 @@
     { label: "财务确认", value: "2" },
     { label: "金额不一致", value: "3" },
     { label: "订单缺失", value: "4" },
-    { label: "流水缺失", value: "5" },
+    { label: "流水缺失", value: "5" }
   ];
 
   // 修改的金额类型
@@ -438,9 +440,9 @@
         return "";
       },
 
-      onKeyup(e) {
-        e.target.value = e.target.value.replace(/[!~@#$%*&()_+\s^]/g, '')
-      },
+      // onKeyup(e) {
+      //   e.target.value = e.target.value.replace(/[!~@#$%*&()_+\s^]/g, '')
+      // },
 
       // 搜索订单
       searchOrder(value) {
@@ -581,7 +583,7 @@
             this.rowData[value] = price;
             this.rowData["remark"] = remark;
             const { data } = await AccountEntryService.orderUpdate(this.rowData);
-            this.getList()
+            this.getList();
             this.dialogFormVisible = false;
             if (data) {
               this.$message({
@@ -595,7 +597,7 @@
           }
         });
       }
-    },
+    }
   };
 </script>
 
