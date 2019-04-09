@@ -5,7 +5,7 @@ import {
 import { Auth, Utils } from '@/common'
 
 const settings = {
-  baseURL: '//114.215.198.87:8780/test-reconcili/',
+  baseURL: process.env.VUE_APP_URL,
   headers: { 'Content-Type': 'application/json' }
 }
 
@@ -14,7 +14,7 @@ const ajax = (method, url, data, options = {}) => {
     method,
     url,
     data,
-    baseURL: process.env.NODE_ENV == 'production' ? settings.baseURL : '',
+    baseURL: options.baseURL || settings.baseURL,
     headers: options.headers || settings.headers,
     timeout: 5000
   })
