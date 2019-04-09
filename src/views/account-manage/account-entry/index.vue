@@ -41,12 +41,8 @@
                 style="width: 100%"
                 v-model="search.businessName"
                 placeholder="请输入商户名称"
-<<<<<<< HEAD
-                @keyup.native="handleChange"
-=======
                 maxlength="15"
                 @keyup.native="onKeyup"
->>>>>>> release
               ></el-input>
             </el-form-item>
           </el-col>
@@ -71,16 +67,6 @@
             <el-form-item>
               <el-button type="primary" @click="reset">重置</el-button>
             </el-form-item>
-            <!-- <el-form-item>
-              <el-button
-                :loading="downloadLoading"
-                class="filter-item"
-                type="primary"
-                icon="el-icon-download"
-                @click="handleDownload"
-                >导出</el-button
-              >
-            </el-form-item> -->
           </el-col>
         </el-row>
       </el-form>

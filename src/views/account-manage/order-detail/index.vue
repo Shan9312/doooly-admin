@@ -268,7 +268,7 @@
             }
           });
         }
-        return number;
+        return number ? number : '';
       },
 
       // 计算非积分流水支付总额
