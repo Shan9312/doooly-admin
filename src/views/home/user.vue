@@ -29,6 +29,9 @@
             <el-form-item>
               <el-button type="primary" @click="reset">重置</el-button>
             </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="handelExport">导出</el-button>
+            </el-form-item>
           </el-col>
         </el-row>
       </el-form>
@@ -64,6 +67,17 @@
           :label="item.label"
         >
         </el-table-column>
+        <el-table-column
+          label="操作"
+          align="center"
+          class-name="small-padding fixed-width"
+        >
+          <template slot-scope="scope">
+            <el-button type="danger" size="small" @click="handleDel(scope.row)"
+              >删除</el-button
+            >
+          </template>
+        </el-table-column>
       </el-table>
     </div>
   </div>
@@ -73,7 +87,7 @@
   import { Utils } from "@/common";
   const title = [
     // 表格title
-    { label: "日期范围", value: "dateRange", width: "160px" },
+    { label: "日期", value: "dateRange", width: "160px" },
     { label: "当前用户总数", value: "currentUser", width: "80px" },
     { label: "当前激活用户数", value: "currentActivate", width: "180px" },
     { label: "当期新增用户数", value: "currentPerAdd", width: "160px" },
@@ -126,6 +140,7 @@
             return time.getTime() > Date.now() - 8.64e7;
           }
         },
+        id: 0,
         listLoading: false,
         title,
         list: [],
@@ -154,17 +169,23 @@
           data.data05 &&
           data.data06
         ) {
+          this.id++;
           this.list = [
             {
-              dateRange: `${this.search.startDate}~${this.search.endDate}`,
+              dateRange: `${this.search.startDate}~${this.search.endDate}`, // 将筛选日期添加到数组中显示日期范围
               currentUser: data.data01["infoData"],
               currentActivate: data.data02["infoData"],
               currentPerAdd: data.data04["infoData"],
               currentPerAct: data.data05["infoData"],
-              currentPerActAdd: data.data06["infoData"]
+              currentPerActAdd: data.data06["infoData"],
+              startDate: this.search.startDate,
+              endDate: this.search.endDate,
+              id: this.id
             },
             ...this.list
           ];
+          Array.from(new Set(this.list));
+          console.log(Array.from(new Set(this.list)));
         }
       },
 
@@ -202,6 +223,24 @@
           endDate: data.endDate
         });
         this.getUsers();
+      },
+
+      // 导出订单
+      handelExport() {
+        console.log("导出");
+      },
+
+      // 删除
+      handleDel(value) {
+        this.list = this.list.filter(item => item.dateRange !== value.dateRange);
+        this.tabs.map((item, i) => {
+          if (
+            item.startDate == value.startDate &&
+            item.endDate == value.endDate
+          ) {
+            this.tabs[i].disabled = false; // 按钮可以再次点击
+          }
+        });
       }
     }
   };
