@@ -2,10 +2,8 @@ const path = require('path')
 const resolve = (dir) => {
   return path.join(__dirname, '.', dir)
 }
-const env = require('./env.local')
 
 module.exports = {
-  outputDir: 'reconcili',
   chainWebpack: config => {
     /**清除已有的loader规则，如果你不这样做，接下来的loader会附加在该规则现有的loader之后 */
     const svgRule = config.module.rule('svg')
@@ -46,6 +44,5 @@ module.exports = {
       }
     },
   },
-  publicPath: process.env.NODE_ENV === 'production' ?
-    env.publicPath : '/',
+  publicPath: process.env.BASE_URL
 }
