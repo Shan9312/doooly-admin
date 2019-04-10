@@ -221,7 +221,7 @@
         total: 0, // 返回的列表总数
         listLoading: false, // table列表加载的loading
         title, // 表格的title
-        multipleSelection: [], // 选中的数据
+        multipleSelection: [], // 选中的导出数据
         getRowKey(row) {
           return row.id;
         }
@@ -267,7 +267,8 @@
         };
         this.getList();
       },
-
+      
+      // 选择需要导出的数据
       handleSelectionChange(val) {
         this.multipleSelection = val;
       },

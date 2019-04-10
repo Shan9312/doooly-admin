@@ -4,6 +4,9 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 
+import '@babel/polyfill';
+
+
 /**引入第三方插件库 */
 import ElementUI from 'element-ui'
 Vue.use(ElementUI)

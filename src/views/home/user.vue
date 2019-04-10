@@ -30,7 +30,12 @@
               <el-button type="primary" @click="reset">重置</el-button>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="handelExport">导出</el-button>
+              <el-button
+                type="primary"
+                @click="handelExport"
+                :loading="downloadLoading"
+                >导出</el-button
+              >
             </el-form-item>
           </el-col>
         </el-row>
@@ -58,7 +63,11 @@
         ref="multipleTable"
         v-loading="listLoading"
         style="width: 100%"
+        :row-key="getRowKey"
+        @selection-change="handleSelectionChange"
       >
+        <el-table-column type="selection" :reserve-selection="true" width="30">
+        </el-table-column>
         <el-table-column
           v-for="(item, index) in title"
           :min-width="item.width"
@@ -140,11 +149,16 @@
             return time.getTime() > Date.now() - 8.64e7;
           }
         },
-        id: 0,
+        getRowKey(row) {
+          return row.id;
+        },
+        id: 0, // 列表数据ID
         listLoading: false,
-        title,
-        list: [],
-        tabs: getMonths()
+        title, // 列表title
+        list: [], // 列表数据
+        tabs: getMonths(), // 筛选按钮
+        downloadLoading: false, // 导出loading
+        multipleSelection: [] // 选中的导出数据
       };
     },
     created() {
@@ -184,8 +198,18 @@
             },
             ...this.list
           ];
-          Array.from(new Set(this.list));
-          console.log(Array.from(new Set(this.list)));
+          let obj = {};
+          // 数组对象去重
+          this.list = this.list.reduce((cur, next) => {
+            obj[next.dateRange]
+              ? ""
+              : (obj[next.dateRange] = true && cur.push(next));
+            return cur;
+          }, []); //设置cur默认类型为数组，并且初始值为空的数组
+          this.list = this.list.sort((a, b) => {
+            // 将数据按照日期进行排序
+            return Date.parse(a.endDate) - Date.parse(b.endDate);
+          });
         }
       },
 
@@ -193,7 +217,12 @@
       reset() {
         this.search = {
           date: ""
-        };
+        }; // 筛选时间置空
+        this.list = []; // 列表数据置空
+        this.tabs.map(item => {
+          // 按钮可点击
+          item.disabled = false;
+        });
         this.tabs[11].disabled = true;
         Object.assign(this.search, {
           startDate: this.tabs[11].startDate,
@@ -225,14 +254,9 @@
         this.getUsers();
       },
 
-      // 导出订单
-      handelExport() {
-        console.log("导出");
-      },
-
       // 删除
       handleDel(value) {
-        this.list = this.list.filter(item => item.dateRange !== value.dateRange);
+        this.list = this.list.filter(item => item.id !== value.id); // 过滤掉当前选择的一行
         this.tabs.map((item, i) => {
           if (
             item.startDate == value.startDate &&
@@ -241,6 +265,51 @@
             this.tabs[i].disabled = false; // 按钮可以再次点击
           }
         });
+      },
+
+      // 选择需要导出的数据
+      handleSelectionChange(val) {
+        this.multipleSelection = val;
+      },
+
+      // 导出
+      handelExport() {
+        this.downloadLoading = true;
+        import("@/vendor/Export2Excel").then(excel => {
+          const tHeader = [
+            "日期",
+            "当前用户总数",
+            "当前激活用户数",
+            "当期新增用户数",
+            "当期激活用户数",
+            "当期新增并激活用户数"
+          ];
+          const filterVal = [
+            "dateRange",
+            "currentUser",
+            "currentActivate",
+            "currentPerAdd",
+            "currentPerAct",
+            "currentPerActAdd"
+          ];
+          const list = this.multipleSelection;
+          const data = this.formatJson(filterVal, list);
+          excel.export_json_to_excel({
+            header: tHeader,
+            data,
+            filename: "用户数据" + new Date().toLocaleDateString()
+          });
+          this.downloadLoading = false;
+        });
+      },
+
+      // 格式化需要导出的数据
+      formatJson(filterVal, jsonData) {
+        return jsonData.map(v =>
+          filterVal.map(j => {
+            return v[j];
+          })
+        );
       }
     }
   };
