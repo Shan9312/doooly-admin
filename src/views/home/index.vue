@@ -6,7 +6,7 @@
           <router-link :to="'/user'">
             <el-card shadow="hover" :body-style="{ padding: '0px' }">
               <div class="grid-content grid-con-1">
-                <i class="el-icon-lx-people grid-con-icon"></i>
+                <i class="iconicon- grid-con-icon iconfont"></i>
                 <div class="grid-cont-right">
                   <div class="grid-num">
                     {{ userTotal[4] ? userTotal[4].infoData : "" }}
