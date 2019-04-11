@@ -172,9 +172,10 @@
     },
     methods: {
       // 获取列表数据
-      async getUsers() {
+      async getUsers(index) {
         this.listLoading = true;
         const data = await HomeService.getUsers(this.search);
+        if (index || index == 0) this.tabs[index].disabled = true; // 筛选后此按钮不可再次点击
         this.listLoading = false;
         if (
           data.data01 &&
@@ -246,12 +247,11 @@
 
       // 快捷搜索
       handleClick(data, index) {
-        this.tabs[index].disabled = true; // 筛选后此按钮不可再次点击
         Object.assign(this.search, {
           startDate: data.startDate,
           endDate: data.endDate
         });
-        this.getUsers();
+        this.getUsers(index);
       },
 
       // 删除
