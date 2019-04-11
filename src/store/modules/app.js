@@ -9,12 +9,12 @@ const app = {
   mutations: {
     TOGGLE_SIDEBAR: state => {
       state.sidebar.opened = !state.sidebar.opened
-      localStorage.setItem('sidebarStatus', state.sidebar.opened)
+      // localStorage.setItem('sidebarStatus', state.sidebar.opened)
       state.sidebar.withoutAnimation = false
     },
     CLOSE_SIDEBAR: (state, withoutAnimation) => {
       state.sidebar.opened = false
-      localStorage.setItem('sidebarStatus', state.sidebar.opened)
+      // localStorage.setItem('sidebarStatus', state.sidebar.opened)
       state.sidebar.withoutAnimation = withoutAnimation
     },
     TOGGLE_DEVICE: (state, device) => {
