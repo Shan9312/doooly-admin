@@ -17,7 +17,7 @@
       };
     },
     created() {
-      this.getList();
+      // this.getList();
     },
     filters: {
       proportion(value) {
