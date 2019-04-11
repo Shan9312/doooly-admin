@@ -200,7 +200,7 @@
         pickerOptions: {
           // 设置日期范围
           disabledDate(time) {
-            return time.getTime() > Date.now() - 8.64e7;
+            return time.getTime() > Date.now();
           }
         },
         createDate: "", // 筛选条件v-model绑定的下单时间
@@ -245,7 +245,8 @@
           // 判断有没有选择下单时间，有的话格式化时间并添加到search对象下
           Object.assign(this.search, {
             startOrderDate: Utils.formatTime(this.createDate[0]),
-            endOrderDate: Utils.formatTime(this.createDate[1])
+            endOrderDate: Utils.formatTime(this.createDate[1]),
+            
           });
         }
         this.getList();

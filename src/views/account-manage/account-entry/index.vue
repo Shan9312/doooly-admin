@@ -266,7 +266,7 @@
   const title = [
     // 表格title 0pingtai 1 非平台
     { label: "业务类型", value: "businessType", width: "80px" },
-    { label: "下单时间", value: "createDate", width: "160px" },
+    { label: "下单时间", value: "orderDate", width: "160px" },
     { label: "订单编号", value: "orderNumber", width: "180px" },
     { label: "商户名称", value: "businessName", width: "100px" },
     { label: "收款类型", value: "receiptTypeValue", width: "100px" },
@@ -358,7 +358,7 @@
           startOrderDate: "", // 下单开始日期
           endOrderDate: "", // 下单结束日期
           businessName: "", // 商户名称
-          orderNumber: '', // 订单编号
+          orderNumber: "", // 订单编号
           state: "", // 对账状态
           pageNum: 1, // 分页
           pageSize: 20 // 每页显示的条数
@@ -366,7 +366,7 @@
         pickerOptions: {
           // 设置日期范围
           disabledDate(time) {
-            return time.getTime() > Date.now() - 8.64e7;
+            return time.getTime() > Date.now();
           }
         },
         tabs, // 按钮切换筛选数据
@@ -413,10 +413,6 @@
       this.getList();
     },
     methods: {
-      handleChange(e) {
-        // businessName = businessName.replace(/[!~@#$%*&()_+\s^]/g, '')
-        this.search.businessName=this.search.businessName.replace(/([\u4e00-\u9fa5])|(\s)|[^\d\w]/g, '');
-      },
       // 初始化列表
       async getList() {
         this.listLoading = true;
@@ -436,7 +432,7 @@
 
       // 禁止输入特殊字符
       onKeyup(e) {
-        e.target.value = e.target.value.replace(/[!~@#$%*&()_+\s^]/g, '')
+        e.target.value = e.target.value.replace(/[!~@#$%*&()_+\s^]/g, "");
       },
 
       // 搜索订单
@@ -446,9 +442,7 @@
           this.search = {
             businessName: "",
             state: "",
-            orderNumber: '',
-            pageNum: 1,
-            pageSize: 20
+            orderNumber: "",
           };
         }
         const { createDate, flowDate } = this;
@@ -456,7 +450,9 @@
           // 判断有没有选择下单时间，有的话格式化时间并添加到search对象下
           Object.assign(this.search, {
             startOrderDate: Utils.formatTime(createDate[0]),
-            endOrderDate: Utils.formatTime(createDate[1])
+            endOrderDate: Utils.formatTime(createDate[1]),
+            pageNum: 1,
+            pageSize: 20
           });
         }
         this.getList();
@@ -471,7 +467,7 @@
           state: "",
           startOrderDate: "",
           endOrderDate: "",
-          orderNumber: '',
+          orderNumber: "",
           pageNum: 1,
           pageSize: 20
         };
@@ -580,7 +576,7 @@
           }
         });
       }
-    },
+    }
   };
 </script>
 
