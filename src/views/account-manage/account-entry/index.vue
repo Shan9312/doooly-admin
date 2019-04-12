@@ -49,9 +49,10 @@
           <el-col :span="12">
             <el-form-item label="对账状态">
               <el-select
-                style="width: 120px;"
-                v-model="search.state"
+                style="width: 240px;"
+                v-model="search.stateList"
                 placeholder="请选择"
+                multiple
               >
                 <el-option
                   v-for="(item, index) in checkState"
@@ -290,7 +291,6 @@
 
   // 对账状态
   const checkState = [
-    { label: "全部", value: "" },
     { label: "系统成功", value: "1" },
     { label: "财务确认", value: "2" },
     { label: "金额不一致", value: "3" },
@@ -359,7 +359,7 @@
           endOrderDate: "", // 下单结束日期
           businessName: "", // 商户名称
           orderNumber: "", // 订单编号
-          state: "", // 对账状态
+          stateList: [], // 对账状态
           pageNum: 1, // 分页
           pageSize: 20 // 每页显示的条数
         },
@@ -415,6 +415,7 @@
     methods: {
       // 初始化列表
       async getList() {
+        // this.search.state = this.search.state.join(',')
         this.listLoading = true;
         const { data } = await AccountEntryService.orderList(this.search);
         this.listLoading = false;
@@ -441,7 +442,7 @@
         if (value === "createDate") {
           this.search = {
             businessName: "",
-            state: "",
+            stateList: [],
             orderNumber: "",
           };
         }
@@ -464,7 +465,7 @@
         this.createDate = "";
         this.search = {
           businessName: "",
-          state: "",
+          stateList: [],
           startOrderDate: "",
           endOrderDate: "",
           orderNumber: "",

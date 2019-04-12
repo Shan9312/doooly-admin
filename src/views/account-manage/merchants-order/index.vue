@@ -13,6 +13,7 @@
               <el-input
                 style="width: 100%"
                 v-model="search.businessName"
+                maxlength="20"
                 placeholder="请输入商户名称"
                 @keyup.native="onKeyup"
               ></el-input>
@@ -38,6 +39,7 @@
                 style="width: 100%"
                 v-model="search.orderNumber"
                 placeholder="请输入订单编号"
+                maxlength="30"
                 @keyup.native="onKeyup"
               ></el-input>
             </el-form-item>
@@ -52,8 +54,8 @@
                 placeholder="请选择"
               >
                 <el-option label="全部" value=""></el-option>
-                <el-option label="平台收款" value="0"></el-option>
-                <el-option label="非平台收款" value="1"></el-option>
+                <el-option label="平台收款" :value="0"></el-option>
+                <el-option label="非平台收款" :value="1"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -69,14 +71,16 @@
                 <el-option label="财务确认" value="2"></el-option>
               </el-select>
             </el-form-item>
+            <span class="search-btn">
+              <el-form-item>
+                <el-button type="primary" @click="searchOrder">查询</el-button>
+              </el-form-item>
+              <el-form-item>
+                <el-button type="primary" @click="reset">重置</el-button>
+              </el-form-item>
+            </span>
           </el-col>
           <el-col :span="6">
-            <el-form-item>
-              <el-button type="primary" @click="searchOrder">查询</el-button>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="reset">重置</el-button>
-            </el-form-item>
             <el-form-item>
               <el-button
                 :loading="downloadLoading"
@@ -148,7 +152,7 @@
     // 表格title
     { label: "商户名称", value: "businessName", width: "80px" },
     { label: "订单编号", value: "orderNumber", width: "180px" },
-    { label: "下单时间", value: "createDate", width: "160px" },
+    { label: "下单时间", value: "orderDate", width: "160px" },
     { label: "收款类型", value: "receiptType", width: "100px" },
     { label: "订单应付总金额", value: "orderAmountPlan", width: "100px" },
     { label: "订单实付总金额", value: "orderAmount", width: "100px" },
@@ -245,8 +249,7 @@
           // 判断有没有选择下单时间，有的话格式化时间并添加到search对象下
           Object.assign(this.search, {
             startOrderDate: Utils.formatTime(this.createDate[0]),
-            endOrderDate: Utils.formatTime(this.createDate[1]),
-            
+            endOrderDate: Utils.formatTime(this.createDate[1])
           });
         }
         this.getList();
@@ -268,7 +271,7 @@
         };
         this.getList();
       },
-      
+
       // 选择需要导出的数据
       handleSelectionChange(val) {
         this.multipleSelection = val;
@@ -276,7 +279,7 @@
 
       // 禁止输入特殊字符
       onKeyup(e) {
-        e.target.value = e.target.value.replace(/[!~@#$%*&()_+\s^]/g, '')
+        e.target.value = e.target.value.replace(/[!~@#$%*&()_+\s^]/g, "");
       },
 
       // 导出
@@ -316,9 +319,9 @@
             this.downloadLoading = false;
           });
         } else {
-          let params = Utils.obj2Param(this.search)
+          let params = Utils.obj2Param(this.search);
           this.downloadLoading = false;
-          window.location.href = `http://39.98.195.15/api/pro_reconcili/reconciliInfo/exportExcel?${params}`
+          window.location.href = `http://39.98.195.15/api/pro_reconcili/reconciliInfo/exportExcel?${params}`;
         }
       },
 
@@ -335,4 +338,7 @@
 </script>
 
 <style lang="less">
+  .search-btn{
+    margin-left: 50px;
+  }
 </style>
