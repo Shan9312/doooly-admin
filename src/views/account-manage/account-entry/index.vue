@@ -328,9 +328,7 @@
         default:
           break;
       }
-      if (item.orderAmount && item.flowAmount) {
-        item["differences"] = (item.orderAmount - item.flowAmount).toFixed(2); // 计算差异金额
-      }
+      item["differences"] = Math.abs((item.orderAmount - item.flowAmount).toFixed(2)); // 计算差异金额
       switch (item.receiptType) {
         case 0:
           item.receiptTypeValue = "平台收款";
@@ -442,7 +440,7 @@
           this.search = {
             businessName: "",
             stateList: [],
-            orderNumber: "",
+            orderNumber: ""
           };
         }
         const { createDate } = this;
@@ -456,8 +454,8 @@
           });
         } else {
           // 清空上一次选择的时间
-          this.search['startOrderDate'] = '';
-          this.search['endOrderDate'] = '';
+          this.search["startOrderDate"] = "";
+          this.search["endOrderDate"] = "";
         }
         this.getList();
       },
