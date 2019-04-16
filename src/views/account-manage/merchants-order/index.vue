@@ -251,6 +251,9 @@
             startOrderDate: Utils.formatTime(this.createDate[0]),
             endOrderDate: Utils.formatTime(this.createDate[1])
           });
+        } else {
+          this.search['startOrderDate'] = '';
+          this.search['endOrderDate'] = '';
         }
         this.getList();
       },

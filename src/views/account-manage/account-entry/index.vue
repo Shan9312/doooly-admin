@@ -352,7 +352,6 @@
     data() {
       return {
         createDate: "", // 筛选条件v-model绑定的下单时间
-        flowDate: "", //筛选条件v-model绑定的支付时间
         search: {
           // 列表筛选
           startOrderDate: "", // 下单开始日期
@@ -446,7 +445,7 @@
             orderNumber: "",
           };
         }
-        const { createDate, flowDate } = this;
+        const { createDate } = this;
         if (createDate) {
           // 判断有没有选择下单时间，有的话格式化时间并添加到search对象下
           Object.assign(this.search, {
@@ -455,13 +454,16 @@
             pageNum: 1,
             pageSize: 20
           });
+        } else {
+          // 清空上一次选择的时间
+          this.search['startOrderDate'] = '';
+          this.search['endOrderDate'] = '';
         }
         this.getList();
       },
 
       // 重置搜索
       reset() {
-        this.flowDate = "";
         this.createDate = "";
         this.search = {
           businessName: "",
