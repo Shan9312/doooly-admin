@@ -356,7 +356,7 @@
           endOrderDate: "", // 下单结束日期
           businessName: "", // 商户名称
           orderNumber: "", // 订单编号
-          stateList: [], // 对账状态
+          stateList: ['3', '4', '5'], // 对账状态
           pageNum: 1, // 分页
           pageSize: 20 // 每页显示的条数
         },
@@ -465,7 +465,7 @@
         this.createDate = "";
         this.search = {
           businessName: "",
-          stateList: [],
+          stateList: ['3', '4', '5'],
           startOrderDate: "",
           endOrderDate: "",
           orderNumber: "",
