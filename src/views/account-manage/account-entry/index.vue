@@ -95,6 +95,7 @@
           align="center"
           :prop="item.value"
           :label="item.label"
+          :min-width="item.width"
         >
           <template slot-scope="scope">
             <span v-if="item.value !== 'orderNumber'">{{
@@ -271,15 +272,15 @@
     { label: "订单编号", value: "orderNumber", width: "180px" },
     { label: "商户名称", value: "businessName", width: "100px" },
     { label: "收款类型", value: "receiptTypeValue", width: "100px" },
-    { label: "订单应付金额", value: "orderAmountPlan", width: "160px" },
-    { label: "订单实付金额", value: "orderAmount", width: "160px" },
-    { label: "积分支付总额", value: "orderIntegral", width: "160px" },
-    { label: "非积分支付总额", value: "orderNotIntegral", width: "160px" },
-    { label: "流水总金额", value: "flowAmount", width: "100px" },
-    { label: "积分流水总额", value: "flowIntegral", width: "100px" },
-    { label: "非积分流水总额", value: "flowNotIntegral", width: "100px" },
-    { label: "对账状态", value: "status", width: "100px" },
-    { label: "差异金额", value: "differences", width: "100px" }
+    { label: "订单应付金额", value: "orderAmountPlan", width: "80px" },
+    { label: "订单实付金额", value: "orderAmount", width: "80px" },
+    { label: "积分支付总额", value: "orderIntegral", width: "80px" },
+    { label: "非积分支付总额", value: "orderNotIntegral", width: "80px" },
+    { label: "流水总金额", value: "flowAmount", width: "80px" },
+    { label: "积分流水总额", value: "flowIntegral", width: "80px" },
+    { label: "非积分流水总额", value: "flowNotIntegral", width: "80px" },
+    { label: "对账状态", value: "status", width: "120px" },
+    { label: "差异金额", value: "differences", width: "80px" }
   ];
 
   // 筛选按钮
