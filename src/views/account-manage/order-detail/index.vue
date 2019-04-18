@@ -48,17 +48,23 @@
       <div><h4>订单信息</h4></div>
       <el-row>
         <el-col :span="10" :offset="2"
-          >订单编号：{{ orderDetail.orderReport ? orderDetail.orderReport.orderNumber : '' }}</el-col
+          >订单编号：{{
+            orderDetail.orderReport ? orderDetail.orderReport.orderNumber : ""
+          }}</el-col
         >
         <el-col :span="10" :offset="2"
           >订单下单时间：{{
-            Utils.formatTime(orderDetail.orderReport ? orderDetail.orderReport.orderDate : '')
+            Utils.formatTime(
+              orderDetail.orderReport ? orderDetail.orderReport.orderDate : ""
+            )
           }}</el-col
         >
       </el-row>
       <el-row>
         <el-col :span="10" :offset="2"
-          >付款总金额：{{ orderDetail.orderReport ? orderDetail.orderReport.totalMount : '' }}元</el-col
+          >付款总金额：{{
+            orderDetail.orderReport ? orderDetail.orderReport.totalMount : ""
+          }}元</el-col
         >
         <el-col :span="10" :offset="2"
           >订单状态：{{ orderDetail.orderReport.state | formatState }}</el-col
@@ -85,10 +91,12 @@
     <div class="flow-info">
       <div><h4>支付流水信息</h4></div>
       <el-row>
-        <el-col :span="10" :offset="2">
+        <el-col :span="10" :offset="2" class="integral-flow">
           <div>积分流水号：</div>
-          <div v-if="item.payType == 0" v-for="item in orderDetail.orderFlow">
-            {{ item.id }}
+          <div>
+            <div v-if="item.payType == 0" v-for="item in orderDetail.orderFlow">
+              {{ item.id }}
+            </div>
           </div>
         </el-col>
         <el-col :span="10" :offset="2"
@@ -96,10 +104,16 @@
         >
       </el-row>
       <el-row>
-        <el-col :span="10" :offset="2">
-          <div>非积分流水号：</div>
-          <div v-if="item.payType != 0" v-for="item in orderDetail.orderFlow">
-            {{ item.id }}
+        <el-col :span="10" :offset="2" class="notIntegral-flow">
+          <div class="notIntegral-flow-title">非积分流水号：</div>
+          <div>
+            <div
+              class="notIntegral-flow-list"
+              v-if="item.payType != 0"
+              v-for="item in orderDetail.orderFlow"
+            >
+              {{ item.id }}
+            </div>
           </div>
         </el-col>
         <el-col :span="10" :offset="2"
@@ -127,8 +141,12 @@
             <el-table-column prop="amount" label="实付金额"> </el-table-column>
           </el-table>
           <div class="coll-total">
-            <div class="">应收款合计：<span>{{shouldReceipt}}</span></div>
-            <div>实收款合计：<span>{{realityReceipt}}</span></div>
+            <div class="">
+              应收款合计：<span>{{ shouldReceipt }}</span>
+            </div>
+            <div>
+              实收款合计：<span>{{ realityReceipt }}</span>
+            </div>
           </div>
         </el-col>
       </el-row>
@@ -177,22 +195,28 @@
       // 计算订单商品明细应收款总额
       shouldReceipt() {
         let price = 0;
-        if (this.orderDetail.orderDetail && this.orderDetail.orderDetail.length > 0) {
+        if (
+          this.orderDetail.orderDetail &&
+          this.orderDetail.orderDetail.length > 0
+        ) {
           this.orderDetail.orderDetail.map(item => {
             price += item.price;
-          })
+          });
         }
-        return price
+        return price;
       },
       // 计算订单商品明细实收款总额
       realityReceipt() {
         let price = 0;
-        if (this.orderDetail.orderDetail && this.orderDetail.orderDetail.length > 0) {
+        if (
+          this.orderDetail.orderDetail &&
+          this.orderDetail.orderDetail.length > 0
+        ) {
           this.orderDetail.orderDetail.map(item => {
             price += item.amount;
-          })
+          });
         }
-        return price
+        return price;
       }
     },
     filters: {
@@ -264,11 +288,11 @@
         if (data && data.length > 0) {
           data.map(item => {
             if (item.payType == 0) {
-              number += item.amount
+              number += item.amount;
             }
           });
         }
-        return number ? number : '';
+        return number ? number : "";
       },
 
       // 计算非积分流水支付总额
@@ -277,11 +301,11 @@
         if (data && data.length > 0) {
           data.map(item => {
             if (item.payType != 0) {
-              number += item.amount
+              number += item.amount;
             }
           });
         }
-        return number ? number : '';
+        return number ? number : "";
       }
     }
   };
