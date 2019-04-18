@@ -39,7 +39,7 @@
                 style="width: 100%"
                 v-model="search.orderNumber"
                 placeholder="请输入订单编号"
-                maxlength="30"
+                maxlength="40"
                 @keyup.native="onKeyup"
               ></el-input>
             </el-form-item>
