@@ -324,7 +324,7 @@
         } else {
           let params = Utils.obj2Param(this.search);
           this.downloadLoading = false;
-          window.location.href = `http://39.98.195.15/api/pro_reconcili/reconciliInfo/exportExcel?${params}`;
+          window.location.href = `${process.env.VUE_APP_URL}reconciliInfo/exportExcel?${params}`;
         }
       },
 
