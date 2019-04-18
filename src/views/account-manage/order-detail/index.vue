@@ -11,34 +11,34 @@
       <el-row>
         <el-col :span="10" :offset="2"
           >所属企业：{{
-            orderDetail.group ? orderDetail.group.groupName : ""
+            orderDetail.group ? orderDetail.group.groupName : "无"
           }}</el-col
         >
         <el-col :span="10" :offset="2"
           >手机号码：{{
-            orderDetail.user ? orderDetail.user.telephone : ""
+            orderDetail.user ? orderDetail.user.telephone : "无"
           }}</el-col
         >
       </el-row>
       <el-row>
         <el-col :span="10" :offset="2"
           >会员id：{{
-            orderDetail.user ? orderDetail.user.cardNumber : ""
+            orderDetail.user ? orderDetail.user.cardNumber : "无"
           }}</el-col
         >
         <el-col :span="10" :offset="2"
           >供应商名称：{{
-            orderDetail.business ? orderDetail.business.company : ""
+            orderDetail.business ? orderDetail.business.company : "无"
           }}</el-col
         >
       </el-row>
       <el-row>
         <el-col :span="10" :offset="2"
-          >会员姓名：{{ orderDetail.user ? orderDetail.user.name : "" }}</el-col
+          >会员姓名：{{ orderDetail.user ? orderDetail.user.name : "无" }}</el-col
         >
         <el-col :span="10" :offset="2"
           >门店名称：{{
-            orderDetail.businessStore ? orderDetail.businessStore.storeName : ""
+            orderDetail.businessStore ? orderDetail.businessStore.storeName : "无"
           }}</el-col
         >
       </el-row>
@@ -49,13 +49,13 @@
       <el-row>
         <el-col :span="10" :offset="2"
           >订单编号：{{
-            orderDetail.orderReport ? orderDetail.orderReport.orderNumber : ""
+            orderDetail.orderReport ? orderDetail.orderReport.orderNumber : "无"
           }}</el-col
         >
         <el-col :span="10" :offset="2"
           >订单下单时间：{{
             Utils.formatTime(
-              orderDetail.orderReport ? orderDetail.orderReport.orderDate : ""
+              orderDetail.orderReport ? orderDetail.orderReport.orderDate : "无"
             )
           }}</el-col
         >
@@ -63,7 +63,7 @@
       <el-row>
         <el-col :span="10" :offset="2"
           >付款总金额：{{
-            orderDetail.orderReport ? orderDetail.orderReport.totalMount : ""
+            orderDetail.orderReport ? orderDetail.orderReport.totalMount : "0"
           }}元</el-col
         >
         <el-col :span="10" :offset="2"
@@ -72,7 +72,7 @@
       </el-row>
       <el-row>
         <el-col :span="10" :offset="2"
-          >收款类型：{{ query.receiptType }}</el-col
+          >收款类型：{{ query.receiptType || '无' }}</el-col
         >
         <el-col :span="10" :offset="2"
           >支付方式：{{ orderDetail.order | formatApplyType }}</el-col
@@ -80,10 +80,10 @@
       </el-row>
       <el-row>
         <el-col :span="10" :offset="2"
-          >积分支付总额：{{ query.orderIntegral }}元</el-col
+          >积分支付总额：{{ query.orderIntegral || 0 }}元</el-col
         >
         <el-col :span="10" :offset="2"
-          >非积分支付总额：{{ query.orderNotIntegral }}元</el-col
+          >非积分支付总额：{{ query.orderNotIntegral || 0 }}元</el-col
         >
       </el-row>
     </div>
@@ -95,12 +95,13 @@
           <div>积分流水号：</div>
           <div>
             <div v-if="item.payType == 0" v-for="item in orderDetail.orderFlow">
-              {{ item.id }}
+              {{ item.id}}
             </div>
+            <!-- <div>{{flowNumber}}</div> -->
           </div>
         </el-col>
         <el-col :span="10" :offset="2"
-          >积分流水支付总额：{{ orderDetail.orderFlow | integralTotal }}</el-col
+          >积分流水支付总额：{{ orderDetail.orderFlow | integralTotal }}元</el-col
         >
       </el-row>
       <el-row>
@@ -112,14 +113,15 @@
               v-if="item.payType != 0"
               v-for="item in orderDetail.orderFlow"
             >
-              {{ item.id }}
+              {{ item.id}}
             </div>
+            <!-- <div>{{flowNumber}}</div> -->
           </div>
         </el-col>
         <el-col :span="10" :offset="2"
           >非积分流水支付总额：{{
             orderDetail.orderFlow | integralNotTotal
-          }}</el-col
+          }}元</el-col
         >
       </el-row>
     </div>
@@ -135,6 +137,7 @@
             </el-table-column>
             <el-table-column prop="goods" label="商品名称"> </el-table-column>
             <el-table-column prop="address" label="税率（%）">
+              0
             </el-table-column>
             <el-table-column prop="number" label="数量"> </el-table-column>
             <el-table-column prop="price" label="应付金额"> </el-table-column>
@@ -142,10 +145,10 @@
           </el-table>
           <div class="coll-total">
             <div class="">
-              应收款合计：<span>{{ shouldReceipt }}</span>
+              应收款合计：<span>{{ shouldReceipt }}元</span>
             </div>
             <div>
-              实收款合计：<span>{{ realityReceipt }}</span>
+              实收款合计：<span>{{ realityReceipt }}元</span>
             </div>
           </div>
         </el-col>
@@ -217,7 +220,22 @@
           });
         }
         return price;
-      }
+      },
+
+      // flowNumber() {
+      //   let text = ''
+      //   if (
+      //     this.orderDetail.orderFlow &&
+      //     this.orderDetail.orderFlow.length > 0
+      //   ) {
+      //     this.orderDetail.orderFlow.map(item => {
+      //       if (item.payType == 1) {
+      //         text = '无'
+      //       }
+      //     });
+      //   }
+      //   return text
+      // }
     },
     filters: {
       // 格式化订单状态
@@ -235,7 +253,7 @@
           case "5":
             return "流水缺失";
           default:
-            return "";
+            return "无";
         }
       },
       // 格式化支付方式
@@ -292,7 +310,7 @@
             }
           });
         }
-        return number ? number : "";
+        return number ? number : "0";
       },
 
       // 计算非积分流水支付总额
@@ -305,7 +323,7 @@
             }
           });
         }
-        return number ? number : "";
+        return number ? number : "0";
       }
     }
   };
