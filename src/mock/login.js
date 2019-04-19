@@ -4,7 +4,7 @@ const userMap = [
   {
     id: 1,
     name: 'admin',
-    pwd: '123456',
+    pwd: 'doooly@2019',
     token: 'token123',
     age: 18,
     avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
@@ -13,7 +13,7 @@ const userMap = [
   {
     id: 2,
     name: 'test',
-    pwd: '123456',
+    pwd: 'doooly@2019',
     token: 'token234',
     age: 18,
     avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
