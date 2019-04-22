@@ -228,16 +228,10 @@
       formatState(value) {
         if (!value) return "";
         switch (value) {
+          case "0":
+            return "未完成";
           case "1":
             return "已完成";
-          case "2":
-            return "财务确认";
-          case "3":
-            return "金额不一致";
-          case "4":
-            return "订单缺失";
-          case "5":
-            return "流水缺失";
           default:
             return "无";
         }
