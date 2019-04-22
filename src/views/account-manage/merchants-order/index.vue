@@ -255,6 +255,7 @@
           this.search['startOrderDate'] = '';
           this.search['endOrderDate'] = '';
         }
+        this.multipleSelection = []; // 将上一次选的导出数据置空
         this.getList();
       },
 

@@ -93,12 +93,13 @@
       <el-row>
         <el-col :span="10" :offset="2" class="integral-flow">
           <div>积分流水号：</div>
-          <div>
-            <div v-if="item.payType == 0" v-for="item in orderDetail.orderFlow">
+          <div v-if="orderDetail.orderFlow.length > 0">
+            <div v-if="item.payType == 0" v-for="(item, index) in orderDetail.orderFlow">
               {{ item.id}}
             </div>
-            <!-- <div>{{flowNumber}}</div> -->
+            <div v-else-if="index == 0">无</div>
           </div>
+          <div v-else>无</div>
         </el-col>
         <el-col :span="10" :offset="2"
           >积分流水支付总额：{{ orderDetail.orderFlow | integralTotal }}元</el-col
@@ -107,16 +108,17 @@
       <el-row>
         <el-col :span="10" :offset="2" class="notIntegral-flow">
           <div class="notIntegral-flow-title">非积分流水号：</div>
-          <div>
+          <div v-if="orderDetail.orderFlow.length > 0">
             <div
               class="notIntegral-flow-list"
               v-if="item.payType != 0"
-              v-for="item in orderDetail.orderFlow"
+              v-for="(item, index) in orderDetail.orderFlow"
             >
               {{ item.id}}
             </div>
-            <!-- <div>{{flowNumber}}</div> -->
+            <div v-else-if="index == 0">无</div>
           </div>
+          <div v-else>无</div>
         </el-col>
         <el-col :span="10" :offset="2"
           >非积分流水支付总额：{{
@@ -131,13 +133,12 @@
       <el-row>
         <el-col :span="20" :offset="2">
           <el-table :data="orderDetail.orderDetail" border style="width: 100%">
-            <el-table-column prop="categoryId" label="品类编号" width="180">
+            <el-table-column prop="firstCategory" label="品类编号" width="180">
             </el-table-column>
             <el-table-column prop="code" label="商品编号" width="180">
             </el-table-column>
             <el-table-column prop="goods" label="商品名称"> </el-table-column>
-            <el-table-column prop="address" label="税率（%）">
-              0
+            <el-table-column prop="tax" label="税率（%）">
             </el-table-column>
             <el-table-column prop="number" label="数量"> </el-table-column>
             <el-table-column prop="price" label="应付金额"> </el-table-column>
@@ -221,21 +222,6 @@
         }
         return price;
       },
-
-      // flowNumber() {
-      //   let text = ''
-      //   if (
-      //     this.orderDetail.orderFlow &&
-      //     this.orderDetail.orderFlow.length > 0
-      //   ) {
-      //     this.orderDetail.orderFlow.map(item => {
-      //       if (item.payType == 1) {
-      //         text = '无'
-      //       }
-      //     });
-      //   }
-      //   return text
-      // }
     },
     filters: {
       // 格式化订单状态
