@@ -218,7 +218,7 @@
         </el-form-item>
       </el-form>
       <div v-show="dialogStatus === 'abnormal'">
-        <h3>异常类型：{{ rowData.status }}</h3>
+        <h3>异常类型：{{ rowData.stateOld | formatStatus }}</h3>
         <div class="apply-total">支付总金额：{{ rowData.orderAmountPlan }}</div>
         <el-row class="apply-table">
           <el-col :span="2">&nbsp</el-col>
@@ -329,7 +329,9 @@
         default:
           break;
       }
-      item["differences"] = Math.abs((item.orderAmount - item.flowAmount).toFixed(2)); // 计算差异金额
+      item["differences"] = Math.abs(
+        (item.orderAmount - item.flowAmount).toFixed(2)
+      ); // 计算差异金额
       switch (item.receiptType) {
         case 0:
           item.receiptTypeValue = "平台收款";
@@ -357,7 +359,7 @@
           endOrderDate: "", // 下单结束日期
           businessName: "", // 商户名称
           orderNumber: "", // 订单编号
-          stateList: ['3', '4', '5'], // 对账状态
+          stateList: ["3", "4", "5"], // 对账状态
           pageNum: 1, // 分页
           pageSize: 20 // 每页显示的条数
         },
@@ -441,7 +443,7 @@
           this.search = {
             businessName: "",
             orderNumber: "",
-            stateList: ['3', '4', '5'],
+            stateList: ["3", "4", "5"]
           };
         }
         const { createDate } = this;
@@ -466,7 +468,7 @@
         this.createDate = "";
         this.search = {
           businessName: "",
-          stateList: ['3', '4', '5'],
+          stateList: ["3", "4", "5"],
           startOrderDate: "",
           endOrderDate: "",
           orderNumber: "",
@@ -577,6 +579,27 @@
             return false;
           }
         });
+      }
+    },
+    filters: {
+      formatStatus(status) {
+        if (status) {
+          switch (status) {
+            case 1:
+              return "系统成功";
+            case 2:
+              return "财务确认";
+            case 3:
+              return "金额不一致";
+
+            case 4:
+              return "订单缺失";
+            case 5:
+              return "流水缺失";
+            default:
+              return;
+          }
+        }
       }
     }
   };
