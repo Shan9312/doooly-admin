@@ -93,7 +93,7 @@ export const asyncRouterMap = [
 ]
 
 export default new VueRouter({
-  mode: 'history',
+  // mode: 'history',
   base: 'reconcili',
   routes: constantRouterMap,
   scrollBehavior: () => ({
