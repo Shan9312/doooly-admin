@@ -207,7 +207,7 @@
             price += item.price;
           });
         }
-        return price;
+        return price.toFixed(2);
       },
       // 计算订单商品明细实收款总额
       realityReceipt() {
@@ -220,7 +220,7 @@
             price += item.amount;
           });
         }
-        return price;
+        return price.toFixed(2);
       },
     },
     filters: {
@@ -229,7 +229,7 @@
         if (!value) return "";
         switch (value) {
           case "1":
-            return "系统成功";
+            return "已完成";
           case "2":
             return "财务确认";
           case "3":
