@@ -31,9 +31,7 @@ module.exports = {
     open: true,
     proxy: {
       '/': {
-        // target: 'http://192.168.1.222:8780/test_reconcili/',
         target: 'http://114.215.198.87:8780/test_reconcili/',
-        // target: 'http://39.98.195.15/api/pro_reconcili',
         ws: false,
         changeOrigin: true,
         // pathRewrite: { "^/pro_reconcili": "" }
