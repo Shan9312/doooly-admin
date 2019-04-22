@@ -43,5 +43,5 @@ module.exports = {
       // }
     },
   },
-  publicPath: '/reconcili/'
+  publicPath: ''
 }
