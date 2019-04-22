@@ -255,7 +255,7 @@
           this.search['startOrderDate'] = '';
           this.search['endOrderDate'] = '';
         }
-        this.multipleSelection = []; // 将上一次选的导出数据置空
+        this.$refs.multipleTable.clearSelection(); // 除了翻页，其他任何刷新页面的操作都将清空之前选择的内容
         this.getList();
       },
 
@@ -290,38 +290,39 @@
       handleDownload() {
         this.downloadLoading = true;
         if (this.multipleSelection.length > 0) {
-          import("@/vendor/Export2Excel").then(excel => {
-            const tHeader = [
-              "商户名称",
-              "订单编号",
-              "下单时间",
-              "收款类型",
-              "订单应付总金额",
-              "订单实付总金额",
-              "积分支付总额",
-              "其他支付总额",
-              "对账状态"
-            ];
-            const filterVal = [
-              "businessName",
-              "orderNumber",
-              "createDate",
-              "receiptType",
-              "orderAmountPlan",
-              "orderAmount",
-              "orderIntegral",
-              "orderNotIntegral",
-              "status"
-            ];
-            const list = this.multipleSelection;
-            const data = this.formatJson(filterVal, list);
-            excel.export_json_to_excel({
-              header: tHeader,
-              data,
-              filename: "商户订单入款明细" + new Date().toLocaleDateString()
-            });
-            this.downloadLoading = false;
-          });
+          console.log(this.multipleSelection)
+          // import("@/vendor/Export2Excel").then(excel => {
+          //   const tHeader = [
+          //     "商户名称",
+          //     "订单编号",
+          //     "下单时间",
+          //     "收款类型",
+          //     "订单应付总金额",
+          //     "订单实付总金额",
+          //     "积分支付总额",
+          //     "其他支付总额",
+          //     "对账状态"
+          //   ];
+          //   const filterVal = [
+          //     "businessName",
+          //     "orderNumber",
+          //     "createDate",
+          //     "receiptType",
+          //     "orderAmountPlan",
+          //     "orderAmount",
+          //     "orderIntegral",
+          //     "orderNotIntegral",
+          //     "status"
+          //   ];
+          //   const list = this.multipleSelection;
+          //   const data = this.formatJson(filterVal, list);
+          //   excel.export_json_to_excel({
+          //     header: tHeader,
+          //     data,
+          //     filename: "商户订单入款明细" + new Date().toLocaleDateString()
+          //   });
+          //   this.downloadLoading = false;
+          // });
         } else {
           let params = Utils.obj2Param(this.search);
           this.downloadLoading = false;
