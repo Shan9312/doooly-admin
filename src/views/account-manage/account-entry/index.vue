@@ -440,7 +440,6 @@
         if (value === "createDate") {
           this.search = {
             businessName: "",
-            stateList: [],
             orderNumber: ""
           };
         }
