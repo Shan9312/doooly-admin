@@ -6,6 +6,8 @@ import store from './store'
 
 import '@babel/polyfill';
 
+import promise from 'es6-promise' // IE浏览器兼容Axios
+promise.polyfill()
 
 /**引入第三方插件库 */
 import ElementUI from 'element-ui'

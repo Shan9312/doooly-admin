@@ -24,6 +24,7 @@
     "babel-core": "7.0.0-bridge.0",
     "element-theme": "^2.0.1",
     "element-theme-chalk": "^2.6.1",
+    "es6-promise": "^4.2.6",
     "less": "^3.0.4",
     "less-loader": "^4.1.0",
     "mockjs": "^1.0.1-beta3",
