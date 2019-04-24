@@ -348,6 +348,19 @@
     return list;
   };
 
+  function NewDate(str) {
+    if (!str) {
+      return 0;
+    }
+    arr = str.split(" ");
+    d = arr[0].split("-");
+    t = arr[1].split(":");
+    var date = new Date();
+    date.setUTCFullYear(d[0], d[1] - 1, d[2]);
+    date.setUTCHours(t[0], t[1], t[2], 0);
+    return date;
+  }
+
   export default {
     name: "AccountEntry",
     data() {
@@ -480,33 +493,28 @@
 
       // 切换按钮,筛选前一天，前7天，前一个月的数据
       handleClick(index) {
+        const yesterDay = Utils.formatTime(
+          new Date(new Date().setDate(new Date().getDate() - 1)),
+          "{y}/{m}/{d}"
+        ); // 获取前一天日期
         const end = new Date(
-          new Date(
-            new Date(
-              new Date().setDate(new Date().getDate() - 1)
-            ).toLocaleDateString()
-          ).getTime() +
-            24 * 60 * 60 * 1000 -
-            1
+          new Date(yesterDay).getTime() + 24 * 60 * 60 * 1000 - 1
         ); // 获取昨天的23时59分59秒
-        const start = new Date(new Date().toLocaleDateString()); // 获取今天的0时0分0秒
+        const start = Date.parse(Utils.formatTime(new Date(), "{y}/{m}/{d}")); // 获取今天的0时0分0秒
         switch (index) {
           case 1:
             // 昨天的00:00:00到昨天的23:59:59
-            start.setTime(start - 3600 * 1000 * 24);
-            this.createDate = [start, end];
+            this.createDate = [start - 3600 * 1000 * 24, end];
             this.searchOrder("createDate"); // 切换按钮之后清空支付时间以外的搜索条件并请求数据
             break;
           case 2:
             // 前7天的00:00:00到昨天的23:59:59
-            start.setTime(start - 3600 * 1000 * 24 * 7);
-            this.createDate = [start, end];
+            this.createDate = [start - 3600 * 1000 * 24 * 7, end];
             this.searchOrder("createDate"); // 切换按钮之后清空支付时间以外的搜索条件并请求数据
             break;
           case 3:
             // 前30天的00:00:00到昨天的23:59:59
-            start.setTime(start - 3600 * 1000 * 24 * 30);
-            this.createDate = [start, end];
+            this.createDate = [start - 3600 * 1000 * 24 * 30, end];
             this.searchOrder("createDate"); // 切换按钮之后清空支付时间以外的搜索条件并请求数据
             break;
           default:
