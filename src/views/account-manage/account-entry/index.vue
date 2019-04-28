@@ -50,7 +50,7 @@
             <el-form-item label="对账状态">
               <el-select
                 style="width: 240px;"
-                v-model="search.stateList"
+                v-model="search.statusList"
                 placeholder="请选择"
                 multiple
               >
@@ -124,14 +124,14 @@
         >
           <template slot-scope="scope">
             <el-button
-              v-if="scope.row.state >= 3"
+              v-if="scope.row.status >= 3"
               type="danger"
               size="small"
               @click="handleUpdate(scope.row)"
               >异常处理</el-button
             >
             <el-button
-              v-if="scope.row.state == 2"
+              v-if="scope.row.status == 2"
               size="small"
               @click="handlePreview(scope.row)"
               >查看
@@ -218,7 +218,7 @@
         </el-form-item>
       </el-form>
       <div v-show="dialogStatus === 'abnormal'">
-        <h3>异常类型：{{ rowData.stateOld | formatStatus }}</h3>
+        <h3>异常类型：{{ rowData.statusOld | formatStatus }}</h3>
         <div class="apply-total">支付总金额：{{ rowData.orderAmountPlan }}</div>
         <el-row class="apply-table">
           <el-col :span="2">&nbsp</el-col>
@@ -279,7 +279,7 @@
     { label: "流水总金额", value: "flowAmount", width: "80px" },
     { label: "积分流水总额", value: "flowIntegral", width: "80px" },
     { label: "非积分流水总额", value: "flowNotIntegral", width: "80px" },
-    { label: "对账状态", value: "status", width: "120px" },
+    { label: "对账状态", value: "statusText", width: "120px" },
     { label: "差异金额", value: "differences", width: "80px" }
   ];
 
@@ -310,21 +310,21 @@
   const format = data => {
     let list = [];
     data.map(item => {
-      switch (item.state) {
+      switch (item.status) {
         case 1:
-          item.status = "系统成功";
+          item.statusText = "系统成功";
           break;
         case 2:
-          item.status = "财务确认";
+          item.statusText = "财务确认";
           break;
         case 3:
-          item.status = "金额不一致";
+          item.statusText = "金额不一致";
           break;
         case 4:
-          item.status = "订单缺失";
+          item.statusText = "订单缺失";
           break;
         case 5:
-          item.status = "流水缺失";
+          item.statusText = "流水缺失";
           break;
         default:
           break;
@@ -372,7 +372,7 @@
           endOrderDate: "", // 下单结束日期
           businessName: "", // 商户名称
           orderNumber: "", // 订单编号
-          stateList: ["3", "4", "5"], // 对账状态
+          statusList: ["3", "4", "5"], // 对账状态
           pageNum: 1, // 分页
           pageSize: 20 // 每页显示的条数
         },
@@ -428,7 +428,6 @@
     methods: {
       // 初始化列表
       async getList() {
-        // this.search.state = this.search.state.join(',')
         this.listLoading = true;
         const { data } = await AccountEntryService.orderList(this.search);
         this.listLoading = false;
@@ -438,7 +437,7 @@
 
       // 表格异常数据标红
       tableRowClassName({ row }) {
-        if (row.state === 3 || row.state === 4 || row.state === 5) {
+        if (row.status === 3 || row.status === 4 || row.status === 5) {
           return "warning-row";
         }
         return "";
@@ -456,7 +455,7 @@
           this.search = {
             businessName: "",
             orderNumber: "",
-            stateList: ["3", "4", "5"]
+            statusList: ["3", "4", "5"]
           };
         }
         const { createDate } = this;
@@ -481,7 +480,7 @@
         this.createDate = "";
         this.search = {
           businessName: "",
-          stateList: ["3", "4", "5"],
+          statusList: ["3", "4", "5"],
           startOrderDate: "",
           endOrderDate: "",
           orderNumber: "",
@@ -524,16 +523,21 @@
 
       // 修改订单
       handleUpdate(row) {
+        this.temp = {
+          value: "", // 对账状态
+          remark: "", // 备注
+          price: "" // 修改的金额
+        },
         this.temp["remark"] = row.remark; // 回显备注信息
         this.rowData = Object.assign({}, row); // 存储需要修改的某一行数据
-        if (row.state == 3) {
+        if (row.status == 3) {
           // 金额不一致
           this.dialogStatus = "discrepancy";
         }
-        if (row.state == 4) {
+        if (row.status == 4) {
           this.dialogStatus = "order"; // 流水缺失
         }
-        if (row.state == 5) {
+        if (row.status == 5) {
           this.dialogStatus = "runningWater"; // 订单缺失
         }
         this.dialogFormVisible = true;

@@ -63,7 +63,7 @@
             <el-form-item label="对账状态">
               <el-select
                 style="width: 120px;"
-                v-model="search.state"
+                v-model="search.status"
                 placeholder="请选择"
               >
                 <el-option label="全部" value=""></el-option>
@@ -158,27 +158,27 @@
     { label: "订单实付总金额", value: "orderAmount", width: "100px" },
     { label: "积分支付总额", value: "orderIntegral", width: "100px" },
     { label: "其他支付总额", value: "orderNotIntegral", width: "100px" },
-    { label: "对账状态", value: "status", width: "100px" }
+    { label: "对账状态", value: "statusText", width: "100px" }
   ];
 
   const format = data => {
     let list = [];
     data.map(item => {
-      switch (item.state) {
+      switch (item.status) {
         case 1:
-          item.status = "系统成功";
+          item.statusText = "系统成功";
           break;
         case 2:
-          item.status = "财务确认";
+          item.statusText = "财务确认";
           break;
         case 3:
-          item.status = "金额不一致";
+          item.statusText = "金额不一致";
           break;
         case 4:
-          item.status = "订单缺失";
+          item.statusText = "订单缺失";
           break;
         case 5:
-          item.status = "流水缺失";
+          item.statusText = "流水缺失";
           break;
         default:
           break;
@@ -214,7 +214,7 @@
           endOrderDate: "", // 下单结束日期
           businessName: "", // 商户名称
           orderNumber: "", // 订单编号
-          state: "", // 对账状态
+          status: "", // 对账状态
           receiptType: "", // 收款类型
           pageNum: 1, // 分页
           pageSize: 20 // 每页显示的条数
@@ -268,7 +268,7 @@
           endOrderDate: "", // 下单结束日期
           businessName: "", // 商户名称
           orderNumber: "", // 订单编号
-          state: "", // 对账状态
+          status: "", // 对账状态
           receiptType: "", // 收款类型
           pageNum: 1, // 分页
           pageSize: 20 // 每页显示的条数
