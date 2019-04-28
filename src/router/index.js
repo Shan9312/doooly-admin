@@ -68,6 +68,11 @@ export const constantRouterMap = [{
     hidden: true,
     component: () => import( /* webpackChunkName: "form" */ '@/views/account-manage/order-detail/index'),
     meta: { title: '订单详情', icon: 'tree' }
+  }, {
+    path: '/reconExcel',
+    name: 'ReconExcel',
+    component: () => import( /* webpackChunkName: "form" */ '@/views/account-manage/reconExcel.vue'),
+    meta: { title: '商户对账导出', icon: 'tree' }
   }]
 }, {
   path: '/404',
