@@ -8,7 +8,7 @@
         class="demo-form-inline"
       >
         <el-row>
-          <el-col :span="6" :offset="1">
+          <el-col :span="6">
             <el-form-item label="商户名称">
               <el-input
                 style="width: 100%"
@@ -46,7 +46,7 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="6" :offset="1">
+          <el-col :span="6">
             <el-form-item label="收款类型">
               <el-select
                 style="width: 120px;"
@@ -60,6 +60,20 @@
             </el-form-item>
           </el-col>
           <el-col :span="11">
+            <el-form-item label="同步日期">
+              <el-date-picker
+                :editable="false"
+                v-model="syncDate"
+                type="daterange"
+                :picker-options="pickerOptions"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+              >
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
             <el-form-item label="对账状态">
               <el-select
                 style="width: 120px;"
@@ -71,6 +85,23 @@
                 <el-option label="财务确认" value="2"></el-option>
               </el-select>
             </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="6">
+            <el-form-item label="是否补单">
+              <el-select
+                style="width: 120px;"
+                v-model="search.dateMark"
+                placeholder="请选择"
+              >
+                <el-option label="全部" value=""></el-option>
+                <el-option label="是" :value="1"></el-option>
+                <el-option label="否" :value="0"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="5">
             <span class="search-btn">
               <el-form-item>
                 <el-button type="primary" @click="searchOrder">查询</el-button>
@@ -150,6 +181,8 @@
   import { Utils } from "@/common";
   const title = [
     // 表格title
+    { label: "同步日期", value: "orderCreateDate", width: "160px" },
+    { label: "是否补单", value: "dateMark", width: "80px" },
     { label: "商户名称", value: "businessName", width: "80px" },
     { label: "订单编号", value: "orderNumber", width: "180px" },
     { label: "下单时间", value: "orderDate", width: "160px" },
@@ -193,6 +226,11 @@
         default:
           break;
       }
+      if (item.dateMark) {
+        item.dateMark = '是'
+      } else {
+        item.dateMark = '否'
+      }
       list.push(item);
     });
     return list;
@@ -207,14 +245,18 @@
             return time.getTime() > Date.now();
           }
         },
+        syncDate: "", // 同步日期
         createDate: "", // 筛选条件v-model绑定的下单时间
         search: {
           // 列表筛选
+          startCreateDate: "", // 同步开始日期
+          endCreateDate: "", // 同步结束日期
           startOrderDate: "", // 下单开始日期
           endOrderDate: "", // 下单结束日期
           businessName: "", // 商户名称
           orderNumber: "", // 订单编号
           status: "", // 对账状态
+          dateMark: "", // 是否补单
           receiptType: "", // 收款类型
           pageNum: 1, // 分页
           pageSize: 20 // 每页显示的条数
@@ -252,8 +294,20 @@
             endOrderDate: Utils.formatTime(this.createDate[1])
           });
         } else {
-          this.search['startOrderDate'] = '';
-          this.search['endOrderDate'] = '';
+          // 如果上一次选择了下单时间，本次没有选择下单时间，则需要将上一次的下单时间清空
+          this.search["startOrderDate"] = "";
+          this.search["endOrderDate"] = "";
+        }
+        if (this.syncDate) {
+          // 判断有没有选择同步日期，有的话格式化时间并添加到search对象下
+          Object.assign(this.search, {
+            startCreateDate: Utils.formatTime(this.syncDate[0]),
+            endCreateDate: Utils.formatTime(this.syncDate[1])
+          });
+        } else {
+          // 如果上一次选择了同步日期，本次没有选择同步日期，则需要将上一次的同步日期清空
+          this.search["startCreateDate"] = "";
+          this.search["endCreateDate"] = "";
         }
         this.$refs.multipleTable.clearSelection(); // 除了翻页，其他任何刷新页面的操作都将清空之前选择的内容
         this.getList();
@@ -264,6 +318,8 @@
         this.createDate = "";
         this.search = {
           // 列表筛选
+          startCreateDate: "", // 同步开始日期
+          endCreateDate: "", // 同步结束日期
           startOrderDate: "", // 下单开始日期
           endOrderDate: "", // 下单结束日期
           businessName: "", // 商户名称
@@ -290,43 +346,48 @@
       handleDownload() {
         this.downloadLoading = true;
         if (this.multipleSelection.length > 0) {
-          console.log(this.multipleSelection)
-          // import("@/vendor/Export2Excel").then(excel => {
-          //   const tHeader = [
-          //     "商户名称",
-          //     "订单编号",
-          //     "下单时间",
-          //     "收款类型",
-          //     "订单应付总金额",
-          //     "订单实付总金额",
-          //     "积分支付总额",
-          //     "其他支付总额",
-          //     "对账状态"
-          //   ];
-          //   const filterVal = [
-          //     "businessName",
-          //     "orderNumber",
-          //     "createDate",
-          //     "receiptType",
-          //     "orderAmountPlan",
-          //     "orderAmount",
-          //     "orderIntegral",
-          //     "orderNotIntegral",
-          //     "status"
-          //   ];
-          //   const list = this.multipleSelection;
-          //   const data = this.formatJson(filterVal, list);
-          //   excel.export_json_to_excel({
-          //     header: tHeader,
-          //     data,
-          //     filename: "商户订单入款明细" + new Date().toLocaleDateString()
-          //   });
-          //   this.downloadLoading = false;
-          // });
+          import("@/vendor/Export2Excel").then(excel => {
+            const tHeader = [
+              "同步日期",
+              "是否补单",
+              "商户名称",
+              "订单编号",
+              "下单时间",
+              "收款类型",
+              "订单应付总金额",
+              "订单实付总金额",
+              "积分支付总额",
+              "其他支付总额",
+              "对账状态"
+            ];
+            const filterVal = [
+              "orderCreateDate",
+              "dateMark",
+              "businessName",
+              "orderNumber",
+              "createDate",
+              "receiptType",
+              "orderAmountPlan",
+              "orderAmount",
+              "orderIntegral",
+              "orderNotIntegral",
+              "status"
+            ];
+            const list = this.multipleSelection;
+            const data = this.formatJson(filterVal, list);
+            excel.export_json_to_excel({
+              header: tHeader,
+              data,
+              filename: "商户订单入款明细" + new Date().toLocaleDateString()
+            });
+            this.downloadLoading = false;
+          });
         } else {
           let params = Utils.obj2Param(this.search);
           this.downloadLoading = false;
-          window.location.href = `${process.env.VUE_APP_URL}reconciliInfo/exportExcel?${params}`;
+          window.location.href = `${
+            process.env.VUE_APP_URL
+          }reconciliInfo/exportExcel?${params}`;
         }
       },
 
@@ -343,7 +404,7 @@
 </script>
 
 <style lang="less">
-  .search-btn{
+  .search-btn {
     margin-left: 50px;
   }
 </style>
