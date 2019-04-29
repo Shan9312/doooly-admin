@@ -20,13 +20,24 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="商户名称">
-              <el-input
-                style="width: 100%"
-                v-model="search.businessName"
-                maxlength="20"
+              <el-select
+                v-model="search.businessIds"
+                multiple
+                filterable
+                remote
+                reserve-keyword
                 placeholder="请输入商户名称"
-                @keyup.native="onKeyup"
-              ></el-input>
+                :remote-method="remoteMethod"
+                :loading="loading"
+              >
+                <el-option
+                  v-for="item in options"
+                  :key="item.businessId"
+                  :label="item.company"
+                  :value="item.businessId"
+                >
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -47,6 +58,7 @@
 </template>
 <script>
   import { Utils } from "@/common";
+  import { ReconExcelService } from "@/service";
   export default {
     name: "ReconExcel",
     data() {
@@ -58,31 +70,46 @@
           }
         },
         search: {
-          businessName: "", // 商户名称
+          businessIds: [], // 商户名称
           checkTimeStartDate: "", //开始日期
           checkTimeEndDate: "" //结束日期
         },
-        clearingDate: "" // 清算日期
+        clearingDate: "", // 清算日期
+        options: [],
+        loading: false
       };
     },
     created() {},
+    mounted() {},
     methods: {
       // 筛选输入框禁止输入特殊字符
       onKeyup(e) {
         e.target.value = e.target.value.replace(/[!~@#$%*&()_+\s^]/g, "");
       },
+      remoteMethod(query) {
+        if (query !== "") {
+          this.loading = true;
+          setTimeout(async () => {
+            const { data } = await ReconExcelService.getbusniessName(query);
+            this.loading = false;
+            this.options = data;
+          }, 200);
+        } else {
+          this.options = [];
+        }
+      },
       // 导出
       handleDownload() {
         let query = {};
         if (!this.clearingDate) return;
-        if (!this.search.businessName) return;
-        if (this.clearingDate) {
-          Object.assign(this.search, {
-            checkTimeStartDate: this.clearingDate[0],
-            checkTimeEndDate: this.clearingDate[1]
-          });
-        }
-        let params = Utils.obj2Param(this.search);
+        if (this.search.businessIds.length == 0) return;
+        Object.assign(query, {
+          checkTimeStartDate: this.clearingDate[0],
+          checkTimeEndDate: this.clearingDate[1],
+          businessIds: this.search.businessIds.join(',')
+        });
+        let params = Utils.obj2Param(query);
+        console.log(query);
         window.location.href = `${
           process.env.VUE_APP_URL
         }reconciliInfo/accountCheckExcel?${params}`;

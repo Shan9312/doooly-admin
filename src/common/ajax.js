@@ -48,11 +48,11 @@ const ajax = (method, url, data, options = {}) => {
 }
 
 export default {
-  get(url, data) {
+  get(url, data, options) {
     let params = Utils.obj2Param(data)
     params = params.length > 0 ? `?${params}` : ''
 
-    return ajax('get', `${url}${params}`)
+    return ajax('get', `${url}${params}`, options)
   },
   post(url, data, options) {
     return ajax('post', url, data, options)
