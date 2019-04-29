@@ -91,7 +91,7 @@
         if (query !== "") {
           this.loading = true;
           setTimeout(async () => {
-            const { data } = await ReconExcelService.getbusniessName(query);
+            const { data } = await ReconExcelService.getbusniessName(encodeURI(query));
             this.loading = false;
             this.options = data;
           }, 200);
