@@ -300,7 +300,7 @@
     // 表格title
     { label: "业务类型", value: "businessType", width: "80px" },
     { label: "同步日期", value: "orderCreateDate", width: "160px" },
-    { label: "是否补单", value: "dateMark", width: "80px" },
+    { label: "是否补单", value: "dateMarkText", width: "80px" },
     { label: "下单时间", value: "orderDate", width: "160px" },
     { label: "订单编号", value: "orderNumber", width: "180px" },
     { label: "商户名称", value: "businessName", width: "100px" },
@@ -376,9 +376,9 @@
           break;
       }
       if (item.dateMark) {
-        item.dateMark = '是'
+        item.dateMarkText = '是'
       } else {
-        item.dateMark = '否'
+        item.dateMarkText = '否'
       }
       item["businessType"] = "入款";
       list.push(item);
