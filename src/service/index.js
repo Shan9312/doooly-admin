@@ -3,6 +3,7 @@ import AccountEntryService from './account-entry/account-entry'
 import MerchantsOrder from './merchants-order/merchants-order'
 import OrderDetailService from './order-detail/order-detail'
 import HomeService from './home/home'
+import ReconExcelService from './reconExcel'
 
 export {
   LoginService,
@@ -10,4 +11,5 @@ export {
   MerchantsOrder,
   OrderDetailService,
   HomeService,
+  ReconExcelService,
 }
