@@ -29,6 +29,7 @@
                 placeholder="请输入商户名称"
                 :remote-method="remoteMethod"
                 :loading="loading"
+                @keyup.native="onKeyup"
               >
                 <el-option
                   v-for="item in options"
@@ -109,7 +110,6 @@
           businessIds: this.search.businessIds.join(',')
         });
         let params = Utils.obj2Param(query);
-        console.log(query);
         window.location.href = `${
           process.env.VUE_APP_URL
         }reconciliInfo/accountCheckExcel?${params}`;
