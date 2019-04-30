@@ -103,11 +103,10 @@
       handleDownload() {
         let query = {};
         if (!this.clearingDate) return;
-        if (this.search.businessIds.length == 0) return;
         Object.assign(query, {
           checkTimeStartDate: this.clearingDate[0],
           checkTimeEndDate: this.clearingDate[1],
-          businessIds: this.search.businessIds.join(',')
+          businessIds: this.search.businessIds ? this.search.businessIds.join(',') : ''
         });
         let params = Utils.obj2Param(query);
         window.location.href = `${

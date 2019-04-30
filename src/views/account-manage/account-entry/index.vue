@@ -16,7 +16,6 @@
                 type="daterange"
                 :default-time="['00:00:00', '23:59:59']"
                 :picker-options="pickerOptions"
-                value-format="yyyy-MM-dd HH:mm:ss"
                 range-separator="至"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
@@ -59,7 +58,6 @@
                 :editable="false"
                 v-model="createDate"
                 type="datetimerange"
-                value-format="yyyy-MM-dd HH:mm:ss"
                 :picker-options="pickerOptions"
                 range-separator="至"
                 start-placeholder="开始日期"
@@ -379,9 +377,9 @@
           break;
       }
       if (item.dateMark) {
-        item.dateMarkText = "是";
+        item.dateMarkText = '是'
       } else {
-        item.dateMarkText = "否";
+        item.dateMarkText = '否'
       }
       item["businessType"] = "入款";
       list.push(item);
@@ -391,34 +389,13 @@
 
   export default {
     name: "AccountEntry",
-    filters: {
-      formatStatus(status) {
-        if (status) {
-          switch (status) {
-            case 1:
-              return "系统成功";
-            case 2:
-              return "财务确认";
-            case 3:
-              return "金额不一致";
-
-            case 4:
-              return "订单缺失";
-            case 5:
-              return "流水缺失";
-            default:
-              return;
-          }
-        }
-      }
-    },
     data() {
       return {
         createDate: "", // 筛选条件v-model绑定的下单时间
         syncDate: "", // 筛选条件v-model绑定的同步日期
         search: {
           // 列表筛选
-          startCreateDate: "", // 同步开始日期
+          startOrderCreateDate: "", // 同步开始日期
           endCreateDate: "", // 同步结束日期
           startOrderDate: "", // 下单开始日期
           endOrderDate: "", // 下单结束日期
@@ -506,11 +483,12 @@
        * @param {value} 快捷搜索时传入的参数类型
        */
       searchOrder(value) {
-        // 切换按钮筛选数据，除了支付时间其他条件置空
-        if (value === "createDate") {
+        // 切换按钮筛选数据，除了同步日期其他条件置空
+        if (value === "syncDate") {
+          this.createDate = '';
           this.search = {
-            startCreateDate: "", // 同步开始日期
-            endCreateDate: "", // 同步结束日期
+            startOrderDate: "", // 下单开始日期
+            endOrderDate: "", // 下单结束日期
             businessName: "",
             orderNumber: "",
             dateMark: "",
@@ -523,8 +501,8 @@
         if (createDate) {
           // 判断有没有选择下单时间，有的话格式化时间并添加到search对象下
           Object.assign(this.search, {
-            startOrderDate: createDate[0],
-            endOrderDate: createDate[1]
+            startOrderDate: Utils.formatTime(createDate[0]),
+            endOrderDate: Utils.formatTime(createDate[1])
           });
         } else {
           // 如果上一次选择了下单时间，本次没有选择下单时间，则需要将上一次的下单时间清空
@@ -534,8 +512,8 @@
         if (syncDate) {
           // 判断有没有选择同步日期，有的话格式化时间并添加到search对象下
           Object.assign(this.search, {
-            startOrderCreateDate: syncDate[0],
-            endOrderCreateDate: syncDate[1]
+            startOrderCreateDate: Utils.formatTime(syncDate[0]),
+            endOrderCreateDate: Utils.formatTime(syncDate[1])
           });
         } else {
           // 如果上一次选择了同步日期，本次没有选择同步日期，则需要将上一次的同步日期清空
@@ -550,8 +528,8 @@
         this.createDate = "";
         this.syncDate = "";
         this.search = {
-          startCreateDate: "", // 同步开始日期
-          endCreateDate: "", // 同步结束日期
+          startOrderCreateDate: '',
+          endOrderCreateDate: '',
           businessName: "",
           statusList: ["3", "4", "5"],
           startOrderDate: "",
@@ -579,18 +557,18 @@
         switch (index) {
           case 1:
             // 昨天的00:00:00到昨天的23:59:59
-            this.createDate = [start - 3600 * 1000 * 24, end];
-            this.searchOrder("createDate"); // 切换按钮之后清空支付时间以外的搜索条件并请求数据
+            this.syncDate = [start - 3600 * 1000 * 24, end];
+            this.searchOrder("syncDate"); // 切换按钮之后清空支付时间以外的搜索条件并请求数据
             break;
           case 2:
             // 前7天的00:00:00到昨天的23:59:59
-            this.createDate = [start - 3600 * 1000 * 24 * 7, end];
-            this.searchOrder("createDate"); // 切换按钮之后清空支付时间以外的搜索条件并请求数据
+            this.syncDate = [start - 3600 * 1000 * 24 * 7, end];
+            this.searchOrder("syncDate"); // 切换按钮之后清空支付时间以外的搜索条件并请求数据
             break;
           case 3:
             // 前30天的00:00:00到昨天的23:59:59
-            this.createDate = [start - 3600 * 1000 * 24 * 30, end];
-            this.searchOrder("createDate"); // 切换按钮之后清空支付时间以外的搜索条件并请求数据
+            this.syncDate = [start - 3600 * 1000 * 24 * 30, end];
+            this.searchOrder("syncDate"); // 切换按钮之后清空支付时间以外的搜索条件并请求数据
             break;
           default:
             break;
@@ -667,6 +645,27 @@
             return false;
           }
         });
+      }
+    },
+    filters: {
+      formatStatus(status) {
+        if (status) {
+          switch (status) {
+            case 1:
+              return "系统成功";
+            case 2:
+              return "财务确认";
+            case 3:
+              return "金额不一致";
+
+            case 4:
+              return "订单缺失";
+            case 5:
+              return "流水缺失";
+            default:
+              return;
+          }
+        }
       }
     }
   };
