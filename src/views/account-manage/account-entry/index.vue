@@ -14,6 +14,7 @@
                 :editable="false"
                 v-model="syncDate"
                 type="daterange"
+                :default-time="['00:00:00', '23:59:59']"
                 :picker-options="pickerOptions"
                 range-separator="至"
                 start-placeholder="开始日期"
@@ -394,7 +395,7 @@
         syncDate: "", // 筛选条件v-model绑定的同步日期
         search: {
           // 列表筛选
-          startCreateDate: "", // 同步开始日期
+          startOrderCreateDate: "", // 同步开始日期
           endCreateDate: "", // 同步结束日期
           startOrderDate: "", // 下单开始日期
           endOrderDate: "", // 下单结束日期
@@ -482,11 +483,12 @@
        * @param {value} 快捷搜索时传入的参数类型
        */
       searchOrder(value) {
-        // 切换按钮筛选数据，除了支付时间其他条件置空
-        if (value === "createDate") {
+        // 切换按钮筛选数据，除了同步日期其他条件置空
+        if (value === "syncDate") {
+          this.createDate = '';
           this.search = {
-            startCreateDate: "", // 同步开始日期
-            endCreateDate: "", // 同步结束日期
+            startOrderDate: "", // 下单开始日期
+            endOrderDate: "", // 下单结束日期
             businessName: "",
             orderNumber: "",
             dateMark: "",
@@ -510,13 +512,13 @@
         if (syncDate) {
           // 判断有没有选择同步日期，有的话格式化时间并添加到search对象下
           Object.assign(this.search, {
-            startCreateDate: Utils.formatTime(syncDate[0]),
-            endCreateDate: Utils.formatTime(syncDate[1])
+            startOrderCreateDate: Utils.formatTime(syncDate[0]),
+            endOrderCreateDate: Utils.formatTime(syncDate[1])
           });
         } else {
           // 如果上一次选择了同步日期，本次没有选择同步日期，则需要将上一次的同步日期清空
-          this.search["startCreateDate"] = "";
-          this.search["endCreateDate"] = "";
+          this.search["startOrderCreateDate"] = "";
+          this.search["endOrderCreateDate"] = "";
         }
         this.getList();
       },
@@ -526,8 +528,8 @@
         this.createDate = "";
         this.syncDate = "";
         this.search = {
-          startCreateDate: "", // 同步开始日期
-          endCreateDate: "", // 同步结束日期
+          startOrderCreateDate: '',
+          endOrderCreateDate: '',
           businessName: "",
           statusList: ["3", "4", "5"],
           startOrderDate: "",
@@ -555,18 +557,18 @@
         switch (index) {
           case 1:
             // 昨天的00:00:00到昨天的23:59:59
-            this.createDate = [start - 3600 * 1000 * 24, end];
-            this.searchOrder("createDate"); // 切换按钮之后清空支付时间以外的搜索条件并请求数据
+            this.syncDate = [start - 3600 * 1000 * 24, end];
+            this.searchOrder("syncDate"); // 切换按钮之后清空支付时间以外的搜索条件并请求数据
             break;
           case 2:
             // 前7天的00:00:00到昨天的23:59:59
-            this.createDate = [start - 3600 * 1000 * 24 * 7, end];
-            this.searchOrder("createDate"); // 切换按钮之后清空支付时间以外的搜索条件并请求数据
+            this.syncDate = [start - 3600 * 1000 * 24 * 7, end];
+            this.searchOrder("syncDate"); // 切换按钮之后清空支付时间以外的搜索条件并请求数据
             break;
           case 3:
             // 前30天的00:00:00到昨天的23:59:59
-            this.createDate = [start - 3600 * 1000 * 24 * 30, end];
-            this.searchOrder("createDate"); // 切换按钮之后清空支付时间以外的搜索条件并请求数据
+            this.syncDate = [start - 3600 * 1000 * 24 * 30, end];
+            this.searchOrder("syncDate"); // 切换按钮之后清空支付时间以外的搜索条件并请求数据
             break;
           default:
             break;
@@ -575,11 +577,16 @@
 
       // 修改订单
       handleUpdate(row) {
-        this.temp = {
-          value: "", // 对账状态
-          remark: "", // 备注
-          price: "" // 修改的金额
-        };
+        this.dialogFormVisible = true;
+        // this.temp = {
+        //   value: "", // 对账状态
+        //   remark: "", // 备注
+        //   price: "" // 修改的金额
+        // };
+        this.$nextTick(() => {
+          // 打开弹框清空数据
+          this.$refs["dataForm"].clearValidate();
+        });
         this.temp["remark"] = row.remark; // 回显备注信息
         this.rowData = Object.assign({}, row); // 存储需要修改的某一行数据
         if (row.status == 3) {
@@ -592,11 +599,6 @@
         if (row.status == 5) {
           this.dialogStatus = "runningWater"; // 订单缺失
         }
-        this.dialogFormVisible = true;
-        this.$nextTick(() => {
-          // 打开弹框清空数据
-          this.$refs["dataForm"].clearValidate();
-        });
       },
 
       // 切换修改的金额

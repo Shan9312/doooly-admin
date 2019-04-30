@@ -65,6 +65,7 @@
                 :editable="false"
                 v-model="syncDate"
                 type="daterange"
+                :default-time="['00:00:00', '23:59:59']"
                 :picker-options="pickerOptions"
                 range-separator="至"
                 start-placeholder="开始日期"
@@ -249,8 +250,8 @@
         createDate: "", // 筛选条件v-model绑定的下单时间
         search: {
           // 列表筛选
-          startCreateDate: "", // 同步开始日期
-          endCreateDate: "", // 同步结束日期
+          startOrderCreateDate: "", // 同步开始日期
+          endOrderCreateDate: "", // 同步结束日期
           startOrderDate: "", // 下单开始日期
           endOrderDate: "", // 下单结束日期
           businessName: "", // 商户名称
@@ -301,13 +302,13 @@
         if (this.syncDate) {
           // 判断有没有选择同步日期，有的话格式化时间并添加到search对象下
           Object.assign(this.search, {
-            startCreateDate: Utils.formatTime(this.syncDate[0]),
-            endCreateDate: Utils.formatTime(this.syncDate[1])
+            startOrderCreateDate: Utils.formatTime(this.syncDate[0]),
+            endOrderCreateDate: Utils.formatTime(this.syncDate[1])
           });
         } else {
           // 如果上一次选择了同步日期，本次没有选择同步日期，则需要将上一次的同步日期清空
-          this.search["startCreateDate"] = "";
-          this.search["endCreateDate"] = "";
+          this.search["startOrderCreateDate"] = "";
+          this.search["endOrderCreateDate"] = "";
         }
         this.$refs.multipleTable.clearSelection(); // 除了翻页，其他任何刷新页面的操作都将清空之前选择的内容
         this.getList();
@@ -316,10 +317,11 @@
       // 重置
       reset() {
         this.createDate = "";
+        this.syncDate = '';
         this.search = {
           // 列表筛选
-          startCreateDate: "", // 同步开始日期
-          endCreateDate: "", // 同步结束日期
+          startOrderCreateDate: "", // 同步开始日期
+          endOrderCreateDate: "", // 同步结束日期
           startOrderDate: "", // 下单开始日期
           endOrderDate: "", // 下单结束日期
           businessName: "", // 商户名称
