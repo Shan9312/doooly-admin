@@ -14,7 +14,9 @@
                 :editable="false"
                 v-model="syncDate"
                 type="daterange"
+                :default-time="['00:00:00', '23:59:59']"
                 :picker-options="pickerOptions"
+                value-format="yyyy-MM-dd HH:mm:ss"
                 range-separator="至"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
@@ -57,6 +59,7 @@
                 :editable="false"
                 v-model="createDate"
                 type="datetimerange"
+                value-format="yyyy-MM-dd HH:mm:ss"
                 :picker-options="pickerOptions"
                 range-separator="至"
                 start-placeholder="开始日期"
@@ -376,9 +379,9 @@
           break;
       }
       if (item.dateMark) {
-        item.dateMarkText = '是'
+        item.dateMarkText = "是";
       } else {
-        item.dateMarkText = '否'
+        item.dateMarkText = "否";
       }
       item["businessType"] = "入款";
       list.push(item);
@@ -388,6 +391,27 @@
 
   export default {
     name: "AccountEntry",
+    filters: {
+      formatStatus(status) {
+        if (status) {
+          switch (status) {
+            case 1:
+              return "系统成功";
+            case 2:
+              return "财务确认";
+            case 3:
+              return "金额不一致";
+
+            case 4:
+              return "订单缺失";
+            case 5:
+              return "流水缺失";
+            default:
+              return;
+          }
+        }
+      }
+    },
     data() {
       return {
         createDate: "", // 筛选条件v-model绑定的下单时间
@@ -499,8 +523,8 @@
         if (createDate) {
           // 判断有没有选择下单时间，有的话格式化时间并添加到search对象下
           Object.assign(this.search, {
-            startOrderDate: Utils.formatTime(createDate[0]),
-            endOrderDate: Utils.formatTime(createDate[1])
+            startOrderDate: createDate[0],
+            endOrderDate: createDate[1]
           });
         } else {
           // 如果上一次选择了下单时间，本次没有选择下单时间，则需要将上一次的下单时间清空
@@ -510,13 +534,13 @@
         if (syncDate) {
           // 判断有没有选择同步日期，有的话格式化时间并添加到search对象下
           Object.assign(this.search, {
-            startCreateDate: Utils.formatTime(syncDate[0]),
-            endCreateDate: Utils.formatTime(syncDate[1])
+            startOrderCreateDate: syncDate[0],
+            endOrderCreateDate: syncDate[1]
           });
         } else {
           // 如果上一次选择了同步日期，本次没有选择同步日期，则需要将上一次的同步日期清空
-          this.search["startCreateDate"] = "";
-          this.search["endCreateDate"] = "";
+          this.search["startOrderCreateDate"] = "";
+          this.search["endOrderCreateDate"] = "";
         }
         this.getList();
       },
@@ -575,11 +599,16 @@
 
       // 修改订单
       handleUpdate(row) {
-        this.temp = {
-          value: "", // 对账状态
-          remark: "", // 备注
-          price: "" // 修改的金额
-        };
+        this.dialogFormVisible = true;
+        // this.temp = {
+        //   value: "", // 对账状态
+        //   remark: "", // 备注
+        //   price: "" // 修改的金额
+        // };
+        this.$nextTick(() => {
+          // 打开弹框清空数据
+          this.$refs["dataForm"].clearValidate();
+        });
         this.temp["remark"] = row.remark; // 回显备注信息
         this.rowData = Object.assign({}, row); // 存储需要修改的某一行数据
         if (row.status == 3) {
@@ -592,11 +621,6 @@
         if (row.status == 5) {
           this.dialogStatus = "runningWater"; // 订单缺失
         }
-        this.dialogFormVisible = true;
-        this.$nextTick(() => {
-          // 打开弹框清空数据
-          this.$refs["dataForm"].clearValidate();
-        });
       },
 
       // 切换修改的金额
@@ -643,27 +667,6 @@
             return false;
           }
         });
-      }
-    },
-    filters: {
-      formatStatus(status) {
-        if (status) {
-          switch (status) {
-            case 1:
-              return "系统成功";
-            case 2:
-              return "财务确认";
-            case 3:
-              return "金额不一致";
-
-            case 4:
-              return "订单缺失";
-            case 5:
-              return "流水缺失";
-            default:
-              return;
-          }
-        }
       }
     }
   };
