@@ -25,17 +25,17 @@ const reconRouter = {
     name: 'OrderDetail',
     hidden: true,
     component: () => import( /* webpackChunkName: "form" */ '@/views/account-manage/order-detail/index'),
-    meta: { title: '订单详情', icon: 'tree' }
+    meta: { title: '订单详情', icon: 'eye' }
   }, {
     path: '/reconExcel',
     name: 'ReconExcel',
     component: () => import( /* webpackChunkName: "form" */ '@/views/account-manage/reconExcel.vue'),
-    meta: { title: '商户对账导出', icon: 'tree' }
+    meta: { title: '商户对账导出', icon: 'link' }
   }, {
     path: '/enterpriseExcel',
     name: 'enterpriseExcel',
     component: () => import( /* webpackChunkName: "form" */ '@/views/account-manage/enterpriseExcel.vue'),
-    meta: { title: '企业对账导出', icon: 'tree' }
+    meta: { title: '企业对账导出', icon: 'eye-open' }
   }]
 }
 export default reconRouter

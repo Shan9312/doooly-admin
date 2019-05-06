@@ -382,7 +382,7 @@
         item.dateMarkText = '否'
       }
       item["businessType"] = "入款";
-      list.push(item);
+      list = [...list, item];
     });
     return list;
   };
@@ -483,6 +483,7 @@
        * @param {value} 快捷搜索时传入的参数类型
        */
       searchOrder(value) {
+        this.search.pageNum = 1;
         // 切换按钮筛选数据，除了同步日期其他条件置空
         if (value === "syncDate") {
           this.createDate = '';

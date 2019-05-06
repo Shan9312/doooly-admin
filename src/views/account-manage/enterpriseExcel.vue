@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="enterprise-recon app-container">
     <div>
       <el-form label-position="left" :inline="true" :model="search">
         <el-row>
@@ -7,21 +7,21 @@
             <el-form-item label="企业名称" prop="enterpriseName">
               <el-select
                 style="width: 145px;"
-                v-model="search.enterpriseName"
+                v-model="search.groupId"
                 filterable
                 remote
                 clearable
                 maxlength="15"
                 placeholder="请输入企业名称"
-                :remote-method="remoteMethod"
+                :remote-method="getEnterpriseName"
                 :loading="loading"
                 @keyup.native="onKeyup"
               >
                 <el-option
-                  v-for="item in options"
-                  :key="item.businessId"
-                  :label="item.company"
-                  :value="item.businessId"
+                  v-for="item in enterpriseList"
+                  :key="item.id"
+                  :label="item.groupName"
+                  :value="item.id"
                 >
                 </el-option>
               </el-select>
@@ -54,12 +54,12 @@
                 reserve-keyword
                 maxlength="15"
                 placeholder="请输入商户名称"
-                :remote-method="remoteMethod"
+                :remote-method="getbusniessName"
                 :loading="loading"
                 @keyup.native="onKeyup"
               >
                 <el-option
-                  v-for="item in options"
+                  v-for="item in busniessList"
                   :key="item.businessId"
                   :label="item.company"
                   :value="item.businessId"
@@ -74,7 +74,7 @@
                 class="filter-item"
                 type="primary"
                 icon="el-icon-download"
-                @click="handleDownload"
+                @click="handleSearch"
                 >查询</el-button
               >
             </el-form-item>
@@ -91,7 +91,12 @@
         </el-row>
       </el-form>
       <div>
-        <el-table :data="list" v-loading="listLoading" style="width: 100%">
+        <el-table
+          :data="list"
+          v-loading="listLoading"
+          style="width: 100%"
+          :row-class-name="tableRowClassName"
+        >
           <el-table-column
             v-for="(item, index) in title"
             :min-width="item.width"
@@ -99,6 +104,17 @@
             :prop="item.value"
             :label="item.label"
           >
+            <template slot-scope="scope">
+              <span v-if="item.value !== 'orderDetails'">{{
+                scope.row[item.value]
+              }}</span>
+              <el-popover v-else trigger="hover" placement="bottom">
+                <p>{{scope.row[item.value]}}</p>
+                <div slot="reference" class="enter-goods-detail">
+                  {{ scope.row[item.value] }}
+                </div>
+              </el-popover>
+            </template>
           </el-table-column>
         </el-table>
         <pagination
@@ -117,15 +133,43 @@
   import { EnterExcelService } from "@/service";
   const title = [
     // 表格title
-    { label: "清算日期", value: "businessType", width: "80px" },
-    { label: "企业名称", value: "orderCreateDate", width: "160px" },
-    { label: "商户名称", value: "dateMarkText", width: "80px" },
+    { label: "清算日期", value: "orderCreateDate", width: "80px" },
+    { label: "企业名称", value: "groupName", width: "160px" },
+    { label: "商户名称", value: "businessName", width: "80px" },
     { label: "下单时间", value: "orderDate", width: "160px" },
     { label: "订单号", value: "orderNumber", width: "180px" },
-    { label: "商户明细", value: "businessName", width: "100px" },
-    { label: "积分支付总额", value: "receiptTypeValue", width: "100px" },
-    { label: "核对情况", value: "orderAmountPlan", width: "80px" }
+    { label: "商品明细", value: "orderDetails", width: "100px" },
+    { label: "积分支付总额", value: "orderIntegral", width: "100px" },
+    { label: "核对情况", value: "statusText", width: "80px" }
   ];
+
+  const format = data => {
+    let list = [];
+    data.map(item => {
+      switch (item.status) {
+        case 1:
+          item.statusText = "无异常";
+          break;
+        case 2:
+          item.statusText = "有异常，已全部处理";
+          break;
+        case 3:
+          item.statusText = "有异常未处理";
+          break;
+        case 4:
+          item.statusText = "有异常未处理";
+          break;
+        case 5:
+          item.statusText = "有异常未处理";
+          break;
+        default:
+          break;
+      }
+      list = [...list, item];
+    });
+    return list;
+  };
+
   export default {
     name: "enterpriseExcel",
     data() {
@@ -137,34 +181,48 @@
               month = new Date().getMonth() + 1,
               strDate = new Date().getDate();
             const recentYear = new Date(`${year}-${month}-${strDate}`).getTime();
-            return  time.getTime() < recentYear || time.getTime() > Date.now();
-          },
+            return time.getTime() < recentYear || time.getTime() > Date.now();
+          }
         },
         search: {
-          enterpriseName: "", // 企业名称
-          businessIds: [], // 商户名称
-          checkTimeStartDate: "", //开始日期
-          checkTimeEndDate: "", //结束日期
+          groupId: "", // 企业ID
+          businessIds: [], // 商户ID
+          startDate: "", //开始日期
+          endDate: "", //结束日期
           pageNum: 1,
           pageSize: 20
         },
         title, // 列表title
         total: 0, // 返回的列表总数
         clearingDate: "", // 清算日期
-        options: [], // 商户名称
+        busniessList: [], // 商户列表
+        enterpriseList: [], // 企业列表
         list: [], // 企业对账列表
         listLoading: false, // 列表loading
         loading: false // 搜索框loading
       };
     },
-    created() {},
+    watch: {
+      // 监听日期的变化
+      clearingDate(time) {
+        if (time) {
+          this.search.startDate = time[0];
+          this.search.endDate = time[1];
+        } else {
+          this.search.startDate = "";
+          this.search.endDate = "";
+        }
+      }
+    },
     methods: {
       async getList() {
         this.listLoading = true;
         const { data } = await EnterExcelService.getEnterpriseList(this.search);
         this.listLoading = false;
-        // this.list = format(data.list);
-        // this.total = data.total;
+        if (data) {
+          this.list = format(data.groupAccountList);
+          this.total = data.total;
+        }
       },
 
       // 筛选输入框禁止输入特殊字符
@@ -172,44 +230,75 @@
         e.target.value = e.target.value.replace(/[!~@#$%*&()_+\s^]/g, "");
       },
 
-      // 搜索商户
-      remoteMethod(query) {
+      // 表格异常数据标红处理
+      tableRowClassName({ row }) {
+        if (row.status === 3 || row.status === 4 || row.status === 5) {
+          return "warning-row";
+        }
+        return "";
+      },
+
+      // 查询筛选列表
+      handleSearch() {
+        const { groupId, startDate, endDate } = this.search;
+        if (!groupId || !startDate || !endDate) return;
+        this.getList();
+      },
+
+      // 搜索企业
+      getEnterpriseName(query) {
         if (query !== "") {
           this.loading = true;
           setTimeout(async () => {
-            const { data } = await EnterExcelService.getbusniessName(
-              encodeURI(query)
-            );
+            const { data } = await EnterExcelService.getEnterpriseName(query);
             this.loading = false;
-            this.options = data;
+            this.enterpriseList = data;
           }, 200);
         } else {
-          this.options = [];
+          this.enterpriseList = [];
+        }
+      },
+
+      // 搜索商户
+      getbusniessName(query) {
+        if (query !== "") {
+          this.loading = true;
+          setTimeout(async () => {
+            const { data } = await EnterExcelService.getbusniessName(query);
+            this.loading = false;
+            this.busniessList = data;
+          }, 200);
+        } else {
+          this.busniessList = [];
         }
       },
 
       // 导出
       handleDownload() {
         let query = {};
-        if (!this.clearingDate) return;
-        Object.assign(query, {
-          checkTimeStartDate: this.clearingDate[0],
-          checkTimeEndDate: this.clearingDate[1],
-          businessIds: this.search.businessIds
-            ? this.search.businessIds.join(",")
-            : ""
-        });
-        let params = Utils.obj2Param(query);
-        window.location.href = `${
-          process.env.VUE_APP_URL
-        }reconciliInfo/accountCheckExcel?${params}`;
+        const { groupId, startDate, endDate } = this.search;
+        if (!groupId || !startDate || !endDate) return;
+        delete this.search.pageNum;
+        delete this.search.pageSize;
+        let params = Utils.obj2Param(this.search);
+        EnterExcelService.export(params);
       }
     }
   };
 </script>
 
 <style lang="less">
-  .search-btn {
-    margin-left: 50px;
+  .enterprise-recon {
+    .search-btn {
+      margin-left: 50px;
+    }
+    .el-table .warning-row {
+      color: red;
+    }
+    .enter-goods-detail {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 </style>

@@ -288,6 +288,7 @@
       },
       // 搜索订单
       searchOrder() {
+        this.search.pageNum = 1;
         if (this.createDate) {
           // 判断有没有选择下单时间，有的话格式化时间并添加到search对象下
           Object.assign(this.search, {
