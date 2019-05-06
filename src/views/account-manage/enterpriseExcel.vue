@@ -92,10 +92,12 @@
       </el-form>
       <div>
         <el-table
+          show-summary
           :data="list"
           v-loading="listLoading"
           style="width: 100%"
           :row-class-name="tableRowClassName"
+          :summary-method="getSummaries"
         >
           <el-table-column
             v-for="(item, index) in title"
@@ -194,6 +196,7 @@
         },
         title, // 列表title
         total: 0, // 返回的列表总数
+        sums: 0, // 合计金额
         clearingDate: "", // 清算日期
         busniessList: [], // 商户列表
         enterpriseList: [], // 企业列表
@@ -222,6 +225,7 @@
         if (data) {
           this.list = format(data.groupAccountList);
           this.total = data.total;
+          this.sums = data.orderIntegralSum;
         }
       },
 
@@ -282,6 +286,25 @@
         delete this.search.pageSize;
         let params = Utils.obj2Param(this.search);
         EnterExcelService.export(params);
+      },
+
+      // 计算合计
+      getSummaries(param) {
+        const { columns, data } = param;
+        const sums = [];
+        columns.forEach((column, index) => {
+          if (index === 5) {
+            sums[index] = '合计';
+            return;
+          }
+          const values = data.map(item => Number(item[column.property]));
+          if (!values.every(value => isNaN(value))) {
+            sums[index] = this.sums;
+          } else {
+            sums[index] = '';
+          }
+        });
+        return sums;
       }
     }
   };
