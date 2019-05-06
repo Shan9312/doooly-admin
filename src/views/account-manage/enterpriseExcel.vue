@@ -109,7 +109,7 @@
                 scope.row[item.value]
               }}</span>
               <el-popover v-else trigger="hover" placement="bottom">
-                <p>{{scope.row[item.value]}}</p>
+                <p style="max-width: 350px;">{{scope.row[item.value]}}</p>
                 <div slot="reference" class="enter-goods-detail">
                   {{ scope.row[item.value] }}
                 </div>
