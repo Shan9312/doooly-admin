@@ -54,12 +54,12 @@
                 reserve-keyword
                 maxlength="15"
                 placeholder="请输入商户名称"
-                :remote-method="getbusniessName"
+                :remote-method="getbusinessName"
                 :loading="loading"
                 @keyup.native="onKeyup"
               >
                 <el-option
-                  v-for="item in busniessList"
+                  v-for="item in businessList"
                   :key="item.businessId"
                   :label="item.company"
                   :value="item.businessId"
@@ -111,7 +111,7 @@
                 scope.row[item.value]
               }}</span>
               <el-popover v-else trigger="hover" placement="bottom">
-                <p style="max-width: 350px;">{{scope.row[item.value]}}</p>
+                <p style="max-width: 350px;">{{ scope.row[item.value] }}</p>
                 <div slot="reference" class="enter-goods-detail">
                   {{ scope.row[item.value] }}
                 </div>
@@ -141,7 +141,9 @@
     { label: "下单时间", value: "orderDate", width: "160px" },
     { label: "订单号", value: "orderNumber", width: "180px" },
     { label: "商品明细", value: "orderDetails", width: "100px" },
-    { label: "积分支付总额", value: "orderIntegral", width: "100px" },
+    { label: "积分支付总额", value: "integralSum", width: "100px" },
+    { label: "商品积分支付总额", value: "orderIntegral", width: "100px" },
+    { label: "手续费积分支付总额", value: "serviceCharge", width: "80px" },
     { label: "核对情况", value: "statusText", width: "80px" }
   ];
 
@@ -196,9 +198,11 @@
         },
         title, // 列表title
         total: 0, // 返回的列表总数
-        sums: 0, // 合计金额
+        integralSum: 0, // 合计积分支付金额
+        orderIntegralSum: 0, // 合计商品积分支付总额
+        serviceChargeSum: 0, // 合计手续费积分支付总额
         clearingDate: "", // 清算日期
-        busniessList: [], // 商户列表
+        businessList: [], // 商户列表
         enterpriseList: [], // 企业列表
         list: [], // 企业对账列表
         listLoading: false, // 列表loading
@@ -225,13 +229,18 @@
         if (data) {
           this.list = format(data.groupAccountList);
           this.total = data.total;
-          this.sums = data.orderIntegralSum;
+          this.integralSum = data.integralSum;
+          this.orderIntegralSum = data.orderIntegralSum;
+          this.serviceChargeSum = data.serviceChargeSum;
         }
       },
 
       // 筛选输入框禁止输入特殊字符
       onKeyup(e) {
-        e.target.value = e.target.value.replace(/[！……（）——￥!~@#$%*&()_+\s^]/g, "");
+        e.target.value = e.target.value.replace(
+          /[！……（）——￥!~@#$%*&()_+\s^]/g,
+          ""
+        );
       },
 
       // 表格异常数据标红处理
@@ -264,16 +273,16 @@
       },
 
       // 搜索商户
-      getbusniessName(query) {
+      getbusinessName(query) {
         if (query !== "") {
           this.loading = true;
           setTimeout(async () => {
-            const { data } = await EnterExcelService.getbusniessName(query);
+            const { data } = await EnterExcelService.getbusinessName(query);
             this.loading = false;
-            this.busniessList = data;
+            this.businessList = data;
           }, 200);
         } else {
-          this.busniessList = [];
+          this.businessList = [];
         }
       },
 
@@ -284,9 +293,11 @@
         if (!groupId || !startDate || !endDate) return;
         Object.assign(query, {
           groupId: groupId,
-          businessIds: this.search.businessIds ? this.search.businessIds.join(',') : '',
+          businessIds: this.search.businessIds
+            ? this.search.businessIds.join(",")
+            : "",
           startDate: startDate,
-          endDate: endDate,
+          endDate: endDate
         });
         let params = Utils.obj2Param(query);
         EnterExcelService.export(params);
@@ -298,14 +309,17 @@
         const sums = [];
         columns.forEach((column, index) => {
           if (index === 5) {
-            sums[index] = '合计';
+            sums[index] = "合计";
             return;
           }
-          const values = data.map(item => Number(item[column.property]));
-          if (!values.some(value => isNaN(value))) {
-            sums[index] = this.sums;
-          } else {
-            sums[index] = '';
+          if (index === 6) {
+            sums[index] = this.integralSum;
+          }
+          if (index === 7) {
+            sums[index] = this.orderIntegralSum;
+          }
+          if (index === 8) {
+            sums[index] = this.serviceChargeSum;
           }
         });
         return sums;

@@ -90,7 +90,7 @@
         if (query !== "") {
           this.loading = true;
           setTimeout(async () => {
-            const { data } = await ReconExcelService.getbusniessName(encodeURI(query));
+            const { data } = await ReconExcelService.getbusinessName(encodeURI(query));
             this.loading = false;
             this.options = data;
           }, 200);
@@ -108,9 +108,7 @@
           businessIds: this.search.businessIds ? this.search.businessIds.join(',') : ''
         });
         let params = Utils.obj2Param(query);
-        window.location.href = `${
-          process.env.VUE_APP_URL
-        }reconciliInfo/accountCheckExcel?${params}`;
+        ReconExcelService.export(params);
       }
     }
   };

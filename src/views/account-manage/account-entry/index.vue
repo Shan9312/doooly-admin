@@ -313,6 +313,7 @@
     { label: "流水总金额", value: "flowAmount", width: "80px" },
     { label: "积分流水总额", value: "flowIntegral", width: "80px" },
     { label: "非积分流水总额", value: "flowNotIntegral", width: "80px" },
+    { label: "手续费", value: "serviceCharge", width: "80px" },
     { label: "对账状态", value: "statusText", width: "120px" },
     { label: "差异金额", value: "differences", width: "80px" }
   ];

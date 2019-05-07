@@ -6,7 +6,7 @@ export default {
     return Ajax.post(`/reconciliInfo/groupList?groupName=${query}`)
   },
   // 搜索商户名称
-  getbusniessName(query) {
+  getbusinessName(query) {
     return Ajax.post(`/reconciliInfo/businessList?businessName=${query}`)
   },
   // 获取企业对账列表
