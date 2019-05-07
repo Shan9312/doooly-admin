@@ -1,6 +1,6 @@
 <template>
-  <div class="merchants-order app-container">
-    <div class="order-form">
+  <div class="app-container">
+    <div>
       <el-form label-position="left" :inline="true" :model="search">
         <el-row>
           <el-col :span="11" :offset="1">
@@ -80,18 +80,17 @@
         loading: false
       };
     },
-    created() {},
-    mounted() {},
     methods: {
       // 筛选输入框禁止输入特殊字符
       onKeyup(e) {
         e.target.value = e.target.value.replace(/[!~@#$%*&()_+\s^]/g, "");
       },
+      // 搜索商户
       remoteMethod(query) {
         if (query !== "") {
           this.loading = true;
           setTimeout(async () => {
-            const { data } = await ReconExcelService.getbusniessName(encodeURI(query));
+            const { data } = await ReconExcelService.getbusinessName(encodeURI(query));
             this.loading = false;
             this.options = data;
           }, 200);
@@ -109,9 +108,7 @@
           businessIds: this.search.businessIds ? this.search.businessIds.join(',') : ''
         });
         let params = Utils.obj2Param(query);
-        window.location.href = `${
-          process.env.VUE_APP_URL
-        }reconciliInfo/accountCheckExcel?${params}`;
+        ReconExcelService.export(params);
       }
     }
   };

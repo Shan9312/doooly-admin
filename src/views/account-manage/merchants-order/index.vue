@@ -192,6 +192,7 @@
     { label: "订单实付总金额", value: "orderAmount", width: "100px" },
     { label: "积分支付总额", value: "orderIntegral", width: "100px" },
     { label: "其他支付总额", value: "orderNotIntegral", width: "100px" },
+    { label: "手续费", value: "serviceCharge", width: "80px" },
     { label: "对账状态", value: "statusText", width: "100px" }
   ];
 
@@ -288,6 +289,7 @@
       },
       // 搜索订单
       searchOrder() {
+        this.search.pageNum = 1;
         if (this.createDate) {
           // 判断有没有选择下单时间，有的话格式化时间并添加到search对象下
           Object.assign(this.search, {

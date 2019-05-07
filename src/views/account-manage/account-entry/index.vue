@@ -313,6 +313,7 @@
     { label: "流水总金额", value: "flowAmount", width: "80px" },
     { label: "积分流水总额", value: "flowIntegral", width: "80px" },
     { label: "非积分流水总额", value: "flowNotIntegral", width: "80px" },
+    { label: "手续费", value: "serviceCharge", width: "80px" },
     { label: "对账状态", value: "statusText", width: "120px" },
     { label: "差异金额", value: "differences", width: "80px" }
   ];
@@ -382,7 +383,7 @@
         item.dateMarkText = '否'
       }
       item["businessType"] = "入款";
-      list.push(item);
+      list = [...list, item];
     });
     return list;
   };
@@ -483,6 +484,7 @@
        * @param {value} 快捷搜索时传入的参数类型
        */
       searchOrder(value) {
+        this.search.pageNum = 1;
         // 切换按钮筛选数据，除了同步日期其他条件置空
         if (value === "syncDate") {
           this.createDate = '';
