@@ -231,7 +231,7 @@
 
       // 筛选输入框禁止输入特殊字符
       onKeyup(e) {
-        e.target.value = e.target.value.replace(/[!~@#$%*&()_+\s^]/g, "");
+        e.target.value = e.target.value.replace(/[！……（）——￥!~@#$%*&()_+\s^]/g, "");
       },
 
       // 表格异常数据标红处理
@@ -282,9 +282,13 @@
         let query = {};
         const { groupId, startDate, endDate } = this.search;
         if (!groupId || !startDate || !endDate) return;
-        delete this.search.pageNum;
-        delete this.search.pageSize;
-        let params = Utils.obj2Param(this.search);
+        Object.assign(query, {
+          groupId: groupId,
+          businessIds: this.search.businessIds ? this.search.businessIds.join(',') : '',
+          startDate: startDate,
+          endDate: endDate,
+        });
+        let params = Utils.obj2Param(query);
         EnterExcelService.export(params);
       },
 
@@ -298,7 +302,7 @@
             return;
           }
           const values = data.map(item => Number(item[column.property]));
-          if (!values.every(value => isNaN(value))) {
+          if (!values.some(value => isNaN(value))) {
             sums[index] = this.sums;
           } else {
             sums[index] = '';
