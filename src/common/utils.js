@@ -1,6 +1,9 @@
 import scrollTo from './scrollTo'
 
-
+/**
+ * 格式化数组
+ * @param {*} actual actual数组
+ */
 const cleanArray = (actual) => {
   const newArray = []
   for (let i = 0; i < actual.length; i++) {

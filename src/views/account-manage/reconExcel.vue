@@ -90,7 +90,7 @@
         if (query !== "") {
           this.loading = true;
           setTimeout(async () => {
-            const { data } = await ReconExcelService.getbusinessName(encodeURI(query));
+            const { data } = await ReconExcelService.getbusinessName(query);
             this.loading = false;
             this.options = data;
           }, 200);

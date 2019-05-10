@@ -25,15 +25,15 @@
       :style="{ left: left + 'px', top: top + 'px' }"
       class="contextmenu"
     >
-      <li @click="refreshSelectedTag(selectedTag)">refresh</li>
+      <li @click="refreshSelectedTag(selectedTag)">刷新</li>
       <li
         v-if="!(selectedTag.meta && selectedTag.meta.affix)"
         @click="closeSelectedTag(selectedTag)"
       >
-        Close
+        关闭
       </li>
-      <li @click="closeOthersTags">closeOthers</li>
-      <li @click="closeAllTags(selectedTag)">closeAll</li>
+      <li @click="closeOthersTags">关闭其他</li>
+      <li @click="closeAllTags(selectedTag)">关闭所有</li>
     </ul>
   </div>
 </template>
@@ -125,6 +125,7 @@
         this.$store.dispatch("delCachedView", view).then(() => {
           const { fullPath } = view;
           this.$nextTick(() => {
+            // console.log("/redirect" + fullPath)
             this.$router.replace({
               path: "/redirect" + fullPath
             });

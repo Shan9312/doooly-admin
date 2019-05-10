@@ -51,10 +51,15 @@ export default {
   get(url, data, options) {
     let params = Utils.obj2Param(data)
     params = params.length > 0 ? `?${params}` : ''
-
     return ajax('get', encodeURI(`${url}${params}`), options)
   },
   post(url, data, options) {
     return ajax('post', encodeURI(url), data, options)
+  },
+  put(url, data, options) {
+    return ajax('put', url, data, options)
+  },
+  delete(url, data, options) {
+    return ajax('delete', url, data, options)
   }
 }

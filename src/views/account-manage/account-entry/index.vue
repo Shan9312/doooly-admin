@@ -8,7 +8,7 @@
         class="demo-form-inline"
       >
         <el-row>
-          <el-col :span="11">
+          <el-col :span="10">
             <el-form-item label="同步日期">
               <el-date-picker
                 :editable="false"
@@ -16,6 +16,7 @@
                 type="daterange"
                 :default-time="['00:00:00', '23:59:59']"
                 :picker-options="pickerOptions"
+                value-format="yyyy-MM-dd HH:mm:ss"
                 range-separator="至"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
@@ -45,20 +46,21 @@
               ></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="1">
+          <el-col :span="2">
             <el-form-item>
               <el-button type="primary" @click="searchOrder">查询</el-button>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="11">
+          <el-col :span="10">
             <el-form-item label="下单时间">
               <el-date-picker
                 :editable="false"
                 v-model="createDate"
                 type="datetimerange"
                 :picker-options="pickerOptions"
+                value-format="yyyy-MM-dd HH:mm:ss"
                 range-separator="至"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
@@ -96,7 +98,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="1">
+          <el-col :span="2">
             <el-form-item>
               <el-button type="primary" @click="reset">重置</el-button>
             </el-form-item>
@@ -106,7 +108,7 @@
     </div>
     <div class="table-list">
       <el-row>
-        <el-col :span="11" :offset="1">
+        <el-col :span="11">
           <el-button
             v-for="(item, index) in tabs"
             class="filter-item"
@@ -117,9 +119,10 @@
         </el-col>
       </el-row>
       <el-table
+        border
         :data="list"
         v-loading="listLoading"
-        style="width: 100%"
+        style="width: 100%; margin-top: 20px;"
         :row-class-name="tableRowClassName"
       >
         <el-table-column
@@ -150,6 +153,7 @@
           </template>
         </el-table-column>
         <el-table-column
+          min-width="100"
           label="操作"
           align="center"
           class-name="small-padding fixed-width"
@@ -378,9 +382,9 @@
           break;
       }
       if (item.dateMark) {
-        item.dateMarkText = '是'
+        item.dateMarkText = "是";
       } else {
-        item.dateMarkText = '否'
+        item.dateMarkText = "否";
       }
       item["businessType"] = "入款";
       list = [...list, item];
@@ -397,7 +401,7 @@
         search: {
           // 列表筛选
           startOrderCreateDate: "", // 同步开始日期
-          endCreateDate: "", // 同步结束日期
+          endOrderCreateDate: "", // 同步结束日期
           startOrderDate: "", // 下单开始日期
           endOrderDate: "", // 下单结束日期
           businessName: "", // 商户名称
@@ -453,6 +457,28 @@
         }
       };
     },
+    watch: {
+      // 同步日期
+      syncDate(time) {
+        if (time) {
+          this.search.startOrderCreateDate = time[0];
+          this.search.endOrderCreateDate = time[1];
+        } else {
+          this.search.startOrderCreateDate = "";
+          this.search.endOrderCreateDate = "";
+        }
+      },
+      // 下单日期
+      createDate(time) {
+        if (time) {
+          this.search.startOrderDate = time[0];
+          this.search.endOrderDate = time[1];
+        } else {
+          this.search.startOrderDate = "";
+          this.search.endOrderDate = "";
+        }
+      },
+    },
     created() {
       this.getList();
     },
@@ -487,7 +513,7 @@
         this.search.pageNum = 1;
         // 切换按钮筛选数据，除了同步日期其他条件置空
         if (value === "syncDate") {
-          this.createDate = '';
+          this.createDate = "";
           this.search = {
             startOrderDate: "", // 下单开始日期
             endOrderDate: "", // 下单结束日期
@@ -499,29 +525,6 @@
             pageSize: 20
           };
         }
-        const { createDate, syncDate } = this;
-        if (createDate) {
-          // 判断有没有选择下单时间，有的话格式化时间并添加到search对象下
-          Object.assign(this.search, {
-            startOrderDate: Utils.formatTime(createDate[0]),
-            endOrderDate: Utils.formatTime(createDate[1])
-          });
-        } else {
-          // 如果上一次选择了下单时间，本次没有选择下单时间，则需要将上一次的下单时间清空
-          this.search["startOrderDate"] = "";
-          this.search["endOrderDate"] = "";
-        }
-        if (syncDate) {
-          // 判断有没有选择同步日期，有的话格式化时间并添加到search对象下
-          Object.assign(this.search, {
-            startOrderCreateDate: Utils.formatTime(syncDate[0]),
-            endOrderCreateDate: Utils.formatTime(syncDate[1])
-          });
-        } else {
-          // 如果上一次选择了同步日期，本次没有选择同步日期，则需要将上一次的同步日期清空
-          this.search["startOrderCreateDate"] = "";
-          this.search["endOrderCreateDate"] = "";
-        }
         this.getList();
       },
 
@@ -530,8 +533,8 @@
         this.createDate = "";
         this.syncDate = "";
         this.search = {
-          startOrderCreateDate: '',
-          endOrderCreateDate: '',
+          startOrderCreateDate: "",
+          endOrderCreateDate: "",
           businessName: "",
           statusList: ["3", "4", "5"],
           startOrderDate: "",
@@ -550,26 +553,24 @@
       handleClick(index) {
         const yesterDay = Utils.formatTime(
           new Date(new Date().setDate(new Date().getDate() - 1)),
-          "{y}/{m}/{d}"
+          "{y}-{m}-{d}"
         ); // 获取前一天日期
-        const end = new Date(
-          new Date(yesterDay).getTime() + 24 * 60 * 60 * 1000 - 1
-        ); // 获取昨天的23时59分59秒
-        const start = Date.parse(Utils.formatTime(new Date(), "{y}/{m}/{d}")); // 获取今天的0时0分0秒
+        const start = Date.parse(Utils.formatTime(new Date(), "{y}-{m}-{d}")); // 获取今天的0时0分0秒
+        const end = `${yesterDay} 23:59:59`; // 获取昨天的23时59分59秒
         switch (index) {
           case 1:
             // 昨天的00:00:00到昨天的23:59:59
-            this.syncDate = [start - 3600 * 1000 * 24, end];
+            this.syncDate = [Utils.formatTime(start - 3600 * 1000 * 24, "{y}-{m}-{d} {h}:{i}:{s}"), end];
             this.searchOrder("syncDate"); // 切换按钮之后清空支付时间以外的搜索条件并请求数据
             break;
           case 2:
             // 前7天的00:00:00到昨天的23:59:59
-            this.syncDate = [start - 3600 * 1000 * 24 * 7, end];
+            this.syncDate = [Utils.formatTime(start - 3600 * 1000 * 24 * 7, "{y}-{m}-{d} {h}:{i}:{s}"), end];
             this.searchOrder("syncDate"); // 切换按钮之后清空支付时间以外的搜索条件并请求数据
             break;
           case 3:
             // 前30天的00:00:00到昨天的23:59:59
-            this.syncDate = [start - 3600 * 1000 * 24 * 30, end];
+            this.syncDate = [Utils.formatTime(start - 3600 * 1000 * 24 * 30, "{y}-{m}-{d} {h}:{i}:{s}"), end];
             this.searchOrder("syncDate"); // 切换按钮之后清空支付时间以外的搜索条件并请求数据
             break;
           default:
@@ -580,11 +581,6 @@
       // 修改订单
       handleUpdate(row) {
         this.dialogFormVisible = true;
-        // this.temp = {
-        //   value: "", // 对账状态
-        //   remark: "", // 备注
-        //   price: "" // 修改的金额
-        // };
         this.$nextTick(() => {
           // 打开弹框清空数据
           this.$refs["dataForm"].clearValidate();
@@ -659,7 +655,6 @@
               return "财务确认";
             case 3:
               return "金额不一致";
-
             case 4:
               return "订单缺失";
             case 5:

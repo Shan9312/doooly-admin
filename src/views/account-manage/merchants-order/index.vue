@@ -26,6 +26,7 @@
                 v-model="createDate"
                 type="datetimerange"
                 :picker-options="pickerOptions"
+                value-format="yyyy-MM-dd HH:mm:ss"
                 range-separator="至"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
@@ -67,6 +68,7 @@
                 type="daterange"
                 :default-time="['00:00:00', '23:59:59']"
                 :picker-options="pickerOptions"
+                value-format="yyyy-MM-dd HH:mm:ss"
                 range-separator="至"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
@@ -130,6 +132,7 @@
     <div class="order-table">
       <el-table
         :data="list"
+        border
         ref="multipleTable"
         v-loading="listLoading"
         style="width: 100%"
@@ -248,7 +251,7 @@
           }
         },
         syncDate: "", // 同步日期
-        createDate: "", // 筛选条件v-model绑定的下单时间
+        createDate: "", // 下单时间
         search: {
           // 列表筛选
           startOrderCreateDate: "", // 同步开始日期
@@ -275,6 +278,28 @@
         }
       };
     },
+    watch: {
+      // 同步日期
+      syncDate(time) {
+        if (time) {
+          this.search.startOrderCreateDate = time[0];
+          this.search.endOrderCreateDate = time[1];
+        } else {
+          this.search.startOrderCreateDate = "";
+          this.search.endOrderCreateDate = "";
+        }
+      },
+      // 下单日期
+      createDate(time) {
+        if (time) {
+          this.search.startOrderDate = time[0];
+          this.search.endOrderDate = time[1];
+        } else {
+          this.search.startOrderDate = "";
+          this.search.endOrderDate = "";
+        }
+      },
+    },
     created() {
       this.getList();
     },
@@ -287,31 +312,10 @@
         this.list = format(data.list);
         this.total = data.total;
       },
+      
       // 搜索订单
       searchOrder() {
         this.search.pageNum = 1;
-        if (this.createDate) {
-          // 判断有没有选择下单时间，有的话格式化时间并添加到search对象下
-          Object.assign(this.search, {
-            startOrderDate: Utils.formatTime(this.createDate[0]),
-            endOrderDate: Utils.formatTime(this.createDate[1])
-          });
-        } else {
-          // 如果上一次选择了下单时间，本次没有选择下单时间，则需要将上一次的下单时间清空
-          this.search["startOrderDate"] = "";
-          this.search["endOrderDate"] = "";
-        }
-        if (this.syncDate) {
-          // 判断有没有选择同步日期，有的话格式化时间并添加到search对象下
-          Object.assign(this.search, {
-            startOrderCreateDate: Utils.formatTime(this.syncDate[0]),
-            endOrderCreateDate: Utils.formatTime(this.syncDate[1])
-          });
-        } else {
-          // 如果上一次选择了同步日期，本次没有选择同步日期，则需要将上一次的同步日期清空
-          this.search["startOrderCreateDate"] = "";
-          this.search["endOrderCreateDate"] = "";
-        }
         this.$refs.multipleTable.clearSelection(); // 除了翻页，其他任何刷新页面的操作都将清空之前选择的内容
         this.getList();
       },

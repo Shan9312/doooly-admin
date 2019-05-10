@@ -92,6 +92,7 @@
       </el-form>
       <div>
         <el-table
+          border
           show-summary
           :data="list"
           v-loading="listLoading"
@@ -141,9 +142,9 @@
     { label: "下单时间", value: "orderDate", width: "160px" },
     { label: "订单号", value: "orderNumber", width: "180px" },
     { label: "商品明细", value: "orderDetails", width: "100px" },
-    { label: "积分支付总额", value: "integralSum", width: "100px" },
-    { label: "商品积分支付总额", value: "orderIntegral", width: "100px" },
-    { label: "手续费积分支付总额", value: "serviceCharge", width: "80px" },
+    { label: "积分支付总额", value: "integralSum", width: "140px" },
+    { label: "商品积分支付总额", value: "orderIntegral", width: "200px" },
+    { label: "手续费积分支付总额", value: "serviceCharge", width: "200px" },
     { label: "核对情况", value: "statusText", width: "80px" }
   ];
 
