@@ -20,7 +20,6 @@ const user = {
     LoginByUsername({ commit }, userInfo) {
       return new Promise((resolve, reject) => {
         LoginService.loginByUsername(userInfo.username, userInfo.password).then(res => {
-          console.log(res)
           const data = res.data
           if (data.roles && data.roles.length > 0) {
             commit('SET_ROLES', data.roles)
