@@ -9,7 +9,7 @@ const operationRouter = {
   meta: {
     title: '运营管理',
     icon: 'table',
-    roles: ['operation']
+    roles: ['operation', 'financial']
   },
   children: [
     {

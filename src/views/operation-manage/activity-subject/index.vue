@@ -10,7 +10,7 @@ export default {
   name: 'ActivitySubject',
   data() {
     return {
-
+      
     }
   }
 }

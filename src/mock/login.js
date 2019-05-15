@@ -23,7 +23,7 @@ const userMap = [
   pwd: 'operation@2019',
   token: 'token_operation',
   avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-  roles: ['operation']
+  roles: ['operation','financial']
 }]
 
 const data = {
