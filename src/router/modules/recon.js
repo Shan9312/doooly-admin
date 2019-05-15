@@ -1,40 +1,41 @@
 import Layout from '@/views/layout'
 
 const reconRouter = {
-  path: '/account-manage',
+  path: '/accountManage',
   component: Layout,
   alwaysShow: true,
   name: 'AccountManage',
-  redirect: '/account-manage/account-entry',
+  redirect: '/accountManage/accountEntry',
   meta: {
     title: '对账管理',
-    icon: 'table'
+    icon: 'table',
+    roles: ['financial']
   },
   children: [{
-    path: '/account-entry',
+    path: 'accountEntry',
     name: 'AccountEntry',
     component: () => import( /* webpackChunkName: "form" */ '@/views/account-manage/account-entry/index'),
-    meta: { title: '入账流水对账列表', icon: 'nested' }
+    meta: { title: '入账流水对账列表', icon: 'nested'}
   }, {
-    path: '/merchants-order',
+    path: 'merchantsOrder',
     name: 'MerchantsOrder',
     component: () => import( /* webpackChunkName: "form" */ '@/views/account-manage/merchants-order/index'),
     meta: { title: '商户订单入款列表', icon: 'tree' }
   }, {
-    path: '/order-detail/:orderNumber/:userId/:businessId',
+    path: 'orderDetail/:orderNumber/:userId/:businessId',
     name: 'OrderDetail',
     hidden: true,
     component: () => import( /* webpackChunkName: "form" */ '@/views/account-manage/order-detail/index'),
     meta: { title: '订单详情', icon: 'eye' }
   }, {
-    path: '/reconExcel',
+    path: 'reconExcel',
     name: 'ReconExcel',
-    component: () => import( /* webpackChunkName: "form" */ '@/views/account-manage/reconExcel.vue'),
+    component: () => import( /* webpackChunkName: "form" */ '@/views/account-manage/recon-excel/index'),
     meta: { title: '商户对账导出', icon: 'link' }
   }, {
-    path: '/enterpriseExcel',
-    name: 'enterpriseExcel',
-    component: () => import( /* webpackChunkName: "form" */ '@/views/account-manage/enterpriseExcel.vue'),
+    path: 'enterpriseExcel',
+    name: 'EnterpriseExcel',
+    component: () => import( /* webpackChunkName: "form" */ '@/views/account-manage/enterprise-excel/index'),
     meta: { title: '企业对账导出', icon: 'eye-open' }
   }]
 }

@@ -5,6 +5,7 @@ Vue.use(VueRouter)
 
 import Layout from '@/views/layout'
 import reconRouter from './modules/recon'
+import operationRouter from './modules/operation'
 
 
 /**
@@ -21,59 +22,60 @@ import reconRouter from './modules/recon'
   }
 **/
 export const constantRouterMap = [
+{
+  path: '/redirect',
+  component: Layout,
+  hidden: true,
+  children: [
   {
-    path: '/redirect',
-    component: Layout,
-    hidden: true,
-    children: [
-      {
-        path: '/redirect/:path*',
-        component: () => import('@/views/redirect/index')
-      }
-    ]
-  },
-  {
-    path: '/login',
-    name: 'Login',
-    hidden: true,
-    component: () => import( /* webpackChunkName: "main" */ '@/views/login')
-  },
-  {
-    path: '/',
-    name: 'Home',
-    redirect: '/home',
-    component: Layout,
-    children: [{
-      path: 'home',
-      component: () => import( /* webpackChunkName: "main" */ '@/views/home'),
-      meta: { title: '主页', icon: 'example' }
-    }, {
-      path: 'user',
-      name: 'User',
-      hidden: true,
-      component: () => import( /* webpackChunkName: "main" */ '@/views/home/user'),
-      meta: { title: '用户列表', icon: 'example' }
-    }]
-  },
-  reconRouter,
-  {
-    path: '/404',
-    name: 'Page404',
-    hidden: true,
-    component: () => import( /* webpackChunkName: "error-page" */ '@/views/error-page/404')
-  },
-  {
-    path: '/401',
-    name: 'Page401',
-    hidden: true,
-    component: () => import( /* webpackChunkName: "error-page" */ '@/views/error-page/401')
-  }, {
-    path: '*', redirect: '/404', hidden: true
+    path: '/redirect/:path*',
+    component: () => import('@/views/redirect/index')
   }]
-
+},
+{
+  path: '/login',
+  name: 'Login',
+  hidden: true,
+  component: () => import( /* webpackChunkName: "main" */ '@/views/login')
+},
+{
+  path: '/',
+  name: 'Home',
+  redirect: '/home',
+  component: Layout,
+  children: [{
+    path: 'home',
+    component: () => import( /* webpackChunkName: "main" */ '@/views/home'),
+    meta: { title: '主页', icon: 'example' }
+  }, {
+    path: 'user',
+    name: 'User',
+    hidden: true,
+    component: () => import( /* webpackChunkName: "main" */ '@/views/home/user'),
+    meta: { title: '用户列表', icon: 'example' }
+  }]
+},
+{
+  path: '/404',
+  name: 'Page404',
+  hidden: true,
+  component: () => import( /* webpackChunkName: "error-page" */ '@/views/error-page/404')
+},
+{
+  path: '/401',
+  name: 'Page401',
+  hidden: true,
+  component: () => import( /* webpackChunkName: "error-page" */ '@/views/error-page/401')
+}]
 
 export const asyncRouterMap = [
-
+  reconRouter,
+  operationRouter,
+  {
+    path: '*',
+    redirect: '/404',
+    hidden: true
+  }
 ]
 
 export default new VueRouter({
