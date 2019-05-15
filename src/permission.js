@@ -17,6 +17,7 @@ NProgress.configure({ showSpinner: false })
 const WHITE_LIST = ['/login', '/auth-redirect']
 
 router.beforeEach((to, from, next) => {
+  console.log(to)
   NProgress.start()
   if (!Auth.getToken()) {
     if (WHITE_LIST.indexOf(to.path) !== -1) {

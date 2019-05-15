@@ -176,7 +176,7 @@
   };
 
   export default {
-    name: "enterpriseExcel",
+    name: "EnterpriseExcel",
     data() {
       return {
         pickerOptions: {
