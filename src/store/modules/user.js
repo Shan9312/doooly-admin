@@ -26,7 +26,7 @@ const user = {
             commit('SET_USER_INFO', data)
             Auth.setToken(data.token)
           } else {
-            reject('loginByUsername: 角色列表不能为空')
+            reject('请输入正确的用户名和密码')
           }
           resolve(res)
         }).catch(err => {

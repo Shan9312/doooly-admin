@@ -2,7 +2,6 @@ const path = require('path')
 const resolve = (dir) => {
   return path.join(__dirname, '.', dir)
 }
-const env = require('./env.local')
 
 module.exports = {
   chainWebpack: config => {
@@ -30,7 +29,19 @@ module.exports = {
   },
   devServer: {
     open: true,
+    proxy: {
+      '/': {
+        target: 'http://114.215.198.87:8780/test_reconcili/',
+        ws: false,
+        changeOrigin: true,
+        // pathRewrite: { "^/pro_reconcili": "" }
+      },
+      // '/': {
+      //   target: 'http://192.168.1.245:8082',
+      //   ws: false,
+      //   changeOrigin: true
+      // }
+    },
   },
-  publicPath: process.env.NODE_ENV === 'production' ?
-    env.publicPath : '/',
+  publicPath: ''
 }

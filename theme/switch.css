@@ -250,7 +250,7 @@
     vertical-align: middle;
     color: #303133; }
     .el-switch__label.is-active {
-      color: #499FF8; }
+      color: #409EFF; }
     .el-switch__label--left {
       margin-right: 10px; }
     .el-switch__label--right {
@@ -293,8 +293,8 @@
       height: 16px;
       background-color: #FFFFFF; }
   .el-switch.is-checked .el-switch__core {
-    border-color: #499FF8;
-    background-color: #499FF8; }
+    border-color: #409EFF;
+    background-color: #409EFF; }
     .el-switch.is-checked .el-switch__core::after {
       left: 100%;
       margin-left: -17px; }

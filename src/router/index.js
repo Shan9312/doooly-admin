@@ -4,6 +4,7 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
 import Layout from '@/views/layout'
+import reconRouter from './modules/recon'
 
 
 /**
@@ -19,65 +20,65 @@ import Layout from '@/views/layout'
     breadcrumb: false            if false, the item will hidden in breadcrumb(default is true)
   }
 **/
-export const constantRouterMap = [{
-  path: '/login',
-  name: 'Login',
-  hidden: true,
-  component: () => import( /* webpackChunkName: "main" */ '@/views/login')
-},
-{
-  path: '/',
-  name: 'Home',
-  redirect: '/home',
-  component: Layout,
-  children: [{
-    path: 'home',
-    component: () => import( /* webpackChunkName: "main" */ '@/views/home'),
-    meta: { title: 'Home', icon: 'form' }
+export const constantRouterMap = [
+  {
+    path: '/redirect',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '/redirect/:path*',
+        component: () => import('@/views/redirect/index')
+      }
+    ]
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    hidden: true,
+    component: () => import( /* webpackChunkName: "main" */ '@/views/login')
+  },
+  {
+    path: '/',
+    name: 'Home',
+    redirect: '/home',
+    component: Layout,
+    children: [{
+      path: 'home',
+      component: () => import( /* webpackChunkName: "main" */ '@/views/home'),
+      meta: { title: '主页', icon: 'example' }
+    }, {
+      path: 'user',
+      name: 'User',
+      hidden: true,
+      component: () => import( /* webpackChunkName: "main" */ '@/views/home/user'),
+      meta: { title: '用户列表', icon: 'example' }
+    }]
+  },
+  reconRouter,
+  {
+    path: '/404',
+    name: 'Page404',
+    hidden: true,
+    component: () => import( /* webpackChunkName: "error-page" */ '@/views/error-page/404')
+  },
+  {
+    path: '/401',
+    name: 'Page401',
+    hidden: true,
+    component: () => import( /* webpackChunkName: "error-page" */ '@/views/error-page/401')
+  }, {
+    path: '*', redirect: '/404', hidden: true
   }]
-},
-{
-  path: '/form',
-  component: Layout,
-  children: [{
-    path: '/index',
-    name: 'Form',
-    component: () => import( /* webpackChunkName: "form" */ '@/views/form'),
-    meta: { title: 'Form', icon: 'form' }
-  }]
-}, 
-{
-  path: '/test-table',
-  component: Layout,
-  children: [{
-    path: '/test-table',
-    name: 'TestTable',
-    component: () => import( /* webpackChunkName: "form" */ '@/views/test-table'),
-    meta: { title: 'Table', icon: 'table' }
-  }]
-}, {
-  path: '/404',
-  name: 'Page404',
-  hidden: true,
-  component: () => import( /* webpackChunkName: "error-page" */ '@/views/error-page/404')
-},
-{
-  path: '/401',
-  name: 'Page401',
-  hidden: true,
-  component: () => import( /* webpackChunkName: "error-page" */ '@/views/error-page/401')
-}]
 
-import tableRouter from './modules/table'
-import nestedRouter from './modules/nested'
 
 export const asyncRouterMap = [
-  tableRouter,
-  nestedRouter
+
 ]
 
 export default new VueRouter({
-  //mode: 'history',
+  mode: 'history',
+  // base: '/reconcili/',
   routes: constantRouterMap,
   scrollBehavior: () => ({
     y: 0

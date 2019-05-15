@@ -256,8 +256,8 @@
       color: #FD5656;
       border-color: #FD5656; }
     .el-step__head.is-finish {
-      color: #499FF8;
-      border-color: #499FF8; }
+      color: #409EFF;
+      border-color: #409EFF; }
   .el-step__icon {
     position: relative;
     z-index: 1;
@@ -331,7 +331,7 @@
     .el-step__title.is-error {
       color: #FD5656; }
     .el-step__title.is-finish {
-      color: #499FF8; }
+      color: #409EFF; }
   .el-step__description {
     padding-right: 10%;
     margin-top: -5px;
@@ -347,7 +347,7 @@
     .el-step__description.is-error {
       color: #FD5656; }
     .el-step__description.is-finish {
-      color: #499FF8; }
+      color: #409EFF; }
   .el-step.is-horizontal {
     display: inline-block; }
     .el-step.is-horizontal .el-step__line {

@@ -7,6 +7,13 @@ import { Auth } from '@/common'
 
 NProgress.configure({ showSpinner: false })
 
+// 判断登录权限
+// function hasPermission(roles, permissionRoles) {
+//   if (roles.includes('admin')) return true // admin permission passed directly
+//   if (!permissionRoles) return true
+//   return roles.some(role => permissionRoles.indexOf(role) >= 0)
+// }
+
 const WHITE_LIST = ['/login', '/auth-redirect']
 
 router.beforeEach((to, from, next) => {
@@ -36,6 +43,13 @@ router.beforeEach((to, from, next) => {
           })
         })
       }
+      // 没有动态改变权限的需求可直接next() 删除下方权限判断 ↓
+      // if (hasPermission(store.getters.roles, to.meta.roles)) {
+      //   next()
+      // } else {
+      //   next({ path: '/401', replace: true, query: { noGoBack: true }})
+      // }
+      // // 可删 ↑
       next()
     }
   }
