@@ -11,18 +11,20 @@ const operationRouter = {
     icon: 'table',
     roles: ['operation']
   },
-  children: [{
-    path: 'activitySubject',
-    name: 'ActivitySubject',
-    component: () => import( /* webpackChunkName: "operation" */ '@/views/operation-manage/activity-subject/index'),
-    meta: { title: '活动专题列表', icon: 'nested' },
-    children: [
+  children: [
+    {
+      path: 'activitySubject',
+      name: 'ActivitySubject',
+      component: () => import(/* webpackChunkName: "operation" */ '@/views/operation-manage/activity-subject/index'),
+      meta: { title: '活动专题列表', icon: 'nested' }
+    },
     {
       path: 'edit/:id',
       name: 'ActivitySubjectEdit',
       hidden: true,
-      component: () => import( /* webpackChunkName: "operation" */ '@/views/operation-manage/activity-subject/edit/index')
-    }]
-  }]
+      meta: { title: '专题编辑页', icon: 'nested' },
+      component: () => import(/* webpackChunkName: "operation" */ '@/views/operation-manage/activity-subject/edit/index')
+    }
+  ]
 }
 export default operationRouter
