@@ -11,15 +11,15 @@
       <el-col :span="14">
         <el-form label-width='70px'>
           <el-form-item label="背景色">
-            <el-input v-model="bgColor" style="width: 300px;"></el-input>
-            <el-button type="primary" style="width: 120px;">保存</el-button>
+            <el-color-picker v-model="bgColor" size="medium" v-on:change='changeColor'></el-color-picker>
+            <el-button type="primary" class="save-btn">保存</el-button>
           </el-form-item>
         </el-form>
       </el-col>
     </el-row>
     <el-row :gutter="24">
       <el-col :span="10">
-        <div class="grid-left">
+        <div class="grid-left" :style="{backgroundColor: bgColor}">
           <div v-for='(item,index) in componentList' :key="index" class="item" @mouseover="showEditTab(index,true)" @mouseout="showEditTab(index,false)">
             <component :is='item.name' :config='item'></component>
             <div class="btn-group" v-show='currentComponentIndex == index'>
@@ -99,7 +99,7 @@ export default {
   name: 'ActivitySubjectEdit',
   data() {
     return {
-      title: 'title',
+      title: '专题1',
       bgColor: '#fff',
       currentComponentIndex: null,
       componentList: [],
@@ -140,6 +140,9 @@ export default {
     },
     componentDelete(item, index) {
       this.componentList.splice(index, 1);
+    },
+    changeColor(){
+      console.log(this.bgColor)
     }
   }
 }
@@ -147,6 +150,11 @@ export default {
 
 <style lang="less" scoped>
 .page-edit {
+  .save-btn {
+    position: absolute;
+    width: 120px;
+    margin-left: 240px;
+  }
   .grid-left {
     box-sizing: content-box;
     width: 375px;
