@@ -1,6 +1,6 @@
 <template>
   <div class="img-module3">
-    <div class="img" v-for="(item,index) in config.subList" :key='index' @click="goDetail(item.url)">
+    <div class="img" v-for="(item,index) in config.subList" :key='index' @click="openModal(parentIndex,index)">
       <img :src="item.imgSrc" alt="">
     </div>
   </div>
@@ -17,14 +17,15 @@ export default {
     config: {
       required: true,
       type: Object
+    },
+    parentIndex: {
+      required: true,
+      type: Number
     }
   },
-  created() {
-    console.log(this.config)
-  },
   methods: {
-    goDetail(url) {
-      // window.open(url, '_blank')
+    openModal(parentIndex, subIndex) {
+      this.$emit('openDialogModal', parentIndex, subIndex)
     }
   }
 }
