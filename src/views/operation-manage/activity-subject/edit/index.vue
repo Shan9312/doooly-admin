@@ -6,13 +6,23 @@
           <el-form-item label="专题标题">
             <el-input v-model="title" style="width: 300px;"></el-input>
           </el-form-item>
+          <el-form-item label="背景色">
+            <el-color-picker v-model="bgColor" size="medium" v-on:change='changeColor'></el-color-picker>
+
+          </el-form-item>
+
         </el-form>
       </el-col>
       <el-col :span="14">
         <el-form label-width='70px'>
-          <el-form-item label="背景色">
-            <el-color-picker v-model="bgColor" size="medium" v-on:change='changeColor'></el-color-picker>
+          <el-form-item label="下架状态">
+            <el-radio v-model="radioStatus" label="1">限时下架</el-radio>
+            <el-radio v-model="radioStatus" label="2">永久下架</el-radio>
             <el-button type="primary" class="save-btn">保存</el-button>
+          </el-form-item>
+          <el-form-item label="下架时间">
+            <el-date-picker v-model="shelfTime" type="datetime" placeholder="选择日期时间">
+            </el-date-picker>
           </el-form-item>
         </el-form>
       </el-col>
@@ -101,6 +111,8 @@ export default {
     return {
       title: '专题1',
       bgColor: '#fff',
+      radioStatus: '1', // 下架状态
+      shelfTime: '', // 下架时间
       currentComponentIndex: null,
       componentList: [],
       templateList: [
@@ -141,7 +153,7 @@ export default {
     componentDelete(item, index) {
       this.componentList.splice(index, 1);
     },
-    changeColor(){
+    changeColor() {
       console.log(this.bgColor)
     }
   }
@@ -153,7 +165,7 @@ export default {
   .save-btn {
     position: absolute;
     width: 120px;
-    margin-left: 240px;
+    margin-left: 58px;
   }
   .grid-left {
     box-sizing: content-box;
