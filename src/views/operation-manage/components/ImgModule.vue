@@ -34,6 +34,7 @@ export default {
 .img-module3 {
   width: 100%;
   display: flex;
+  cursor: pointer;
   .img {
     flex: 1;
     img {

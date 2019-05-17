@@ -4,7 +4,7 @@
       <el-col :span="10">
         <el-form label-width='70px'>
           <el-form-item label="专题标题">
-            <el-input v-model="title" style="width: 300px;"></el-input>
+            <el-input v-model="title" placeholder="请输入专题标题" style="width: 300px;"></el-input>
           </el-form-item>
           <el-form-item label="背景色">
             <el-color-picker v-model="bgColor" size="medium" v-on:change='changeColor'></el-color-picker>
@@ -28,25 +28,30 @@
     <el-row :gutter="24">
       <el-col :span="10">
         <div class="grid-left" :style="{backgroundColor: bgColor}">
-          <div v-for='(item,index) in componentList' :key="index" class="item" @mouseover="showEditTab(index,true)" @mouseout="showEditTab(index,false)">
-            <component :is='item.name' :config='item' :parentIndex='index' v-on:openDialogModal='openDialogModal'></component>
-            <div class="btn-group" v-show='currentComponentIndex == index'>
-              <el-row>
-                <el-col :span="8">
-                  <el-button type="primary" :disabled='index === 0' @click="componentUp(item,index)">上移</el-button>
-                </el-col>
-              </el-row>
-              <el-row>
-                <el-col :span="8">
-                  <el-button type="primary" :disabled='index === (componentList.length-1)' @click="componentDown(item,index)">下移</el-button>
-                </el-col>
-              </el-row>
-              <el-row>
-                <el-col :span="8">
-                  <el-button type="primary" @click="componentDelete(item,index)">删除</el-button>
-                </el-col>
-              </el-row>
+          <div v-if="componentList.length > 0">
+            <div v-for='(item,index) in componentList' :key="index" class="item" @mouseover="showEditTab(index,true)" @mouseout="showEditTab(index,false)">
+              <component :is='item.name' :config='item' :parentIndex='index' v-on:openDialogModal='openDialogModal'></component>
+              <div class="btn-group" v-show='currentComponentIndex == index'>
+                <el-row>
+                  <el-col :span="8">
+                    <el-button type="primary" :disabled='index === 0' @click="componentUp(item,index)">上移</el-button>
+                  </el-col>
+                </el-row>
+                <el-row>
+                  <el-col :span="8">
+                    <el-button type="primary" :disabled='index === (componentList.length-1)' @click="componentDown(item,index)">下移</el-button>
+                  </el-col>
+                </el-row>
+                <el-row>
+                  <el-col :span="8">
+                    <el-button type="primary" @click="componentDelete(item,index)">删除</el-button>
+                  </el-col>
+                </el-row>
+              </div>
             </div>
+          </div>
+          <div v-else class="no-content">
+            请将右边的组件添加到这里
           </div>
         </div>
       </el-col>
@@ -64,7 +69,7 @@
     <el-dialog title="编辑" :visible.sync="dialogModalVisible">
       <el-form label-width='70px'>
         <el-form-item label="图片名称">
-          <el-input v-model="modalImg.name" style="width: 217px;"></el-input>
+          <el-input v-model="modalImg.name" placeholder="请输入图片名称" style="width: 217px;"></el-input>
         </el-form-item>
       </el-form>
       <el-upload class="avatar-uploader" action="" :show-file-list="false" :on-success="handleAvatarSuccess" :on-change='handleUpImgChange'>
@@ -73,11 +78,11 @@
       </el-upload>
       <el-form label-width='70px'>
         <el-form-item label="操作类型">
-          <el-select v-model="urlType" placeholder="请选择">
+          <el-select v-model="urlType" placeholder="请选择链接类型">
             <el-option v-for="item in urlOptions" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
-          <el-input v-model="linkUrl" style="width: 300px; margin-left:20px;"></el-input>
+          <el-input v-model="linkUrl" placeholder="请输入正确的链接地址" style="width: 300px; margin-left:20px;"></el-input>
         </el-form-item>
       </el-form>
       <el-button type="primary" class="modal-save-btn" @click="handleSaveImgInfo">保存</el-button>
@@ -130,13 +135,13 @@ export default {
   name: 'ActivitySubjectEdit',
   data() {
     return {
-      title: '专题1',
+      title: '',
       bgColor: '#fff',
       radioStatus: '1', // 下架状态
       shelfTime: '', // 下架时间
       dialogModalVisible: false, // 编辑框
       modalImg: {
-        name: 'dfdf',
+        name: '',
         url: '',
         type: ''
       },
@@ -181,6 +186,7 @@ export default {
   methods: {
     addTemplate(type) {
       ModuleList.forEach((item) => {
+        console.log(item.subList[0].imgSrc)
         if (type === item.type) {
           this.componentList.push(item)
         }
@@ -220,9 +226,7 @@ export default {
     },
     handleSaveImgInfo() {
       this.dialogModalVisible = false
-      console.log(this.componentList)
       this.componentList[this.parentIndex].subList[this.currentIndex].imgSrc = this.modalImg.url
-      console.log(this.componentList)
     }
   }
 }
@@ -248,6 +252,12 @@ export default {
     border: 1px solid #000;
     &::-webkit-scrollbar {
       display: none;
+    }
+    .no-content {
+      padding-top: 100px;
+      text-align: center;
+      color: #999;
+      font-size: 24px;
     }
     .item {
       position: relative;
