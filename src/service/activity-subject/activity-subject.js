@@ -5,4 +5,12 @@ export default {
   getSubjectList(query) {
     return Ajax.post('/activity/specialTopicList', query)
   },
+  // 复制专题
+  copySubject(query){
+    return Ajax.post('/activity/copySpecialTopic', query)
+  },
+  // 下架专题
+  deleteSubject(query){
+    return Ajax.post('/activity/updateStatus', query)
+  }
 }
