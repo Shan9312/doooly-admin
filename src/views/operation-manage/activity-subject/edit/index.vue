@@ -72,7 +72,7 @@
           <el-input v-model="modalImg.name" placeholder="请输入图片名称" style="width: 217px;"></el-input>
         </el-form-item>
       </el-form>
-      <el-upload class="avatar-uploader" action="" :show-file-list="false" :on-success="handleAvatarSuccess" :on-change='handleUpImgChange'>
+      <el-upload class="avatar-uploader" action="" drag :show-file-list="false" :on-success="handleAvatarSuccess" :on-change='handleUpImgChange'>
         <img v-if="modalImg.url" :src="modalImg.url" class="avatar">
         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
       </el-upload>
@@ -93,40 +93,7 @@
 <script>
 import ImgModule from '../../components/ImgModule.vue'
 import { SubjectService } from '@/service'
-const ModuleList = [
-  {
-    modularId: 1,
-    actModularAssemblyList: [{
-      imgUrl: require("@/assets/image/operation/timg1.jpg"),
-      url: 'http://www.baidu.com'
-    }]
-  },
-  {
-    modularId: 2,
-    actModularAssemblyList: [{
-      imgUrl: require("@/assets/image/operation/timg2.jpg"),
-      url: 'http://www.baidu.com'
-    },
-    {
-      imgUrl: require("@/assets/image/operation/timg2.jpg"),
-      url: 'http://www.baidu.com'
-    }]
-  },
-  {
-    modularId: 3,
-    actModularAssemblyList: [{
-      imgUrl: require("@/assets/image/operation/timg3.jpg"),
-      url: 'http://www.baidu.com'
-    },
-    {
-      imgUrl: require("@/assets/image/operation/timg3.jpg"),
-      url: 'http://www.baidu.com'
-    }, {
-      imgUrl: require("@/assets/image/operation/timg3.jpg"),
-      url: 'http://www.baidu.com'
-    }]
-  }
-]
+
 export default {
   name: 'ActivitySubjectEdit',
   data() {
@@ -200,6 +167,40 @@ export default {
       }
     },
     addTemplate(modularId) {
+      let ModuleList = [
+        {
+          modularId: 1,
+          actModularAssemblyList: [{
+            imgUrl: require("@/assets/image/operation/timg1.jpg"),
+            url: 'http://www.baidu.com'
+          }]
+        },
+        {
+          modularId: 2,
+          actModularAssemblyList: [{
+            imgUrl: require("@/assets/image/operation/timg2.jpg"),
+            url: 'http://www.baidu.com'
+          },
+          {
+            imgUrl: require("@/assets/image/operation/timg2.jpg"),
+            url: 'http://www.baidu.com'
+          }]
+        },
+        {
+          modularId: 3,
+          actModularAssemblyList: [{
+            imgUrl: require("@/assets/image/operation/timg3.jpg"),
+            url: 'http://www.baidu.com'
+          },
+          {
+            imgUrl: require("@/assets/image/operation/timg3.jpg"),
+            url: 'http://www.baidu.com'
+          }, {
+            imgUrl: require("@/assets/image/operation/timg3.jpg"),
+            url: 'http://www.baidu.com'
+          }]
+        }
+      ]
       ModuleList.forEach((item) => {
         if (modularId == item.modularId) {
           this.componentList.push(item)
