@@ -161,7 +161,7 @@ export default {
         this.specialTopicInfo = {
           bgColor: data.specialTopicInfo.bgColor,
           title: data.specialTopicInfo.title,
-          status: data.specialTopicInfo.status,
+          status: data.specialTopicInfo.status === 1 ? '1' : '2',
           endTime: data.specialTopicInfo.endDate
         }
       }
@@ -280,6 +280,7 @@ export default {
     .item {
       position: relative;
       .btn-group {
+        z-index: 1;
         position: absolute;
         right: 0;
         top: 50%;
