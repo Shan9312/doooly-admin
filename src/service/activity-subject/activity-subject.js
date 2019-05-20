@@ -12,5 +12,8 @@ export default {
   // 下架专题
   deleteSubject(query){
     return Ajax.post('/activity/updateStatus', query)
+  },
+  subjectDetail(query){
+    return Ajax.post('/activity/specialTopicDetail', query)
   }
 }

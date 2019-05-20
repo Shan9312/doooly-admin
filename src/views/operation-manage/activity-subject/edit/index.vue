@@ -4,22 +4,22 @@
       <el-col :span="10">
         <el-form label-width='70px'>
           <el-form-item label="专题标题">
-            <el-input v-model="title" placeholder="请输入专题标题" style="width: 300px;"></el-input>
+            <el-input v-model="specialTopicInfo.title" placeholder="请输入专题标题" style="width: 300px;"></el-input>
           </el-form-item>
           <el-form-item label="背景色">
-            <el-color-picker v-model="bgColor" size="medium" v-on:change='changeColor'></el-color-picker>
+            <el-color-picker v-model="specialTopicInfo.bgColor" size="medium" value-format="yyyy-MM-dd HH:mm:ss" v-on:change='changeColor'></el-color-picker>
           </el-form-item>
         </el-form>
       </el-col>
       <el-col :span="14">
         <el-form label-width='70px'>
           <el-form-item label="下架状态">
-            <el-radio v-model="radioStatus" label="1">限时下架</el-radio>
-            <el-radio v-model="radioStatus" label="2">永久下架</el-radio>
-            <el-button type="primary" class="save-btn">保存</el-button>
+            <el-radio v-model="specialTopicInfo.status" label=1>限时下架</el-radio>
+            <el-radio v-model="specialTopicInfo.status" label=2>永久下架</el-radio>
+            <el-button type="primary" class="save-btn" @click="handleSaveSubject">保存</el-button>
           </el-form-item>
           <el-form-item label="下架时间">
-            <el-date-picker v-model="shelfTime" type="datetime" placeholder="选择日期时间">
+            <el-date-picker v-model="specialTopicInfo.endTime" type="datetime" placeholder="选择日期时间">
             </el-date-picker>
           </el-form-item>
         </el-form>
@@ -27,10 +27,10 @@
     </el-row>
     <el-row :gutter="24">
       <el-col :span="10">
-        <div class="grid-left" :style="{backgroundColor: bgColor}">
+        <div class="grid-left" :style="{backgroundColor: specialTopicInfo.bgColor}">
           <div v-if="componentList.length > 0">
             <div v-for='(item,index) in componentList' :key="index" class="item" @mouseover="showEditTab(index,true)" @mouseout="showEditTab(index,false)">
-              <component :is='item.name' :config='item' :parentIndex='index' v-on:openDialogModal='openDialogModal'></component>
+              <component is='img-module' :config='item' :parentIndex='index' v-on:openDialogModal='openDialogModal'></component>
               <div class="btn-group" v-show='currentComponentIndex == index'>
                 <el-row>
                   <el-col :span="8">
@@ -58,9 +58,9 @@
       <el-col :span="14">
         <div class="grid-right">
           <el-container v-for="(item,index) in templateList" :key="index">
-            <el-aside width="300px" height="200px"><img :src="item.url" alt=""></el-aside>
+            <el-aside width="300px" height="200px"><img :src="item.imgUrl" alt=""></el-aside>
             <el-main>
-              <el-button type="primary" class="btn" @click="addTemplate(item.type)">添加</el-button>
+              <el-button type="primary" class="btn" @click="addTemplate(item.modularId)">添加</el-button>
             </el-main>
           </el-container>
         </div>
@@ -92,41 +92,37 @@
 
 <script>
 import ImgModule from '../../components/ImgModule.vue'
-import { link } from 'fs';
-import { constants } from 'crypto';
+import { SubjectService } from '@/service'
 const ModuleList = [
   {
-    type: 1,
-    name: 'ImgModule',
-    subList: [{
-      imgSrc: require("@/assets/image/operation/timg1.jpg"),
+    modularId: 1,
+    actModularAssemblyList: [{
+      imgUrl: require("@/assets/image/operation/timg1.jpg"),
       url: 'http://www.baidu.com'
     }]
   },
   {
-    type: 2,
-    name: 'ImgModule',
-    subList: [{
-      imgSrc: require("@/assets/image/operation/timg2.jpg"),
+    modularId: 2,
+    actModularAssemblyList: [{
+      imgUrl: require("@/assets/image/operation/timg2.jpg"),
       url: 'http://www.baidu.com'
     },
     {
-      imgSrc: require("@/assets/image/operation/timg2.jpg"),
+      imgUrl: require("@/assets/image/operation/timg2.jpg"),
       url: 'http://www.baidu.com'
     }]
   },
   {
-    type: 3,
-    name: 'ImgModule',
-    subList: [{
-      imgSrc: require("@/assets/image/operation/timg3.jpg"),
+    modularId: 3,
+    actModularAssemblyList: [{
+      imgUrl: require("@/assets/image/operation/timg3.jpg"),
       url: 'http://www.baidu.com'
     },
     {
-      imgSrc: require("@/assets/image/operation/timg3.jpg"),
+      imgUrl: require("@/assets/image/operation/timg3.jpg"),
       url: 'http://www.baidu.com'
     }, {
-      imgSrc: require("@/assets/image/operation/timg3.jpg"),
+      imgUrl: require("@/assets/image/operation/timg3.jpg"),
       url: 'http://www.baidu.com'
     }]
   }
@@ -135,30 +131,32 @@ export default {
   name: 'ActivitySubjectEdit',
   data() {
     return {
-      title: '',
-      bgColor: '#fff',
-      radioStatus: '1', // 下架状态
-      shelfTime: '', // 下架时间
+      specialTopicInfo: {
+        id: this.$route.params.id,
+        title: '',
+        bgColor: '#fff',
+        status: 1, // 下架状态 1.限时 2.永久
+        endTime: '', // 下架时间
+      },
       dialogModalVisible: false, // 编辑框
       modalImg: {
-        name: '',
         url: '',
-        type: ''
+        modularId: ''
       },
       currentComponentIndex: null,
       componentList: [],
       templateList: [
         {
-          type: 1,
-          url: require("@/assets/image/operation/timg1.jpg")
+          modularId: 1,
+          imgUrl: require("@/assets/image/operation/timg1.jpg")
         },
         {
-          type: 2,
-          url: require("@/assets/image/operation/timg2.jpg")
+          modularId: 2,
+          imgUrl: require("@/assets/image/operation/timg2.jpg")
         },
         {
-          type: 3,
-          url: require("@/assets/image/operation/timg3.jpg")
+          modularId: 3,
+          imgUrl: require("@/assets/image/operation/timg3.jpg")
         }
       ],
       urlOptions: [{
@@ -183,11 +181,27 @@ export default {
   components: {
     ImgModule
   },
+  created() {
+    this.getSubjectDetail()
+  },
   methods: {
-    addTemplate(type) {
+    async getSubjectDetail() {
+      const res = await SubjectService.subjectDetail({ id: this.specialTopicInfo.id })
+      if (res && res.data) {
+        let data = res.data
+        let list = data.list
+        this.componentList = list
+        this.specialTopicInfo = {
+          bgColor: data.specialTopicInfo.bgColor,
+          title: data.specialTopicInfo.title,
+          status: data.specialTopicInfo.status,
+          endTime: data.specialTopicInfo.endDate
+        }
+      }
+    },
+    addTemplate(modularId) {
       ModuleList.forEach((item) => {
-        console.log(item.subList[0].imgSrc)
-        if (type === item.type) {
+        if (modularId == item.modularId) {
           this.componentList.push(item)
         }
       })
@@ -226,7 +240,10 @@ export default {
     },
     handleSaveImgInfo() {
       this.dialogModalVisible = false
-      this.componentList[this.parentIndex].subList[this.currentIndex].imgSrc = this.modalImg.url
+      this.componentList[this.parentIndex].actModularAssemblyList[this.currentIndex].imgUrl = this.modalImg.url
+    },
+    handleSaveSubject() {
+      console.log(this.specialTopicInfo)
     }
   }
 }

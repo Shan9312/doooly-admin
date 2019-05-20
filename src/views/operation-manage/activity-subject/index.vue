@@ -26,7 +26,6 @@
 
 <script>
 import { SubjectService } from '@/service'
-import { async } from 'q';
 export default {
   name: 'ActivitySubject',
   data() {
@@ -87,8 +86,9 @@ export default {
       });
       const { endDate, id, status } = objectData
       const data = await SubjectService.deleteSubject({ endDate, id, status, type: 2 })
+      console.log(data)
       if (res === 'confirm') {
-        if (data) {
+        if (data && data.data) {
           this.$message({
             type: 'success',
             message: '下架成功!'

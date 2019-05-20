@@ -1,7 +1,7 @@
 <template>
   <div class="img-module3">
-    <div class="img" v-for="(item,index) in config.subList" :key='index' @click="openModal(parentIndex,index)">
-      <img :src="item.imgSrc" alt="">
+    <div class="img" v-for="(item,index) in config.actModularAssemblyList" :key='index' @click="openModal(parentIndex,index)">
+      <img :src="item.imgUrl" alt="">
     </div>
   </div>
 </template>
