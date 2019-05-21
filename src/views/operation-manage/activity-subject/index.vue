@@ -1,12 +1,16 @@
 <template>
   <div class="app-container subject-list">
-    <el-button type="primary" class="modal-save-btn" @click="handleEdit(null)">新建专题</el-button>
+    <el-button type="primary" @click="handleEdit(null)">新建专题</el-button>
     <el-table stripe :data="tableData" border style="width: 100%">
       <el-table-column prop="id" label="专题编号" width="180">
       </el-table-column>
       <el-table-column prop="title" label="专题标题" width="180">
       </el-table-column>
       <el-table-column prop="shelfStatus" label="上架状态" width="80">
+        <template slot-scope="scope">
+          <span v-if='scope.row.shelfStatus ===  1'>上架</span>
+          <span v-if='scope.row.shelfStatus ===  2'>下架</span>
+        </template>
       </el-table-column>
       <el-table-column prop="url" label="网址">
       </el-table-column>
@@ -16,10 +20,28 @@
         <template slot-scope="scope">
           <el-button size="mini" @click="handleEdit(scope.row.id)">编辑/查看</el-button>
           <el-button size="mini" @click="handleCopy(scope.row.id)">复制</el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(scope.row)">下架</el-button>
+          <el-button size="mini" type="success" v-if="scope.row.shelfStatus === 2" @click="handleShelf(scope.row)">上架</el-button>
+          <el-button size="mini" type="danger" v-if="scope.row.shelfStatus === 1" @click="handleShelf(scope.row)">下架</el-button>
         </template>
       </el-table-column>
     </el-table>
+    <el-dialog title="上架编辑页" :visible.sync="dialogModalVisible">
+      <el-form label-width='85px'>
+        <el-form-item label="状态" required>
+          <el-radio v-model="specialTopicInfo.status" label=1>限时下架</el-radio>
+          <el-radio v-model="specialTopicInfo.status" label=2>永久</el-radio>
+        </el-form-item>
+        <el-form-item v-show="specialTopicInfo.status === '1'" label="时间">
+          <el-date-picker v-model="specialTopicInfo.endDate" type="datetime" value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间">
+          </el-date-picker>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogModalVisible = false">取 消</el-button>
+        <el-button type="primary" @click="putOnShelf">确 定</el-button>
+      </span>
+
+    </el-dialog>
     <pagination v-show="total > search.pageSize" :total="total" :page.sync="search.pageNum" :limit.sync="search.pageSize" @pagination="getSubjectList" />
   </div>
 </template>
@@ -35,7 +57,13 @@ export default {
       search: {
         pageNum: 1,
         pageSize: 10
-      }
+      },
+      dialogModalVisible: false,
+      specialTopicInfo: {
+        status: '1', // 下架状态 1.限时 2.永久
+        endDate: '', // 下架时间
+      },
+      currentRowData: {}
     }
   },
   created() {
@@ -73,29 +101,53 @@ export default {
         }
       }
     },
-    async handleDelete(objectData) {
-      const res = await this.$confirm('确认下架专题, 是否继续?', '下架专题页', {
+    async handleShelf(objectData) {
+      if (objectData.shelfStatus == 1) {
+        console.log('需要下架')
+        this.pullOffShelf(objectData)
+      } else if (objectData.shelfStatus == 2) {
+        this.dialogModalVisible = true
+        this.currentRowData = objectData
+      }
+    },
+    async pullOffShelf(objectData) {
+      const { endDate, id, status } = objectData
+      let res = await this.$confirm('确认下架专题, 是否继续?', '下架专题页', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).catch(() => {
         this.$message({
           type: 'info',
-          message: '已取消删除'
+          message: '已取消本次操作！'
         });
       });
-      const { endDate, id, status } = objectData
-      const data = await SubjectService.deleteSubject({ endDate, id, status, type: 2 })
-      console.log(data)
-      if (res === 'confirm') {
-        if (data && data.data) {
-          this.$message({
-            type: 'success',
-            message: '下架成功!'
-          });
-          this.getSubjectList()
-        }
+      let data = await SubjectService.deleteSubject({ endDate, id, status, type: 2 })
+      if (res === 'confirm' && data && data.data) {
+        this.$message({
+          type: 'success',
+          message: '下架架成功!'
+        });
+        this.getSubjectList()
       }
+    },
+    async putOnShelf() {
+      let queryData = {
+        endDate: this.specialTopicInfo.endDate,
+        status: Number(this.specialTopicInfo.status),
+        id: this.currentRowData.id,
+        type: 1
+      }
+      let data = await SubjectService.deleteSubject(queryData)
+      if (data && data.data) {
+        this.$message({
+          type: 'success',
+          message: '上架成功!'
+        });
+        this.dialogModalVisible = false
+        this.getSubjectList()
+      }
+
     }
   }
 }
@@ -110,5 +162,9 @@ export default {
       text-align: center;
     }
   }
+}
+/deep/ .el-dialog {
+  width: 40%;
+  min-width: 510px;
 }
 </style>
