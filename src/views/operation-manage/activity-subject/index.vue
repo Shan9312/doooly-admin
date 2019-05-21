@@ -6,7 +6,7 @@
       </el-table-column>
       <el-table-column prop="title" label="专题标题" width="180">
       </el-table-column>
-      <el-table-column prop="status" label="上架状态" width="80">
+      <el-table-column prop="shelfStatus" label="上架状态" width="80">
       </el-table-column>
       <el-table-column prop="url" label="网址">
       </el-table-column>

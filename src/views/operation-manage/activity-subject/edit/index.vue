@@ -2,24 +2,24 @@
   <div class="app-container page-edit">
     <el-row>
       <el-col :span="10">
-        <el-form label-width='70px'>
-          <el-form-item label="专题标题">
+        <el-form label-width='85px'>
+          <el-form-item label="专题标题" required>
             <el-input v-model="specialTopicInfo.title" placeholder="请输入专题标题" style="width: 300px;"></el-input>
           </el-form-item>
           <el-form-item label="背景色">
-            <el-color-picker v-model="specialTopicInfo.bgColor" size="medium" value-format="yyyy-MM-dd HH:mm:ss" v-on:change='changeColor'></el-color-picker>
+            <el-color-picker v-model="specialTopicInfo.bgColor" size="medium"></el-color-picker>
           </el-form-item>
         </el-form>
       </el-col>
       <el-col :span="14">
-        <el-form label-width='70px'>
-          <el-form-item label="下架状态">
+        <el-form label-width='85px'>
+          <el-form-item label="下架状态" required>
             <el-radio v-model="specialTopicInfo.status" label=1>限时下架</el-radio>
-            <el-radio v-model="specialTopicInfo.status" label=2>永久下架</el-radio>
+            <el-radio v-model="specialTopicInfo.status" label=2>永久</el-radio>
             <el-button type="primary" class="save-btn" @click="handleSaveSubject">保存</el-button>
           </el-form-item>
-          <el-form-item label="下架时间">
-            <el-date-picker v-model="specialTopicInfo.endTime" type="datetime" placeholder="选择日期时间">
+          <el-form-item v-show="specialTopicInfo.status === '1'" label="下架时间">
+            <el-date-picker v-model="specialTopicInfo.endDate" type="datetime" value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间">
             </el-date-picker>
           </el-form-item>
         </el-form>
@@ -60,29 +60,29 @@
           <el-container v-for="(item,index) in templateList" :key="index">
             <el-aside width="300px" height="200px"><img :src="item.imgUrl" alt=""></el-aside>
             <el-main>
-              <el-button type="primary" class="btn" @click="addTemplate(item.modularId)">添加</el-button>
+              <el-button type="primary" class="btn" @click="addTemplate(item.modularType)">添加</el-button>
             </el-main>
           </el-container>
         </div>
       </el-col>
     </el-row>
     <el-dialog title="编辑" :visible.sync="dialogModalVisible">
-      <el-form label-width='70px'>
-        <el-form-item label="图片名称">
-          <el-input v-model="modalImg.name" placeholder="请输入图片名称" style="width: 217px;"></el-input>
+      <el-form label-width='85px'>
+        <el-form-item label="图片名称" required>
+          <el-input v-model="modalImg.name" placeholder="请输入图片名称" clearable maxlength=10 minlength=1 style="width: 217px;"></el-input>
         </el-form-item>
       </el-form>
-      <el-upload class="avatar-uploader" action="" drag :show-file-list="false" :on-success="handleAvatarSuccess" :on-change='handleUpImgChange'>
+      <el-upload class="avatar-uploader" action="/subject/fileUpload" drag :show-file-list="false" :before-upload="beforeImgUpload" :on-success="handleImgSuccess">
         <img v-if="modalImg.url" :src="modalImg.url" class="avatar">
         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
       </el-upload>
-      <el-form label-width='70px'>
-        <el-form-item label="操作类型">
+      <el-form label-width='85px'>
+        <el-form-item label="操作类型" required>
           <el-select v-model="urlType" placeholder="请选择链接类型">
             <el-option v-for="item in urlOptions" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
-          <el-input v-model="linkUrl" placeholder="请输入正确的链接地址" style="width: 300px; margin-left:20px;"></el-input>
+          <el-input v-model="linkUrl" placeholder="请输入正确的链接地址" clearable @blur='onBlur(linkUrl)' style="width: 300px; margin-left:20px;"></el-input>
         </el-form-item>
       </el-form>
       <el-button type="primary" class="modal-save-btn" @click="handleSaveImgInfo">保存</el-button>
@@ -93,7 +93,11 @@
 <script>
 import ImgModule from '../../components/ImgModule.vue'
 import { SubjectService } from '@/service'
-
+const ImgList = {
+  url_1: 'https://admin.doooly.com/image/201905/9ae23048237147d499c41383a7e3529a.jpg',
+  url_2: 'https://admin.doooly.com/image/201905/67c5f73fc3db4c8a86b895d577732461.jpg',
+  url_3: 'https://admin.doooly.com/image/201905/07b50e9cc4504a469495b2742a3c244e.jpg'
+}
 export default {
   name: 'ActivitySubjectEdit',
   data() {
@@ -102,41 +106,41 @@ export default {
         id: this.$route.params.id,
         title: '',
         bgColor: '#fff',
-        status: 1, // 下架状态 1.限时 2.永久
-        endTime: '', // 下架时间
+        status: '1', // 下架状态 1.限时 2.永久
+        endDate: '', // 下架时间
       },
       dialogModalVisible: false, // 编辑框
       modalImg: {
         url: '',
-        modularId: ''
+        name: ''
       },
       currentComponentIndex: null,
       componentList: [],
       templateList: [
         {
-          modularId: 1,
-          imgUrl: require("@/assets/image/operation/timg1.jpg")
+          modularType: 1,
+          imgUrl: ImgList.url_1
         },
         {
-          modularId: 2,
-          imgUrl: require("@/assets/image/operation/timg2.jpg")
+          modularType: 2,
+          imgUrl: ImgList.url_2
         },
         {
-          modularId: 3,
-          imgUrl: require("@/assets/image/operation/timg3.jpg")
+          modularType: 3,
+          imgUrl: ImgList.url_3
         }
       ],
       urlOptions: [{
-        value: '选项1',
+        value: '1',
         label: '链接'
       }, {
-        value: '选项2',
+        value: '2',
         label: '品牌馆链接'
       }, {
-        value: '选项3',
+        value: '3',
         label: '内购网链接'
       }, {
-        value: '选项4',
+        value: '9',
         label: '无'
       }],
       urlType: '', // 跳转地址的类型，内购、品牌馆等
@@ -149,6 +153,7 @@ export default {
     ImgModule
   },
   created() {
+    if (this.specialTopicInfo.id == 'null') return
     this.getSubjectDetail()
   },
   methods: {
@@ -162,47 +167,77 @@ export default {
           bgColor: data.specialTopicInfo.bgColor,
           title: data.specialTopicInfo.title,
           status: data.specialTopicInfo.status === 1 ? '1' : '2',
-          endTime: data.specialTopicInfo.endDate
+          endDate: data.specialTopicInfo.endDate
         }
       }
     },
-    addTemplate(modularId) {
+    addTemplate(modularType) {
+      // ModuleList需写在添加方法里面；要是写在添加方法外面，后导致，修改模块某个属性，同一类模板数据都改变
       let ModuleList = [
         {
-          modularId: 1,
-          actModularAssemblyList: [{
-            imgUrl: require("@/assets/image/operation/timg1.jpg"),
-            url: 'http://www.baidu.com'
+          "modularType": 1,
+          "modularSort": '',
+          "changeStatus": 1,  // 1新增 2 修改
+          "modularId": '',
+          "actModularAssemblyList": [{
+            "changeStatus": 1,  // 1新增 2 修改
+            "imgUrl": ImgList.url_1,
+            "url": 'http://www.baidu.com',
+            "type": 9,
+            "sort": 1
           }]
         },
         {
-          modularId: 2,
-          actModularAssemblyList: [{
-            imgUrl: require("@/assets/image/operation/timg2.jpg"),
-            url: 'http://www.baidu.com'
+          "modularType": 2,
+          "modularSort": '',
+          "changeStatus": 1,  // 1新增 2 修改
+          "modularId": '',
+          "actModularAssemblyList": [{
+            "changeStatus": 1,
+            "imgUrl": ImgList.url_2,
+            "url": 'http://www.baidu.com',
+            "type": 9,
+            "sort": 1
           },
           {
-            imgUrl: require("@/assets/image/operation/timg2.jpg"),
-            url: 'http://www.baidu.com'
+            "changeStatus": 1,
+            "imgUrl": ImgList.url_2,
+            "url": 'http://www.baidu.com',
+            "type": 9,
+            "sort": 2
           }]
         },
         {
-          modularId: 3,
-          actModularAssemblyList: [{
-            imgUrl: require("@/assets/image/operation/timg3.jpg"),
-            url: 'http://www.baidu.com'
+          "modularType": 3,
+          "modularSort": '',
+          "changeStatus": 1,  // 1新增 2 修改
+          "modularId": '',
+          "actModularAssemblyList": [{
+            "changeStatus": 1,
+            "imgUrl": ImgList.url_3,
+            "url": 'http://www.baidu.com',
+            "type": 9,
+            "sort": 1
           },
           {
-            imgUrl: require("@/assets/image/operation/timg3.jpg"),
-            url: 'http://www.baidu.com'
+            "changeStatus": 1,
+            "imgUrl": ImgList.url_3,
+            "url": 'http://www.baidu.com',
+            "type": 9,
+            "sort": 2
           }, {
-            imgUrl: require("@/assets/image/operation/timg3.jpg"),
-            url: 'http://www.baidu.com'
+            "changeStatus": 1,
+            "imgUrl": ImgList.url_3,
+            "url": 'http://www.baidu.com',
+            "type": 9,
+            "sort": 3
           }]
         }
       ]
       ModuleList.forEach((item) => {
-        if (modularId == item.modularId) {
+        let componentLength = this.componentList.length
+        if (modularType == item.modularType) {
+          item.modularSort = componentLength + 1
           this.componentList.push(item)
         }
       })
@@ -217,34 +252,84 @@ export default {
     componentUp(item, index) {
       this.$set(this.componentList, index, this.componentList[index - 1]);
       this.$set(this.componentList, index - 1, item);
+      this.componentSort()
+      console.log(this.componentList)
     },
     componentDown(item, index) {
       this.$set(this.componentList, index, this.componentList[index + 1]);
       this.$set(this.componentList, index + 1, item);
+      this.componentSort()
+      console.log(this.componentList)
     },
     componentDelete(item, index) {
       this.componentList.splice(index, 1);
+      this.componentSort()
+      console.log(this.componentList)
     },
-    changeColor() {
-      console.log(this.bgColor)
+    componentSort() {
+      this.componentList.forEach((item, index) => {
+        item.modularSort = index + 1
+      })
     },
     openDialogModal(parentIndex, subIndex) {
       this.dialogModalVisible = true
       this.parentIndex = parentIndex
       this.currentIndex = subIndex
     },
-    handleAvatarSuccess(res, file) {
-      // this.modalImg.name = URL.createObjectURL(file.raw);
+    onBlur(val) {
+      if (!val) {
+        this.$message({
+          message: '请输入正确格式的链接地址！',
+          type: 'warning'
+        });
+      }
     },
-    handleUpImgChange(file, fileList) {
-      this.$set(this.modalImg, 'url', URL.createObjectURL(file.raw))
+    beforeImgUpload(file) {
+      const isJPG = file.type == 'image/jpeg' || 'image/png';
+      const isLt3M = file.size / 1024 / 1024 <= 3;
+      if (!isJPG) {
+        this.$message.error('上传图片只能是PNG、JPG格式!');
+      }
+      if (!isLt3M) {
+        this.$message.error('上传图片大小不能超过3MB!');
+      }
+      return isJPG && isLt3M;
+    },
+    handleImgSuccess(res, file) {
+      if (res.data) {
+        this.$set(this.modalImg, 'url', res.data[0])
+      }
     },
     handleSaveImgInfo() {
-      this.dialogModalVisible = false
-      this.componentList[this.parentIndex].actModularAssemblyList[this.currentIndex].imgUrl = this.modalImg.url
+      this.dialogModalVisible = false // 关掉弹框
+      // 保存上传的图片信息时，父、子组件修改状态为2
+      this.componentList[this.parentIndex].changeStatus = 2
+      this.$set(this.componentList[this.parentIndex].actModularAssemblyList, this.currentIndex, {
+        "changeStatus": 2,
+        "name": this.modalImg.name,
+        "imgUrl": this.modalImg.url,
+        "url": this.linkUrl, // 跳转地址
+        "type": this.urlType, // 链接类型
+        "sort": this.currentIndex + 1  // 排序
+      })
+      console.log(this.componentList[this.parentIndex])
     },
-    handleSaveSubject() {
-      console.log(this.specialTopicInfo)
+    async handleSaveSubject() {
+      let specialTopicInfo = { ...this.specialTopicInfo }
+      specialTopicInfo.status = Number(specialTopicInfo.status)
+      let queryData = {
+        "list": [...this.componentList],
+        "specialTopicInfo": { ...specialTopicInfo }
+      }
+      const res = await SubjectService.updateSpecialTopic(queryData)
+      console.log(res)
+      if (res && res.data) {
+        this.$message({
+          type: 'success',
+          message: '保存成功!'
+        });
+        this.$router.push('/operationManage/activitySubject')
+      }
     }
   }
 }
@@ -255,7 +340,7 @@ export default {
   .save-btn {
     position: absolute;
     width: 120px;
-    margin-left: 58px;
+    margin-left: 45px;
   }
   .modal-save-btn {
     display: block;
@@ -334,7 +419,9 @@ export default {
     top: 0;
     transform: translateX(-50%);
     overflow: hidden;
-
+    .el-upload-dragger {
+      width: 300px;
+    }
     .el-upload:hover {
       border-color: #409eff;
     }

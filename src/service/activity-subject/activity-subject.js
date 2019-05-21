@@ -6,14 +6,17 @@ export default {
     return Ajax.post('/activity/specialTopicList', query)
   },
   // 复制专题
-  copySubject(query){
+  copySubject(query) {
     return Ajax.post('/activity/copySpecialTopic', query)
   },
   // 下架专题
-  deleteSubject(query){
+  deleteSubject(query) {
     return Ajax.post('/activity/updateStatus', query)
   },
-  subjectDetail(query){
+  subjectDetail(query) {
     return Ajax.post('/activity/specialTopicDetail', query)
+  },
+  updateSpecialTopic(query) {
+    return Ajax.post('/activity/updateSpecialTopic', query)
   }
 }
