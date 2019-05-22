@@ -1,30 +1,34 @@
 <template>
   <div class="app-container page-edit">
-    <el-row>
-      <el-col :span="10">
-        <el-form label-width='85px'>
-          <el-form-item label="专题标题" required>
+    <el-form label-width='85px' :model="specialTopicInfo" :rules="specialTopicInfoRules" ref="topicRef">
+      <el-row>
+        <el-col :span="10">
+          <el-form-item label="专题标题" prop="title">
             <el-input v-model="specialTopicInfo.title" placeholder="请输入专题标题" style="width: 300px;"></el-input>
           </el-form-item>
-          <el-form-item label="背景色">
-            <el-color-picker v-model="specialTopicInfo.bgColor" size="medium"></el-color-picker>
-          </el-form-item>
-        </el-form>
-      </el-col>
-      <el-col :span="14">
-        <el-form label-width='85px'>
-          <el-form-item label="下架状态" required>
+        </el-col>
+        <el-col :span="14">
+          <el-form-item label="下架状态" prop="status">
             <el-radio v-model="specialTopicInfo.status" label=1>限时下架</el-radio>
             <el-radio v-model="specialTopicInfo.status" label=2>永久</el-radio>
             <el-button type="primary" class="save-btn" @click="handleSaveSubject">保存</el-button>
           </el-form-item>
-          <el-form-item v-show="specialTopicInfo.status === '1'" label="下架时间">
-            <el-date-picker v-model="specialTopicInfo.endDate" type="datetime" value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间">
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="10">
+          <el-form-item label="背景色" prop="bgColor">
+            <el-color-picker v-model="specialTopicInfo.bgColor" size="medium"></el-color-picker>
+          </el-form-item>
+        </el-col>
+        <el-col :span="14">
+          <el-form-item prop="endDate" v-show="specialTopicInfo.status === '1'" label="下架时间">
+            <el-date-picker v-model="specialTopicInfo.endDate" type="datetime" :editable='false' value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间">
             </el-date-picker>
           </el-form-item>
-        </el-form>
-      </el-col>
-    </el-row>
+        </el-col>
+      </el-row>
+    </el-form>
     <el-row :gutter="24">
       <el-col :span="10">
         <div class="grid-left" :style="{backgroundColor: specialTopicInfo.bgColor}">
@@ -71,25 +75,38 @@
       </el-col>
     </el-row>
     <el-dialog title="编辑" :visible.sync="dialogModalVisible">
-      <el-form label-width='85px'>
-        <el-form-item label="图片名称" required>
+      <el-form label-width='85px' ref="editImgRef" :model="modalImg" :rules="editImgRules">
+        <el-form-item label="图片名称" prop="name">
           <el-input v-model="modalImg.name" placeholder="请输入图片名称" clearable maxlength=10 minlength=1 style="width: 217px;"></el-input>
         </el-form-item>
-      </el-form>
-      <el-upload class="avatar-uploader" action="/subject/fileUpload" drag :show-file-list="false" :before-upload="beforeImgUpload" :on-success="handleImgSuccess">
-        <img v-if="modalImg.url" :src="modalImg.url" class="avatar">
-        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-      </el-upload>
-      <el-form label-width='85px'>
-        <el-form-item label="操作类型" required>
-          <el-select v-model="urlType" placeholder="请选择链接类型">
-            <el-option v-for="item in urlOptions" :key="item.value" :label="item.label" :value="item.value">
-            </el-option>
-          </el-select>
-          <el-input v-model="linkUrl" placeholder="请输入正确的链接地址" clearable @blur='onBlur(linkUrl)' style="width: 300px; margin-left:20px;"></el-input>
+
+        <el-form-item prop="url">
+          <el-upload class="avatar-uploader" v-loading="loading" action="/subject/fileUpload" drag :show-file-list="false" :before-upload="beforeImgUpload" :on-success="handleImgSuccess">
+            <img v-if="modalImg.url" :src="modalImg.url" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
+        </el-form-item>
+
+        <el-form-item label="操作类型">
+          <el-col :span="10">
+            <el-form-item prop="urlType">
+              <el-select v-model="modalImg.urlType" placeholder="请选择链接类型">
+                <el-option v-for="item in urlOptions" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item prop="linkUrl" style="width: 300px; margin-left:20px;">
+              <el-input v-model="modalImg.linkUrl" placeholder="请输入正确的链接地址" clearable></el-input>
+            </el-form-item>
+          </el-col>
+        </el-form-item>
+
+        <el-form-item>
+          <el-button type="primary" class="modal-save-btn" @click="handleSaveImgInfo">保存</el-button>
         </el-form-item>
       </el-form>
-      <el-button type="primary" class="modal-save-btn" @click="handleSaveImgInfo">保存</el-button>
     </el-dialog>
   </div>
 </template>
@@ -97,12 +114,31 @@
 <script>
 import ImgModule from '../../components/ImgModule.vue'
 import { SubjectService } from '@/service'
+import { Validate } from "@/common";
+import { constants } from 'crypto';
+import { async } from 'q';
 const ModuleImgUrl = require('@/assets/image/operation/bg.png')
 
 export default {
   name: 'ActivitySubjectEdit',
   data() {
+    let validateLinkUrl = (rule, value, callback) => {
+      if (this.modalImg.urlType !== '9' && !Validate.isUrl(value)) {
+        callback(new Error('请输入正确的链接地址'));
+      } else {
+        callback();
+      }
+    };
+    let validateEndDate = (rule, value, callback) => {
+      console.log(this.specialTopicInfo.status)
+      if (this.specialTopicInfo.status == 1 && !value) {
+        callback(new Error('请选择时间'));
+      } else {
+        callback();
+      }
+    }
     return {
+      loading: false,
       specialTopicInfo: {
         id: this.$route.params.id,
         title: '',
@@ -113,7 +149,9 @@ export default {
       dialogModalVisible: false, // 编辑框
       modalImg: {
         url: '',
-        name: ''
+        name: '',
+        urlType: '', // 跳转地址的类型，内购、品牌馆等
+        linkUrl: '' // 点击图片的跳转地址
       },
       currentComponentIndex: null,
       componentList: [],
@@ -144,10 +182,32 @@ export default {
         value: '9',
         label: '无'
       }],
-      urlType: '', // 跳转地址的类型，内购、品牌馆等
-      linkUrl: '', // 点击图片的跳转地址
       parentIndex: null,
-      currentIndex: null
+      currentIndex: null,
+      editImgRules: {
+        name: [
+          { required: true, message: '请输入模块名称', trigger: 'blur' },
+          { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' }
+        ],
+        url: [
+          { required: true, message: '请选择图片', trigger: 'change' }
+        ],
+        urlType: [
+          { required: true, message: '请选择链接类型', trigger: 'change' }
+        ],
+        linkUrl: [
+          { validator: validateLinkUrl, trigger: 'blur' }
+        ]
+      },
+      specialTopicInfoRules: {
+        title: [
+          { required: true, message: '请输入专题标题', trigger: 'blur' },
+          { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' }
+        ],
+        endDate: [
+          { validator: validateEndDate, trigger: 'blur' }
+        ]
+      }
     }
   },
   components: {
@@ -273,21 +333,16 @@ export default {
       })
     },
     openDialogModal(parentIndex, subIndex) {
+      // 每次打开都需重置
+      this.resetFields('editImgRef');
       this.dialogModalVisible = true
       this.parentIndex = parentIndex
       this.currentIndex = subIndex
     },
-    onBlur(val) {
-      if (!val) {
-        this.$message({
-          message: '请输入正确格式的链接地址！',
-          type: 'warning'
-        });
-      }
-    },
     beforeImgUpload(file) {
       const isJPG = file.type == 'image/jpeg' || 'image/png';
       const isLt3M = file.size / 1024 / 1024 <= 3;
+      this.loading = true
       if (!isJPG) {
         this.$message.error('上传图片只能是PNG、JPG格式!');
       }
@@ -298,39 +353,69 @@ export default {
     },
     handleImgSuccess(res, file) {
       if (res.data) {
+        this.loading = false
         this.$set(this.modalImg, 'url', res.data[0])
       }
     },
     handleSaveImgInfo() {
-      this.dialogModalVisible = false // 关掉弹框
-      // 保存上传的图片信息时，父、子组件修改状态为2
-      this.componentList[this.parentIndex].changeStatus = 2
-      this.$set(this.componentList[this.parentIndex].actModularAssemblyList, this.currentIndex, {
-        "changeStatus": 2,
-        "name": this.modalImg.name,
-        "imgUrl": this.modalImg.url,
-        "url": this.linkUrl, // 跳转地址
-        "type": this.urlType, // 链接类型
-        "sort": this.currentIndex + 1  // 排序
+      this.$refs['editImgRef'].validate((valid) => {
+        if (!valid) return false;
+        // 关掉弹框
+        this.dialogModalVisible = false
+        // 保存上传的图片信息时，父、子组件修改状态为2
+        this.componentList[this.parentIndex].changeStatus = 2
+        this.$set(this.componentList[this.parentIndex].actModularAssemblyList, this.currentIndex, {
+          "changeStatus": 2,
+          "name": this.modalImg.name,
+          "imgUrl": this.modalImg.url,
+          "url": this.modalImg.linkUrl, // 跳转地址
+          "type": this.modalImg.urlType, // 链接类型
+          "sort": this.currentIndex + 1  // 排序
+        })
+      });
+    },
+    validateComponent() {
+      let isValidate = true
+      if (this.componentList.length < 1) {
+        this.$message.error('您还未添加模板哦！');
+        isValidate = false
+        return false
+      }
+      this.componentList.forEach((item, index) => {
+        item.actModularAssemblyList.forEach((subItem, subIndex) => {
+          if (!subItem.name) {
+            isValidate = false
+            this.$message.error('您还有未选择图片的模板哦！');
+            return
+          }
+        })
       })
-      console.log(this.componentList[this.parentIndex])
+      return isValidate
     },
     async handleSaveSubject() {
-      let specialTopicInfo = { ...this.specialTopicInfo }
-      specialTopicInfo.status = Number(specialTopicInfo.status)
-      let queryData = {
-        "list": [...this.componentList],
-        "specialTopicInfo": { ...specialTopicInfo }
-      }
-      const res = await SubjectService.updateSpecialTopic(queryData)
-      console.log(res)
-      if (res && res.data) {
-        this.$message({
-          type: 'success',
-          message: '保存成功!'
-        });
-        this.$router.push('/operationManage/activitySubject')
-      }
+      this.$refs['topicRef'].validate(async (valid) => {
+        if (!valid) return false;
+        if (!this.validateComponent()) return false
+        let specialTopicInfo = { ...this.specialTopicInfo }
+        specialTopicInfo.status = Number(specialTopicInfo.status)
+        let queryData = {
+          "list": [...this.componentList],
+          "specialTopicInfo": { ...specialTopicInfo }
+        }
+        const res = await SubjectService.updateSpecialTopic(queryData)
+        console.log(res)
+        if (res && res.data) {
+          this.$message({
+            type: 'success',
+            message: '保存成功!'
+          });
+          this.$router.push('/operationManage/activitySubject')
+        }
+      });
+    },
+    resetFields(formName) {
+      if (!this.$refs[formName]) return
+      this.$refs[formName].resetFields();
     }
   }
 }
@@ -413,8 +498,10 @@ export default {
   width: 40%;
   min-width: 670px;
 }
-/deep/ .avatar-uploader {
+/deep/ .el-form-item__content {
   margin-bottom: 30px;
+}
+/deep/ .avatar-uploader {
   .el-upload {
     border: 1px dashed #d9d9d9;
     border-radius: 6px;

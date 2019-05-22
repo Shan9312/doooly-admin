@@ -32,7 +32,7 @@
           <el-radio v-model="specialTopicInfo.status" label=2>永久</el-radio>
         </el-form-item>
         <el-form-item v-show="specialTopicInfo.status === '1'" label="时间">
-          <el-date-picker v-model="specialTopicInfo.endDate" type="datetime" value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间">
+          <el-date-picker v-model="specialTopicInfo.endDate" type="datetime" :editable='false' value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间">
           </el-date-picker>
         </el-form-item>
       </el-form>
