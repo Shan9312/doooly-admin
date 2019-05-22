@@ -58,7 +58,11 @@
       <el-col :span="14">
         <div class="grid-right">
           <el-container v-for="(item,index) in templateList" :key="index">
-            <el-aside width="300px" height="200px"><img :src="item.imgUrl" alt=""></el-aside>
+            <el-aside width="300px" height="175px" class="img-side">
+              <div class="img-div" v-for="(subItem,subIndex) in item.modularType" :key='subIndex'>
+                <img :src="item.imgUrl" alt="">
+              </div>
+            </el-aside>
             <el-main>
               <el-button type="primary" class="btn" @click="addTemplate(item.modularType)">添加</el-button>
             </el-main>
@@ -93,11 +97,8 @@
 <script>
 import ImgModule from '../../components/ImgModule.vue'
 import { SubjectService } from '@/service'
-const ImgList = {
-  url_1: 'https://admin.doooly.com/image/201905/9ae23048237147d499c41383a7e3529a.jpg',
-  url_2: 'https://admin.doooly.com/image/201905/67c5f73fc3db4c8a86b895d577732461.jpg',
-  url_3: 'https://admin.doooly.com/image/201905/07b50e9cc4504a469495b2742a3c244e.jpg'
-}
+const ModuleImgUrl = require('@/assets/image/operation/bg.png')
+
 export default {
   name: 'ActivitySubjectEdit',
   data() {
@@ -119,15 +120,15 @@ export default {
       templateList: [
         {
           modularType: 1,
-          imgUrl: ImgList.url_1
+          imgUrl: ModuleImgUrl
         },
         {
           modularType: 2,
-          imgUrl: ImgList.url_2
+          imgUrl: ModuleImgUrl
         },
         {
           modularType: 3,
-          imgUrl: ImgList.url_3
+          imgUrl: ModuleImgUrl
         }
       ],
       urlOptions: [{
@@ -181,7 +182,7 @@ export default {
           "modularId": '',
           "actModularAssemblyList": [{
             "changeStatus": 1,  // 1新增 2 修改
-            "imgUrl": ImgList.url_1,
+            "imgUrl": ModuleImgUrl,
             "url": 'http://www.baidu.com',
             "type": 9,
             "sort": 1
@@ -194,14 +195,14 @@ export default {
           "modularId": '',
           "actModularAssemblyList": [{
             "changeStatus": 1,
-            "imgUrl": ImgList.url_2,
+            "imgUrl": ModuleImgUrl,
             "url": 'http://www.baidu.com',
             "type": 9,
             "sort": 1
           },
           {
             "changeStatus": 1,
-            "imgUrl": ImgList.url_2,
+            "imgUrl": ModuleImgUrl,
             "url": 'http://www.baidu.com',
             "type": 9,
             "sort": 2
@@ -214,20 +215,20 @@ export default {
           "modularId": '',
           "actModularAssemblyList": [{
             "changeStatus": 1,
-            "imgUrl": ImgList.url_3,
+            "imgUrl": ModuleImgUrl,
             "url": 'http://www.baidu.com',
             "type": 9,
             "sort": 1
           },
           {
             "changeStatus": 1,
-            "imgUrl": ImgList.url_3,
+            "imgUrl": ModuleImgUrl,
             "url": 'http://www.baidu.com',
             "type": 9,
             "sort": 2
           }, {
             "changeStatus": 1,
-            "imgUrl": ImgList.url_3,
+            "imgUrl": ModuleImgUrl,
             "url": 'http://www.baidu.com',
             "type": 9,
             "sort": 3
@@ -340,7 +341,7 @@ export default {
   .save-btn {
     position: absolute;
     width: 120px;
-    margin-left: 45px;
+    margin-left: 71px;
   }
   .modal-save-btn {
     display: block;
@@ -383,19 +384,23 @@ export default {
   .grid-right {
     width: 500px;
     .el-container {
-      height: 200px;
-      margin-bottom: 30px;
+      height: 175px;
+      margin-bottom: 50px;
       .el-aside {
-        line-height: 200px;
-        img {
-          display: block;
-          width: 100%;
-          height: 100%;
+        line-height: 175px;
+        display: flex;
+        .img-div {
+          flex: 1;
+          img {
+            display: block;
+            width: 100%;
+            height: 100%;
+          }
         }
       }
       .el-main {
         text-align: center;
-        line-height: 160px;
+        line-height: 135px;
         .btn {
           display: inline-block;
           width: 120px;
