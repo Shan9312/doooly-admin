@@ -26,12 +26,12 @@
       </el-table-column>
     </el-table>
     <el-dialog title="上架编辑页" :visible.sync="dialogModalVisible">
-      <el-form label-width='85px'>
-        <el-form-item label="状态" required>
+      <el-form label-width='85px' :model="specialTopicInfo" :rules="putOnRules" ref="putOnRef">
+        <el-form-item label="状态" prop="status">
           <el-radio v-model="specialTopicInfo.status" label=1>限时下架</el-radio>
           <el-radio v-model="specialTopicInfo.status" label=2>永久</el-radio>
         </el-form-item>
-        <el-form-item v-show="specialTopicInfo.status === '1'" label="时间">
+        <el-form-item v-show="specialTopicInfo.status === '1'" label="时间" prop="endDate">
           <el-date-picker v-model="specialTopicInfo.endDate" type="datetime" :editable='false' value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间">
           </el-date-picker>
         </el-form-item>
@@ -51,6 +51,13 @@ import { SubjectService } from '@/service'
 export default {
   name: 'ActivitySubject',
   data() {
+    let validateEndDate = (rule, value, callback) => {
+      if (this.specialTopicInfo.status == 1 && !value) {
+        callback(new Error('请选择时间'));
+      } else {
+        callback();
+      }
+    }
     return {
       tableData: [],
       total: 0,
@@ -63,7 +70,12 @@ export default {
         status: '1', // 下架状态 1.限时 2.永久
         endDate: '', // 下架时间
       },
-      currentRowData: {}
+      currentRowData: {},
+      putOnRules: {
+        endDate: [
+          { required: true, validator: validateEndDate, trigger: 'blur' }
+        ],
+      }
     }
   },
   created() {
@@ -82,6 +94,9 @@ export default {
     },
     async handleCopy(id) {
       const res = await this.$prompt('专题标题', '复制专题', {
+        inputPlaceholder: '请输入新的专题标题',
+        inputPattern: /^.{1,10}$/,
+        inputErrorMessage: '输入的标题长度需在 1 到 10 个字符之间',
         confirmButtonText: '确定',
         cancelButtonText: '取消'
       }).catch(() => {
@@ -106,6 +121,7 @@ export default {
         console.log('需要下架')
         this.pullOffShelf(objectData)
       } else if (objectData.shelfStatus == 2) {
+        this.resetFields('putOnRef')
         this.dialogModalVisible = true
         this.currentRowData = objectData
       }
@@ -138,16 +154,22 @@ export default {
         id: this.currentRowData.id,
         type: 1
       }
-      let data = await SubjectService.deleteSubject(queryData)
-      if (data && data.data) {
-        this.$message({
-          type: 'success',
-          message: '上架成功!'
-        });
-        this.dialogModalVisible = false
-        this.getSubjectList()
-      }
-
+      this.$refs['putOnRef'].validate(async (valid) => {
+        if (!valid) return
+        let data = await SubjectService.deleteSubject(queryData)
+        if (data && data.data) {
+          this.$message({
+            type: 'success',
+            message: '上架成功!'
+          });
+          this.dialogModalVisible = false
+          this.getSubjectList()
+        }
+      })
+    },
+    resetFields(formName) {
+      if (!this.$refs[formName]) return
+      this.$refs[formName].resetFields();
     }
   }
 }

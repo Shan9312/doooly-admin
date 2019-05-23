@@ -1,6 +1,6 @@
 <template>
   <div class="img-module3">
-    <div class="img" v-for="(item,index) in config.actModularAssemblyList" :key='index' @click="openModal(parentIndex,index)">
+    <div class="img" v-for="(item,index) in config.actModularAssemblyList" :key='index' @click="openModal(parentIndex,index,item)">
       <img :src="item.imgUrl" alt="">
     </div>
   </div>
@@ -24,8 +24,8 @@ export default {
     }
   },
   methods: {
-    openModal(parentIndex, subIndex) {
-      this.$emit('openDialogModal', parentIndex, subIndex)
+    openModal(parentIndex, subIndex, subItem) {
+      this.$emit('openDialogModal', parentIndex, subIndex, subItem)
     }
   }
 }

@@ -115,10 +115,8 @@
 import ImgModule from '../../components/ImgModule.vue'
 import { SubjectService } from '@/service'
 import { Validate } from "@/common";
-import { constants } from 'crypto';
-import { async } from 'q';
-const ModuleImgUrl = require('@/assets/image/operation/bg.png')
 
+const ModuleImgUrl = require('@/assets/image/operation/bg.png')
 export default {
   name: 'ActivitySubjectEdit',
   data() {
@@ -205,7 +203,7 @@ export default {
           { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' }
         ],
         endDate: [
-          { validator: validateEndDate, trigger: 'blur' }
+          { required: true, validator: validateEndDate, trigger: 'blur' }
         ]
       }
     }
@@ -332,9 +330,18 @@ export default {
         item.modularSort = index + 1
       })
     },
-    openDialogModal(parentIndex, subIndex) {
+    openDialogModal(parentIndex, subIndex, subItem) {
       // 每次打开都需重置
       this.resetFields('editImgRef');
+      // 如果有name的话证明是选择过图片的，否则是模板
+      if (subItem.name) {
+        this.modalImg = {
+          url: subItem.imgUrl,
+          name: subItem.name,
+          urlType: subItem.type, // 跳转地址的类型，内购、品牌馆等
+          linkUrl: subItem.url // 点击图片的跳转地址
+        }
+      }
       this.dialogModalVisible = true
       this.parentIndex = parentIndex
       this.currentIndex = subIndex
