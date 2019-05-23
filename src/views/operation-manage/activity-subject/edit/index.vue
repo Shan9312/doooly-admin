@@ -87,10 +87,10 @@
           </el-upload>
         </el-form-item>
 
-        <el-form-item label="操作类型">
+        <el-form-item label="操作类型" required>
           <el-col :span="10">
             <el-form-item prop="urlType">
-              <el-select v-model="modalImg.urlType" placeholder="请选择链接类型">
+              <el-select v-model="modalImg.urlType" placeholder="请选择链接类型" :change='changeOption(modalImg.urlType)'>
                 <el-option v-for="item in urlOptions" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
               </el-select>
@@ -334,11 +334,12 @@ export default {
       // 每次打开都需重置
       this.resetFields('editImgRef');
       // 如果有name的话证明是选择过图片的，否则是模板
+      let urlTypeList = this.urlOptions.filter(item => item.value == subItem.type)
       if (subItem.name) {
         this.modalImg = {
           url: subItem.imgUrl,
           name: subItem.name,
-          urlType: subItem.type, // 跳转地址的类型，内购、品牌馆等
+          urlType: urlTypeList[0].value, // 跳转地址的类型，内购、品牌馆等
           linkUrl: subItem.url // 点击图片的跳转地址
         }
       }
@@ -423,6 +424,11 @@ export default {
     resetFields(formName) {
       if (!this.$refs[formName]) return
       this.$refs[formName].resetFields();
+    },
+    changeOption(urlType) {
+      if (urlType == 9) {
+        this.modalImg.linkUrl = ''
+      }
     }
   }
 }
