@@ -74,7 +74,7 @@
         </div>
       </el-col>
     </el-row>
-    <el-dialog title="编辑" :visible.sync="dialogModalVisible">
+    <el-dialog title="编辑" :visible.sync="dialogModalVisible" :close='dialogCloseBack'>
       <el-form label-width='85px' ref="editImgRef" :model="modalImg" :rules="editImgRules">
         <el-form-item label="图片名称" prop="name">
           <el-input v-model="modalImg.name" placeholder="请输入图片名称" clearable maxlength=10 minlength=1 style="width: 217px;"></el-input>
@@ -136,7 +136,7 @@ export default {
       }
     }
     return {
-      actionUrl:  process.env.VUE_APP_URL + '/fileUpload',
+      actionUrl: process.env.VUE_APP_URL + '/fileUpload',
       loading: false,
       specialTopicInfo: {
         id: this.$route.params.id,
@@ -233,11 +233,13 @@ export default {
     },
     addTemplate(modularType) {
       // ModuleList需写在添加方法里面；要是写在添加方法外面，后导致，修改模块某个属性，同一类模板数据都改变
+      // changeStatus 默认状态是1，为新增。addStatus表示本地新增的模板，为后面保存图片信息时所用
       let ModuleList = [
         {
           "modularType": 1,
           "modularSort": '',
           "changeStatus": 1,  // 1新增 2 修改
+          "addStatus": true,
           "modularId": '',
           "actModularAssemblyList": [{
             "changeStatus": 1,  // 1新增 2 修改
@@ -251,6 +253,7 @@ export default {
           "modularType": 2,
           "modularSort": '',
           "changeStatus": 1,  // 1新增 2 修改
+          "addStatus": true,
           "modularId": '',
           "actModularAssemblyList": [{
             "changeStatus": 1,
@@ -271,6 +274,7 @@ export default {
           "modularType": 3,
           "modularSort": '',
           "changeStatus": 1,  // 1新增 2 修改
+          "addStatus": true,
           "modularId": '',
           "actModularAssemblyList": [{
             "changeStatus": 1,
@@ -348,6 +352,9 @@ export default {
       this.parentIndex = parentIndex
       this.currentIndex = subIndex
     },
+    dialogCloseBack() {
+      this.modalImg = {}
+    },
     beforeImgUpload(file) {
       const isJPG = file.type == 'image/jpeg' || 'image/png';
       const isLt3M = file.size / 1024 / 1024 <= 3;
@@ -367,14 +374,19 @@ export default {
       }
     },
     handleSaveImgInfo() {
+      let addStatus = this.componentList[this.parentIndex].addStatus
       this.$refs['editImgRef'].validate((valid) => {
         if (!valid) return false;
         // 关掉弹框
         this.dialogModalVisible = false
-        // 保存上传的图片信息时，父、子组件修改状态为2
+        // 线上获取的列表，修改的时候，保存上传的图片信息时，父、子组件修改状态为2
         this.componentList[this.parentIndex].changeStatus = 2
+        // 点击本地模板上传图片的话，状态为新增 1
+        if (addStatus) {
+          this.componentList[this.parentIndex].changeStatus = 1
+        }
         this.$set(this.componentList[this.parentIndex].actModularAssemblyList, this.currentIndex, {
-          "changeStatus": 2,
+          "changeStatus": addStatus ? 1 : 2,
           "name": this.modalImg.name,
           "imgUrl": this.modalImg.url,
           "url": this.modalImg.linkUrl, // 跳转地址
