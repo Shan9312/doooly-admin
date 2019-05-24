@@ -356,13 +356,15 @@ export default {
       this.modalImg = {}
     },
     beforeImgUpload(file) {
-      const isJPG = file.type == 'image/jpeg' || 'image/png';
+      const isJPG = (file.type == 'image/jpeg' || file.type == 'image/png');
       const isLt3M = file.size / 1024 / 1024 <= 3;
       this.loading = true
       if (!isJPG) {
+        this.loading = false
         this.$message.error('上传图片只能是PNG、JPG格式!');
       }
       if (!isLt3M) {
+        this.loading = false
         this.$message.error('上传图片大小不能超过3MB!');
       }
       return isJPG && isLt3M;
