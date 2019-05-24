@@ -81,7 +81,7 @@
         </el-form-item>
 
         <el-form-item prop="url">
-          <el-upload class="avatar-uploader" v-loading="loading" :action="actionUrl" drag :show-file-list="false" :before-upload="beforeImgUpload" :on-success="handleImgSuccess">
+          <el-upload class="avatar-uploader" v-loading="loading" :action="actionUrl" drag :show-file-list="false" :before-upload="beforeImgUpload" :on-success="handleImgSuccess" :on-error="handleImgError">
             <img v-if="modalImg.url" :src="modalImg.url" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
@@ -372,6 +372,10 @@ export default {
         this.loading = false
         this.$set(this.modalImg, 'url', res.data[0])
       }
+    },
+    handleImgError(err, file) {
+      this.loading = false
+      this.$message.error('上传图片失败，请重新上传！');
     },
     handleSaveImgInfo() {
       let addStatus = this.componentList[this.parentIndex].addStatus
