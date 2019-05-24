@@ -81,7 +81,7 @@
         </el-form-item>
 
         <el-form-item prop="url">
-          <el-upload class="avatar-uploader" v-loading="loading" action="/subject/fileUpload" drag :show-file-list="false" :before-upload="beforeImgUpload" :on-success="handleImgSuccess">
+          <el-upload class="avatar-uploader" v-loading="loading" :action="actionUrl" drag :show-file-list="false" :before-upload="beforeImgUpload" :on-success="handleImgSuccess">
             <img v-if="modalImg.url" :src="modalImg.url" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
@@ -136,6 +136,7 @@ export default {
       }
     }
     return {
+      actionUrl:  process.env.VUE_APP_URL + '/fileUpload',
       loading: false,
       specialTopicInfo: {
         id: this.$route.params.id,
