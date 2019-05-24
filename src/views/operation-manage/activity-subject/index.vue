@@ -106,7 +106,7 @@ export default {
         });
       })
       if (res && res.action === 'confirm') {
-        const data = await SubjectService.copySubject({ id, title: res.value })
+        const data = await SubjectService.copySubject(id, res.value)
         if (data && data.data) {
           this.$message({
             type: 'success',
@@ -138,7 +138,7 @@ export default {
           message: '已取消本次操作！'
         });
       });
-      let data = await SubjectService.deleteSubject({ endDate, id, status, type: 2 })
+      let data = await SubjectService.deleteSubject(endDate, id, status, 2)
       if (res === 'confirm' && data && data.data) {
         this.$message({
           type: 'success',
@@ -148,15 +148,9 @@ export default {
       }
     },
     async putOnShelf() {
-      let queryData = {
-        endDate: this.specialTopicInfo.endDate,
-        status: Number(this.specialTopicInfo.status),
-        id: this.currentRowData.id,
-        type: 1
-      }
       this.$refs['putOnRef'].validate(async (valid) => {
         if (!valid) return
-        let data = await SubjectService.deleteSubject(queryData)
+        let data = await SubjectService.deleteSubject(this.specialTopicInfo.endDate, this.currentRowData.id, Number(this.specialTopicInfo.status), 1)
         if (data && data.data) {
           this.$message({
             type: 'success',

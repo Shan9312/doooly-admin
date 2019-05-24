@@ -217,7 +217,7 @@ export default {
   },
   methods: {
     async getSubjectDetail() {
-      const res = await SubjectService.subjectDetail({ id: this.specialTopicInfo.id })
+      const res = await SubjectService.subjectDetail(this.specialTopicInfo.id)
       if (res && res.data) {
         let data = res.data
         let list = data.list
@@ -406,11 +406,7 @@ export default {
         if (!this.validateComponent()) return false
         let specialTopicInfo = { ...this.specialTopicInfo }
         specialTopicInfo.status = Number(specialTopicInfo.status)
-        let queryData = {
-          "list": [...this.componentList],
-          "specialTopicInfo": { ...specialTopicInfo }
-        }
-        const res = await SubjectService.updateSpecialTopic(queryData)
+        const res = await SubjectService.updateSpecialTopic([...this.componentList], { ...specialTopicInfo })
         console.log(res)
         if (res && res.data) {
           this.$message({

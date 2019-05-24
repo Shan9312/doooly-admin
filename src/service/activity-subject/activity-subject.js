@@ -5,18 +5,41 @@ export default {
   getSubjectList(query) {
     return Ajax.post('/activity/specialTopicList', query)
   },
-  // 复制专题
-  copySubject(query) {
-    return Ajax.post('/activity/copySpecialTopic', query)
+  /**
+   * 复制专题
+   * @param {活动id} id 
+   * @param {活动标题} title 
+   */
+  copySubject(id, title) {
+    return Ajax.post('/activity/copySpecialTopic', { id, title })
   },
-  // 下架专题
-  deleteSubject(query) {
-    return Ajax.post('/activity/updateStatus', query)
+  /**
+   *下架专题
+   * @param {下架时间} endDate
+   * @param {活动id} id
+   * @param {下架状态} status
+   * @param {上架/下架} type
+   */
+  deleteSubject(endDate, id, status, type) {
+    return Ajax.post('/activity/updateStatus', { endDate, id, status, type })
   },
-  subjectDetail(query) {
-    return Ajax.post('/activity/specialTopicDetail', query)
+  /**
+   * 获取标题详情页面
+   * @param {活动id} id
+   */
+  subjectDetail(id) {
+    return Ajax.post('/activity/specialTopicDetail', { id })
   },
-  updateSpecialTopic(query) {
-    return Ajax.post('/activity/updateSpecialTopic', query)
+  /**
+   * 编辑保存专题页
+   * @param {模板列表} list
+   * @param specialTopicInfo ={bgColor: "#FFFFFF"
+   *         endDate: "2019-05-24 00:00:00"
+   *         status: 1
+   *        title: "第一个活动"
+   *        } specialTopicInfo
+   */
+  updateSpecialTopic(list, specialTopicInfo) {
+    return Ajax.post('/activity/updateSpecialTopic', { list, specialTopicInfo })
   }
 }
