@@ -4,7 +4,7 @@
       <el-row>
         <el-col :span="10">
           <el-form-item label="专题标题" prop="title">
-            <el-input v-model="specialTopicInfo.title" placeholder="请输入专题标题" style="width: 300px;"></el-input>
+            <el-input v-model="specialTopicInfo.title" minlength="1" maxlength='10' placeholder="请输入专题标题" style="width: 300px;"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="14">
@@ -128,9 +128,16 @@ export default {
       }
     };
     let validateEndDate = (rule, value, callback) => {
-      console.log(this.specialTopicInfo.status)
       if (this.specialTopicInfo.status == 1 && !value) {
         callback(new Error('请选择时间'));
+      } else {
+        callback();
+      }
+    }
+    let validateTitle = (rule, value, callback) => {
+      let val = value.trim()
+      if (!val) {
+        callback(new Error('请输入专题标题'));
       } else {
         callback();
       }
@@ -185,8 +192,7 @@ export default {
       currentIndex: null,
       editImgRules: {
         name: [
-          { required: true, message: '请输入模块名称', trigger: 'blur' },
-          { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' }
+          { required: true, validator: validateTitle, message: '请输入图片名称', trigger: 'blur' }
         ],
         url: [
           { required: true, message: '请选择图片', trigger: 'change' }
@@ -200,8 +206,7 @@ export default {
       },
       specialTopicInfoRules: {
         title: [
-          { required: true, message: '请输入专题标题', trigger: 'blur' },
-          { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' }
+          { required: true, validator: validateTitle, trigger: 'blur' }
         ],
         endDate: [
           { required: true, validator: validateEndDate, trigger: 'blur' }
@@ -227,7 +232,8 @@ export default {
           bgColor: data.specialTopicInfo.bgColor,
           title: data.specialTopicInfo.title,
           status: data.specialTopicInfo.status === 1 ? '1' : '2',
-          endDate: data.specialTopicInfo.endDate
+          endDate: data.specialTopicInfo.endDate,
+          id: data.specialTopicInfo.id
         }
       }
     },
@@ -425,6 +431,7 @@ export default {
         if (!this.validateComponent()) return false
         let specialTopicInfo = { ...this.specialTopicInfo }
         specialTopicInfo.status = Number(specialTopicInfo.status)
+        console.log(this.specialTopicInfo)
         const res = await SubjectService.updateSpecialTopic([...this.componentList], { ...specialTopicInfo })
         console.log(res)
         if (res && res.data) {

@@ -93,10 +93,17 @@ export default {
       this.$router.push(`/operationManage/edit/${id}`)
     },
     async handleCopy(id) {
+      let validateTitle = (value) => {
+        let val = value.trim()
+        if (!val) {
+          return '请输入新的专题标题'
+        } else if (val.length == 0 || val.length > 10) {
+          return '输入的标题长度需在 1 到 10 个字符之间'
+        }
+      }
       const res = await this.$prompt('专题标题', '复制专题', {
         inputPlaceholder: '请输入新的专题标题',
-        inputPattern: /^.{1,10}$/,
-        inputErrorMessage: '输入的标题长度需在 1 到 10 个字符之间',
+        inputValidator: validateTitle,
         confirmButtonText: '确定',
         cancelButtonText: '取消'
       }).catch(() => {
