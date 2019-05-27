@@ -180,7 +180,15 @@ export default {
     resetFields(formName) {
       if (!this.$refs[formName]) return
       this.$refs[formName].resetFields();
+    },
+    refreshSelectedTag(view) {
+      this.$store.dispatch("delCachedView", view)
     }
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.refreshSelectedTag(vm.$route);
+    })
   }
 }
 </script>
