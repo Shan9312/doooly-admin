@@ -389,8 +389,7 @@ export default {
       let addStatus = this.componentList[this.parentIndex].addStatus
       this.$refs['editImgRef'].validate((valid) => {
         if (!valid) return false;
-        // 关掉弹框
-        this.dialogModalVisible = false
+        let imgId = this.componentList[this.parentIndex].actModularAssemblyList[this.currentIndex].id
         // 线上获取的列表，修改的时候，保存上传的图片信息时，父、子组件修改状态为2
         this.componentList[this.parentIndex].changeStatus = 2
         // 点击本地模板上传图片的话，状态为新增 1
@@ -400,11 +399,14 @@ export default {
         this.$set(this.componentList[this.parentIndex].actModularAssemblyList, this.currentIndex, {
           "changeStatus": addStatus ? 1 : 2,
           "name": this.modalImg.name,
+          "id": imgId,
           "imgUrl": this.modalImg.url,
           "url": this.modalImg.linkUrl, // 跳转地址
           "type": this.modalImg.urlType, // 链接类型
           "sort": this.currentIndex + 1  // 排序
         })
+        // 关掉弹框
+        this.dialogModalVisible = false
       });
     },
     validateComponent() {
