@@ -388,8 +388,7 @@ export default {
     handleSaveImgInfo() {
       let addStatus = this.componentList[this.parentIndex].addStatus
       this.$refs['editImgRef'].validate((valid) => {
-        // 图片上传成功之后，loading消失才可以保存
-        if (!valid || !this.loading) return false;
+        if (!valid) return false;
         // 关掉弹框
         this.dialogModalVisible = false
         // 线上获取的列表，修改的时候，保存上传的图片信息时，父、子组件修改状态为2
