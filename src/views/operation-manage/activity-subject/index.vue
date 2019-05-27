@@ -98,7 +98,7 @@ export default {
         let val = value.trim()
         if (!val) {
           return '请输入新的专题标题'
-        } else if (val.length == 0 || val.length > 10) {
+        } else if (value.length == 0 || value.length > 10) {
           return '输入的标题长度需在 1 到 10 个字符之间'
         }
       }
