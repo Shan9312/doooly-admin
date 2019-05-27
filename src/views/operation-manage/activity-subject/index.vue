@@ -94,6 +94,7 @@ export default {
     },
     async handleCopy(id) {
       let validateTitle = (value) => {
+        if(!value) return '请输入新的专题标题'
         let val = value.trim()
         if (!val) {
           return '请输入新的专题标题'
