@@ -94,7 +94,7 @@ export default {
     },
     async handleCopy(id) {
       let validateTitle = (value) => {
-        if(!value) return '请输入新的专题标题'
+        if (!value) return '请输入新的专题标题'
         let val = value.trim()
         if (!val) {
           return '请输入新的专题标题'
@@ -146,13 +146,21 @@ export default {
           message: '已取消本次操作！'
         });
       });
-      let data = await SubjectService.deleteSubject(endDate, id, status, 2)
-      if (res === 'confirm' && data && data.data) {
-        this.$message({
-          type: 'success',
-          message: '下架架成功!'
-        });
-        this.getSubjectList()
+
+      if (res === 'confirm') {
+        let data = await SubjectService.deleteSubject(endDate, id, status, 2)
+        if (data && data.data) {
+          this.$message({
+            type: 'success',
+            message: '下架架成功!'
+          });
+          this.getSubjectList()
+        } else {
+          this.$message({
+            type: 'error',
+            message: '操作失败!'
+          });
+        }
       }
     },
     async putOnShelf() {
