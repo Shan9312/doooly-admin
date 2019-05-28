@@ -19,10 +19,8 @@ const userMap = [
   },
   {
     id: 3,
-    // name: 'operation',
-    // pwd: 'operation@2019',
     name: 'operation',
-    pwd: '123456',
+    pwd: 'operation@2019',
     token: 'token_operation',
     avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
     roles: ['operation']
