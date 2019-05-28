@@ -2,13 +2,19 @@ import { Ajax } from '@/common'
 
 export default {
   // 获取专题列表
-  getSubjectList(query) {
-    return Ajax.post('/activity/specialTopicList', query)
+  /**
+   *
+   * @param {页码} pageNum
+   * @param {每页数量} pageSize
+   * @param {上下架状态 1.上架 2.下架} shelfStatus
+   */
+  getSubjectList(pageNum, pageSize, shelfStatus) {
+    return Ajax.post('/activity/specialTopicList', { pageNum, pageSize, shelfStatus })
   },
   /**
    * 复制专题
-   * @param {活动id} id 
-   * @param {活动标题} title 
+   * @param {活动id} id
+   * @param {活动标题} title
    */
   copySubject(id, title) {
     return Ajax.post('/activity/copySpecialTopic', { id, title })

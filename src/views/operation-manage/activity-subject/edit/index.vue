@@ -34,7 +34,7 @@
         <div class="grid-left" :style="{backgroundColor: specialTopicInfo.bgColor}">
           <div v-if="componentList.length > 0">
             <div v-for='(item,index) in componentList' :key="index" class="item" @mouseover="showEditTab(index,true)" @mouseout="showEditTab(index,false)">
-              <component is='img-module' :config='item' :parentIndex='index' v-on:openDialogModal='openDialogModal'></component>
+              <component :is='componentName' :config='item' :parentIndex='index' v-on:openDialogModal='openDialogModal'></component>
               <div class="btn-group" v-show='currentComponentIndex == index'>
                 <el-row>
                   <el-col :span="8">
@@ -143,6 +143,7 @@ export default {
       }
     }
     return {
+      componentName: 'img-module',
       actionUrl: process.env.VUE_APP_URL + '/fileUpload',
       loading: false,
       specialTopicInfo: {

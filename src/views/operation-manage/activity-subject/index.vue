@@ -1,6 +1,26 @@
 <template>
   <div class="app-container subject-list">
-    <el-button type="primary" @click="handleEdit(null)">新建专题</el-button>
+    <el-row>
+      <el-col :span="6">
+        <el-button type="primary" @click="handleEdit(null)">新建专题</el-button>
+      </el-col>
+      <el-col :span="16">
+        <el-form>
+          <el-form-item label="上架状态：">
+            <el-col :span="9">
+              <el-select v-model="search.shelfStatus" placeholder="请选择查询状态">
+                <el-option v-for="(item,index) in shelfOptions" :key="index" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
+            </el-col>
+            <el-col :span="6">
+              <el-button type="primary" @click="getSubjectList()">查询</el-button>
+            </el-col>
+          </el-form-item>
+        </el-form>
+      </el-col>
+
+    </el-row>
     <el-table stripe :data="tableData" border style="width: 100%">
       <el-table-column prop="id" label="专题编号" width="180">
       </el-table-column>
@@ -69,13 +89,24 @@ export default {
       specialTopicInfo: {
         status: '1', // 下架状态 1.限时 2.永久
         endDate: '', // 下架时间
+        shelfStatus: '' // 上架状态 1.上架 2.下架 不传是全部
       },
       currentRowData: {},
       putOnRules: {
         endDate: [
           { required: true, validator: validateEndDate, trigger: 'blur' }
         ],
-      }
+      },
+      shelfOptions: [{
+        value: '',
+        label: '全部'
+      }, {
+        value: '1',
+        label: '上架'
+      }, {
+        value: '2',
+        label: '下架'
+      }]
     }
   },
   created() {
@@ -83,14 +114,12 @@ export default {
   },
   methods: {
     async getSubjectList() {
-      const data = await SubjectService.getSubjectList(this.search)
+      let { pageNum, pageSize, shelfStatus } = this.search
+      let data = await SubjectService.getSubjectList(pageNum, pageSize, shelfStatus)
       if (data && data.data && data.data.specialTopicList.length > 0) {
         this.tableData = data.data.specialTopicList
         this.total = data.data.total
       }
-    },
-    handleEdit(id) {
-      this.$router.push(`/operationManage/edit/${id}`)
     },
     async handleCopy(id) {
       let validateTitle = (value) => {
@@ -176,6 +205,9 @@ export default {
           this.getSubjectList()
         }
       })
+    },
+    handleEdit(id) {
+      this.$router.push(`/operationManage/edit/${id}`)
     },
     resetFields(formName) {
       if (!this.$refs[formName]) return
