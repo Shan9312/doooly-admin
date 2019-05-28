@@ -16,7 +16,7 @@ export default {
     return /^(https?:|mailto:|tel:)/.test(path)
   },
   isUrl(url){
-    let reg=/^([hH][tT]{2}[pP]:\/\/|[hH][tT]{2}[pP][sS]:\/\/)(([A-Za-z0-9-~]+)\.)+([A-Za-z0-9-~\/])+$/;
+    let reg=/^([hH][tT]{2}[pP]:\/\/|[hH][tT]{2}[pP][sS]:\/\/)(([A-Za-z0-9-~]+)\.)+([A-Za-z0-9-~\/])+/;
     return  reg.test(url)
   }
 }
