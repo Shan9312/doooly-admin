@@ -14,7 +14,7 @@
               </el-select>
             </el-col>
             <el-col :span="6">
-              <el-button type="primary" @click="getSubjectList()">查询</el-button>
+              <el-button type="primary" @click="handleSearch">查询</el-button>
             </el-col>
           </el-form-item>
         </el-form>
@@ -116,7 +116,7 @@ export default {
     async getSubjectList() {
       let { pageNum, pageSize, shelfStatus } = this.search
       let data = await SubjectService.getSubjectList(pageNum, pageSize, shelfStatus)
-      if (data && data.data && data.data.specialTopicList.length > 0) {
+      if (data && data.data && data.data.specialTopicList) {
         this.tableData = data.data.specialTopicList
         this.total = data.data.total
       }
@@ -208,6 +208,10 @@ export default {
     },
     handleEdit(id) {
       this.$router.push(`/operationManage/edit/${id}`)
+    },
+    handleSearch() {
+      this.search.pageNum = 1 // 如果是点击查询，则页码需要重置，否则可能没数据
+      this.getSubjectList()
     },
     resetFields(formName) {
       if (!this.$refs[formName]) return
