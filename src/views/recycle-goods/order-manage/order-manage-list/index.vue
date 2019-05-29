@@ -97,7 +97,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="3">
-            <el-button type="primary" @click="getRecycleGoodsList">查询</el-button>
+            <el-button type="primary" @click="handleGetListByMsg">查询</el-button>
           </el-col>
         </el-row>
       </el-form>
@@ -127,7 +127,6 @@
             </div>
           </template>
         </el-table-column>
-
         <el-table-column
           min-width="180"
           label="操作"
@@ -156,7 +155,7 @@
     <!-- 弹窗 start-->
     <!-- 修改回复信息 -->
     <el-dialog title="修改回付信息" :visible.sync="dialogVisibleEdit" width="30%" center>
-      <el-form :model="forms" key="form2" :rules="rules">
+      <el-form :model="forms" key="form2" :rules="rules" ref="ruleForm">
         <el-form-item label="支付宝姓名" label-width="100px" prop="applyName">
           <el-input v-model="forms.applyName"></el-input>
         </el-form-item>
@@ -166,7 +165,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisibleEdit = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisibleEdit = false">确 定</el-button>
+        <el-button type="primary" @click="handleEditUserInfo">确 定</el-button>
       </span>
     </el-dialog>
     <!-- 确认回款 -->
@@ -277,6 +276,15 @@ export default {
   methods: {
     // 初始化列表,获取数据展示表格
     async getRecycleGoodsList() {
+      this.listLoading = true;
+      const { data } = await RecycleGoodsService.recycleGoodsList(this.formObj);
+      this.listLoading = false;
+      this.tableData = data.list;
+      this.formObj.total = data.totalNumber;
+    },
+
+    // 根据条件查询列表
+    handleGetListByMsg() {
       if (this.orderTimes.length) {
         this.formObj.orderStartTime = this.orderTimes[0];
         this.formObj.orderEndTime = this.orderTimes[1];
@@ -285,11 +293,18 @@ export default {
         this.formObj.recoveryStartTime = this.recoveryTime[0];
         this.formObj.recoveryEndTime = this.recoveryTime[1];
       }
-      this.listLoading = true;
-      const { data } = await RecycleGoodsService.recycleGoodsList(this.formObj);
-      this.listLoading = false;
-      this.tableData = data.list;
-      this.formObj.total = data.totalNumber;
+      this.$refs["formObj"].validate(valid => {
+        if (valid) {
+          this.getRecycleGoodsList();
+        } else {
+          Message({
+            message: "请输入正确的查询信息",
+            type: "error",
+            duration: 2 * 1000
+          });
+          return false;
+        }
+      });
     },
 
     // 筛选输入框禁止输入特殊字符
@@ -341,7 +356,40 @@ export default {
      *
      * */
     handleEdit(orderNumber) {
+      this.userInfo.orderNumber = orderNumber;
       this.dialogVisibleEdit = true;
+    },
+
+    // 确认 修改回复信息
+    async handleEditUserInfo() {
+      const obj = Object.assign(this.userInfo, this.forms);
+      const res = await RecycleGoodsService.recycleEditOrder(obj);
+      this.$refs["ruleForm"].validate(valid => {
+        if (valid) {
+          this.dialogVisibleEdit = false;
+          if (res.data == "SUCCESS") {
+            Message({
+              message: res.info,
+              type: "success",
+              duration: 2 * 1000
+            });
+          } else {
+            Message({
+              message: res.info,
+              type: "error",
+              duration: 2 * 1000
+            });
+          }
+          this.getRecycleGoodsList();
+        } else {
+          Message({
+            message: "请填写付款信息",
+            type: "warning",
+            duration: 2 * 1000
+          });
+          return false;
+        }
+      });
     }
   }
 };
