@@ -156,11 +156,11 @@
     <!-- 弹窗 start-->
     <!-- 修改回复信息 -->
     <el-dialog title="修改回付信息" :visible.sync="dialogVisibleEdit" width="30%" center>
-      <el-form :model="forms" key="form2">
-        <el-form-item label="支付宝姓名" label-width="100px">
+      <el-form :model="forms" key="form2" :rules="rules">
+        <el-form-item label="支付宝姓名" label-width="100px" prop="applyName">
           <el-input v-model="forms.applyName"></el-input>
         </el-form-item>
-        <el-form-item label="支付宝账号" label-width="100px">
+        <el-form-item label="支付宝账号" label-width="100px" prop="applyAccount">
           <el-input v-model="forms.applyAccount"></el-input>
         </el-form-item>
       </el-form>
@@ -183,8 +183,8 @@
 
 <script>
 import { RecycleGoodsService } from "@/service";
-import { phoneValid } from "@/common/validateTools";
-import { constants } from "crypto";
+import { phoneValid, applyVaild } from "@/common/validateTools";
+import { Message } from "element-ui";
 
 // 订单状态
 const recycleStateList = [
@@ -243,7 +243,18 @@ export default {
         }
       },
       rules: {
-        userPhone: [{ validator: phoneValid, trigger: "change" }]
+        userPhone: [{ validator: phoneValid, trigger: "change" }],
+        applyName: [
+          { required: true, message: "请输入支付宝名称", trigger: "blur" },
+          { min: 1, message: "请输入正确名称", trigger: "blur" }
+        ],
+        applyAccount: [
+          {
+            validator: applyVaild,
+            required: true,
+            trigger: "blur"
+          }
+        ]
       },
       tableData: [],
       listLoading: false,
@@ -279,7 +290,6 @@ export default {
       this.listLoading = false;
       this.tableData = data.list;
       this.formObj.total = data.totalNumber;
-      console.log(data);
     },
 
     // 筛选输入框禁止输入特殊字符
@@ -308,8 +318,22 @@ export default {
 
     // 回款弹窗
     async handleConfirm() {
-      const res = RecycleGoodsService.recycleConfirmOrder(this.userInfo);
-      console.log(res);
+      const res = await RecycleGoodsService.recycleConfirmOrder(this.userInfo);
+      this.dialogVisibl = false;
+      if (res.data == "SUCCESS") {
+        Message({
+          message: res.info,
+          type: "success",
+          duration: 2 * 1000
+        });
+      } else {
+        Message({
+          message: res.info,
+          type: "error",
+          duration: 2 * 1000
+        });
+      }
+      this.getRecycleGoodsList();
     },
 
     /**

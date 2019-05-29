@@ -21,6 +21,24 @@ const phoneValid = (rule, value, callback) => {
   }
 };
 
+const applyVaild = (rule, value, callback) => {
+  const reg = /^(?:\w+\.?)*\w+@(?:\w+\.)+\w+|\d{9,11}$/;
+  if (rule.required) {
+    if (!value) {
+      callback(new Error('请输入支付宝账号'));
+    } else if (!reg.test(value)) {
+      callback(new Error('请输入正确支付宝账号'));
+    } else {
+      callback();
+    }
+  } else if (value && !reg.test(value)) {
+    callback(new Error('请输入正确支付宝账号'));
+  } else {
+    callback();
+  }
+};
+
 module.exports = {
   phoneValid,
+  applyVaild
 }

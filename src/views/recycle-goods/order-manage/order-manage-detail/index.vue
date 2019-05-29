@@ -142,12 +142,11 @@ export default {
       orderNumber: this.$route.params.id,
       orderObj: {
         recoveryTime: "",
-        orderNumber: "21235562934929"
+        orderNumber: ""
       }
     };
   },
   created() {
-    console.log(this.$route.params.id);
     this.getOrderDetails();
   },
   methods: {
@@ -157,7 +156,6 @@ export default {
         orderNumber: this.orderNumber
       });
       this.orderObj = data;
-      console.log(data, "订单详情");
     }
   }
 };
