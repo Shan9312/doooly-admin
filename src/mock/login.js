@@ -24,6 +24,14 @@ const userMap = [
   token: 'token_operation',
   avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
   roles: ['operation']
+},
+{
+  id: 4,
+  name: 'recycle',
+  pwd: 'recycle@2019',
+  token: 'token_recycle',
+  avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
+  roles: ['recycle']
 }]
 
 const data = {

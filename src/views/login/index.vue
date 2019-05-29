@@ -1,51 +1,24 @@
 <template>
   <div class="login-container">
-    <el-form
-      ref="loginForm"
-      :model="loginForm"
-      :rules="loginRules"
-      class="login-form"
-      auto-complete="on"
-      label-position="left"
-    >
+    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
       <h3 class="title">DS系统登录</h3>
       <el-form-item prop="username">
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
-        <el-input
-          v-model="loginForm.username"
-          name="username"
-          type="text"
-          auto-complete="on"
-          maxlength="10"
-          placeholder="请输入用户名"
-        />
+        <el-input v-model="loginForm.username" name="username" type="text" auto-complete="on" maxlength="10" placeholder="请输入用户名" />
       </el-form-item>
       <el-form-item prop="password">
         <span class="svg-container">
           <svg-icon icon-class="password" />
         </span>
-        <el-input
-          :type="pwdType"
-          v-model="loginForm.password"
-          name="password"
-          auto-complete="on"
-          placeholder="请输入密码"
-          maxlength="16"
-          @keyup.enter.native="handleLogin"
-        />
+        <el-input :type="pwdType" v-model="loginForm.password" name="password" auto-complete="on" placeholder="请输入密码" maxlength="16" @keyup.enter.native="handleLogin" />
         <span class="show-pwd" @click="showPwd">
           <svg-icon :icon-class="pwdType === 'password' ? 'eye' : 'eye-open'" />
         </span>
       </el-form-item>
       <el-form-item>
-        <el-button
-          :loading="loading"
-          type="primary"
-          style="width:100%;"
-          @click.native.prevent="handleLogin"
-        >
+        <el-button :loading="loading" type="primary" style="width:100%;" @click.native.prevent="handleLogin">
           登录
         </el-button>
       </el-form-item>
@@ -80,19 +53,17 @@
         },
         loginRules: {
           username: [
-            {
-              required: true,
-              trigger: "blur",
-              validator: validateUsername
-            }
-          ],
+          {
+            required: true,
+            trigger: "blur",
+            validator: validateUsername
+          }],
           password: [
-            {
-              required: true,
-              trigger: "blur",
-              validator: validatePass
-            }
-          ]
+          {
+            required: true,
+            trigger: "blur",
+            validator: validatePass
+          }]
         },
         loading: false,
         pwdType: "password",
@@ -131,7 +102,7 @@
     },
     watch: {
       $route: {
-        handler: function(route) {
+        handler: function (route) {
           this.redirect = route.query && route.query.redirect;
         },
         immediate: true
