@@ -117,7 +117,6 @@ export default {
         urlType: '', // 跳转地址的类型，内购、品牌馆等
         linkUrl: '', // 点击图片的跳转地址
       },
-      currentComponentIndex: null,
       componentList: [],
       templateList: [
         {
@@ -197,13 +196,6 @@ export default {
           this.componentList.push(itemCopy)
         }
       })
-    },
-    showEditTab(index, isShow) {
-      if (isShow) {
-        this.currentComponentIndex = index
-      } else {
-        this.currentComponentIndex = null
-      }
     },
     componentUp(item, index) {
       this.$set(this.componentList, index, this.componentList[index - 1])

@@ -33,9 +33,9 @@
       <el-col :span="10">
         <div class="grid-left" :style="{backgroundColor: specialTopicInfo.bgColor}">
           <div v-if="componentList.length > 0">
-            <div v-for='(item,index) in componentList' :key="index" class="item" @mouseover="showEditTab(index,true)" @mouseout="showEditTab(index,false)">
+            <div v-for='(item,index) in componentList' :key="index" class="item">
               <component :is='componentName' :config='item' :parentIndex='index' v-on:openDialogModal='openDialogModal'></component>
-              <div class="btn-group" v-show='currentComponentIndex == index'>
+              <div class="btn-group hover-show">
                 <el-row>
                   <el-col :span="8">
                     <el-button type="primary" :disabled='index === 0' @click="componentUp(item,index)">上移</el-button>
@@ -153,6 +153,7 @@ export default edit
 
       .btn-group {
         z-index: 1;
+        display: none;
         position: absolute;
         right: 0;
         top: 50%;
@@ -166,6 +167,9 @@ export default edit
             padding: 5px 10px;
           }
         }
+      }
+      &:hover .hover-show {
+        display: block;
       }
     }
   }
