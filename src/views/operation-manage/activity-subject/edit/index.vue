@@ -55,14 +55,15 @@
             </div>
           </div>
           <div v-else class="no-content">
-            请将右边的组件添加到这里
+            <p class="text">请将右边的组件添加到这里</p>
+            <p class="des">（单机添加按钮或者双击模板图片）</p>
           </div>
         </div>
       </el-col>
       <el-col :span="14">
         <div class="grid-right">
           <el-container v-for="(item,index) in templateList" :key="index">
-            <el-aside width="300px" height="175px" class="img-side">
+            <el-aside width="300px" height="175px" class="img-side" @dblclick.native="addTemplate(item.modularType)">
               <div class="img-div" v-for="(subItem,subIndex) in item.modularType" :key='subIndex'>
                 <img :src="item.imgUrl" alt="">
               </div>
@@ -146,6 +147,9 @@ export default edit
       text-align: center;
       color: #999;
       font-size: 24px;
+      .des {
+        font-size: 18px;
+      }
     }
 
     .item {
@@ -176,7 +180,9 @@ export default edit
 
   .grid-right {
     width: 500px;
-
+    .img-side {
+      cursor: pointer;
+    }
     .el-container {
       height: 175px;
       margin-bottom: 50px;
