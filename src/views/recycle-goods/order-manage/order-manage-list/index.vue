@@ -143,14 +143,18 @@
         >
           <template slot-scope="scope">
             <el-button size="small" type="primary" @click="handleRouter(scope.row.orderNumber)">查看</el-button>
-            <div v-if="scope.row.recoveryState == '3'">
-              <el-button size="small" type="info" @click="handleEdit(scope.row.orderNumber)">修改回收信息</el-button>
-              <el-button
-                size="small"
-                type="success"
-                @click="confirmRecycle(scope.row.orderNumber)"
-              >确认回款</el-button>
-            </div>
+            <el-button
+              size="small"
+              type="info"
+              v-if="scope.row.recoveryState == '3'"
+              @click="handleEdit(scope.row.orderNumber)"
+            >修改回收信息</el-button>
+            <el-button
+              size="small"
+              type="success"
+              v-if="scope.row.recoveryState == '3'"
+              @click="confirmRecycle(scope.row.orderNumber)"
+            >确认回款</el-button>
           </template>
         </el-table-column>
       </el-table>
