@@ -48,7 +48,14 @@
         <el-col :span="12">
           <el-row>
             <el-col :span="6">订单状态:</el-col>
-            <el-col :span="18">{{orderObj.orderState}}</el-col>
+            <el-col :span="18">
+              <order-state :orderState="orderObj.orderState"></order-state>
+              <el-button
+                class="btn"
+                v-if="orderObj.recoveryState == '3'"
+                @click="dialogVisibleEdit = true"
+              >修改回收信息</el-button>
+            </el-col>
           </el-row>
         </el-col>
         <el-col :span="12">
@@ -90,7 +97,7 @@
         <el-col :span="12">
           <el-row>
             <el-col :span="6">销售金额:</el-col>
-            <el-col :span="18">{{orderObj.sellPrice}}</el-col>
+            <el-col :span="18">{{orderObj.sellPrice | fixedNum}}</el-col>
           </el-row>
         </el-col>
         <el-col :span="12">
@@ -104,21 +111,28 @@
         <el-col :span="12">
           <el-row>
             <el-col :span="6">供货金额:</el-col>
-            <el-col :span="18">{{orderObj.supplyPrice}}</el-col>
+            <el-col :span="18">{{orderObj.supplyPrice | fixedNum}}</el-col>
           </el-row>
         </el-col>
         <el-col :span="12">
           <el-row>
             <el-col :span="6">回收状态:</el-col>
-            <el-col :span="18">{{orderObj.recoveryState}}</el-col>
+            <el-col :span="18">
+              <recycle-state :recoveryState="orderObj.recoveryState"></recycle-state>
+              <el-button
+                class="btn"
+                v-if="orderObj.recoveryState == '3'"
+                @click="dialogVisible = true"
+              >确认回款</el-button>
+            </el-col>
           </el-row>
         </el-col>
       </el-row>
       <el-row :gutter="20" class="detail-row">
         <el-col :span="12">
           <el-row>
-            <el-col :span="6">回收发起时间:</el-col>
-            <el-col :span="18">{{orderObj.recoveryTime}}</el-col>
+            <el-col :span="6">实际总金额:</el-col>
+            <el-col :span="18">{{orderObj.actualPrice | fixedNum}}</el-col>
           </el-row>
         </el-col>
         <el-col :span="12">
@@ -128,21 +142,64 @@
           </router-link>
         </el-col>
       </el-row>
+      <el-row :gutter="20" class="detail-row">
+        <el-col :span="12">
+          <el-row>
+            <el-col :span="6">回收发起时间:</el-col>
+            <el-col :span="18">{{orderObj.recoveryTime}}</el-col>
+          </el-row>
+        </el-col>
+      </el-row>
     </div>
+    <!-- 弹窗 start-->
+    <!-- 修改回复信息 -->
+    <edit-dialog
+      :dialogVisibleEdit="dialogVisibleEdit"
+      @handleEditClose="handleEditClose"
+      :userInfo="userInfo"
+    ></edit-dialog>
+    <!-- 确认回款 -->
+    <confirm-dialog
+      :dialogVisible="dialogVisible"
+      @handleClose="handleClose"
+      @handleConfirm="handleConfirm"
+    ></confirm-dialog>
   </div>
 </template>
 
 <script>
 import { RecycleGoodsService } from "@/service";
+import RecycleState from "../components/RecycleState.vue";
+import OrderState from "../components/OrderState.vue";
+import ConfirmDialog from "../components/ConfirmDialog";
+import EditDialog from "../components/EditDialog";
+import { Message } from "element-ui";
 
 export default {
   name: "OrderDetail",
+  components: {
+    RecycleState,
+    OrderState,
+    ConfirmDialog,
+    EditDialog
+  },
+  filters: {
+    fixedNum(num) {
+      if (!num) return 0;
+      return Number(num).toFixed(2);
+    }
+  },
   data() {
     return {
-      orderNumber: this.$route.params.id,
       orderObj: {
         recoveryTime: "",
         orderNumber: ""
+      },
+      dialogVisibleEdit: false,
+      dialogVisible: false,
+      userInfo: {
+        userId: this.$store.state.user.userInfo.name,
+        orderNumber: this.$route.params.id
       }
     };
   },
@@ -153,9 +210,40 @@ export default {
     // 查询订单详情
     async getOrderDetails() {
       const { data } = await RecycleGoodsService.recycleGoodsDetail({
-        orderNumber: this.orderNumber
+        orderNumber: this.userInfo.orderNumber
       });
       this.orderObj = data;
+    },
+
+    // 取消按钮
+    handleClose(v) {
+      this.dialogVisible = v;
+      this.getOrderDetails();
+    },
+
+    // 回款弹窗
+    async handleConfirm(v) {
+      const res = await RecycleGoodsService.recycleConfirmOrder(this.userInfo);
+      this.dialogVisible = v;
+      if (res.data == "SUCCESS") {
+        Message({
+          message: res.info,
+          type: "success",
+          duration: 2 * 1000
+        });
+        this.getOrderDetails();
+      } else {
+        Message({
+          message: res.info,
+          type: "error",
+          duration: 2 * 1000
+        });
+      }
+    },
+
+    // 修改回复信息的 取消按钮
+    handleEditClose(v) {
+      this.dialogVisibleEdit = v;
     }
   }
 };
@@ -165,6 +253,11 @@ export default {
 .order-detail-wapper {
   .detail-row {
     margin-bottom: 2.5rem;
+  }
+  .btn {
+    vertical-align: top;
+    margin-left: 0.5rem;
+    margin-top: -0.7rem;
   }
 }
 </style>

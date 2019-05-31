@@ -9,7 +9,7 @@
 
 <script>
 export default {
-  name: "state-tag-ui",
+  name: "recyclr-state",
   data() {
     return {};
   },
@@ -23,6 +23,7 @@ export default {
 
 <style lang="less" scoped>
 .state-tag-wrapper {
+  display: inline-block;
   .default {
     color: #909399;
   }

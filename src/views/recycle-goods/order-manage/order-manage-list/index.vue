@@ -11,6 +11,7 @@
                 v-model="formObj.orderNumber"
                 placeholder="请输入订单编号"
                 maxlength="40"
+                clearable
                 @keyup.native="onKeyup"
               ></el-input>
             </el-form-item>
@@ -21,7 +22,7 @@
                 v-model="orderTimes"
                 type="daterange"
                 :picker-options="pickerOptions"
-                value-format="yyyy-MM-dd HH:mm:ss"
+                value-format="yyyy-MM-dd"
                 range-separator="至"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
@@ -35,6 +36,7 @@
                 v-model="formObj.groupName"
                 placeholder="请输入企业名称"
                 maxlength="15"
+                clearable
                 @keyup.native="onKeyup"
               ></el-input>
             </el-form-item>
@@ -46,8 +48,9 @@
               <el-input
                 style="width: 100%"
                 v-model="formObj.userId"
-                placeholder="请输入订单编号"
+                placeholder="请输入会员编号"
                 maxlength="40"
+                clearable
                 @keyup.native="onKeyup"
               ></el-input>
             </el-form-item>
@@ -58,7 +61,7 @@
                 v-model="recoveryTime"
                 type="daterange"
                 :picker-options="pickerOptions"
-                value-format="yyyy-MM-dd HH:mm:ss"
+                value-format="yyyy-MM-dd"
                 range-separator="至"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
@@ -93,7 +96,12 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="手机号" prop="userPhone">
-              <el-input style="width: 100%" v-model="formObj.userPhone"></el-input>
+              <el-input
+                style="width: 100%"
+                v-model="formObj.userPhone"
+                placeholder="请输入手机号"
+                clearable
+              ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="3">
@@ -119,10 +127,10 @@
                 v-if="item.value != 'orderState' && item.value != 'recoveryState'"
               >{{scope.row[item.value]}}</span>
               <span v-if="item.value == 'orderState'">
-                <OrderState :orderState="scope.row[item.value]"></OrderState>
+                <order-state :orderState="scope.row[item.value]"></order-state>
               </span>
               <span v-if="item.value == 'recoveryState'">
-                <RecycleState :recoveryState="scope.row[item.value]"></RecycleState>
+                <recycle-state :recoveryState="scope.row[item.value]">{{scope.row[item.label]}}</recycle-state>
               </span>
             </div>
           </template>
@@ -135,12 +143,14 @@
         >
           <template slot-scope="scope">
             <el-button size="small" type="primary" @click="handleRouter(scope.row.orderNumber)">查看</el-button>
-            <el-button size="small" type="info" @click="handleEdit(scope.row.orderNumber)">修改付款信息</el-button>
-            <el-button
-              size="small"
-              type="success"
-              @click="confirmRecycle(scope.row.orderNumber)"
-            >确认回款</el-button>
+            <div v-if="scope.row.recoveryState == '3'">
+              <el-button size="small" type="info" @click="handleEdit(scope.row.orderNumber)">修改回收信息</el-button>
+              <el-button
+                size="small"
+                type="success"
+                @click="confirmRecycle(scope.row.orderNumber)"
+              >确认回款</el-button>
+            </div>
           </template>
         </el-table-column>
       </el-table>
@@ -148,42 +158,35 @@
         v-show="formObj.total > 0"
         :total="formObj.total"
         :page.sync="formObj.pageNum"
-        :limit.sync="formObj.pageSize"
+        :limit.sync="formObj.rowCount"
         @pagination="getRecycleGoodsList"
       />
     </section>
     <!-- 弹窗 start-->
     <!-- 修改回复信息 -->
-    <el-dialog title="修改回付信息" :visible.sync="dialogVisibleEdit" width="30%" center>
-      <el-form :model="forms" key="form2" :rules="rules" ref="ruleForm">
-        <el-form-item label="支付宝姓名" label-width="100px" prop="applyName">
-          <el-input v-model="forms.applyName"></el-input>
-        </el-form-item>
-        <el-form-item label="支付宝账号" label-width="100px" prop="applyAccount">
-          <el-input v-model="forms.applyAccount"></el-input>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisibleEdit = false">取 消</el-button>
-        <el-button type="primary" @click="handleEditUserInfo">确 定</el-button>
-      </span>
-    </el-dialog>
+    <edit-dialog
+      :dialogVisibleEdit="dialogVisibleEdit"
+      @handleEditClose="handleEditClose"
+      :userInfo="userInfo"
+    ></edit-dialog>
     <!-- 确认回款 -->
-    <el-dialog title="确认回款" :visible.sync="dialogVisibl" width="30%" center class="confirm-box">
-      <span class="dialog-text">请再次确认是否汇款</span>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisibl = false">取 消</el-button>
-        <el-button type="primary" @click="handleConfirm">确 定</el-button>
-      </span>
-    </el-dialog>
+    <confirm-dialog
+      :dialogVisible="dialogVisible"
+      @handleClose="handleClose"
+      @handleConfirm="handleConfirm"
+    ></confirm-dialog>
     <!-- 弹窗 end-->
   </div>
 </template>
 
 <script>
 import { RecycleGoodsService } from "@/service";
-import { phoneValid, applyVaild } from "@/common/validateTools";
 import { Message } from "element-ui";
+import { Validate } from "@/common";
+import RecycleState from "../components/RecycleState.vue";
+import OrderState from "../components/OrderState.vue";
+import ConfirmDialog from "../components/ConfirmDialog";
+import EditDialog from "../components/EditDialog";
 
 // 订单状态
 const recycleStateList = [
@@ -199,6 +202,7 @@ const orderStateList = [
   { label: "未支付", value: "0" },
   { label: "已支付", value: "1" },
   { label: "取消", value: "2" },
+  { label: "已退款", value: "5" },
   { label: "全部", value: "" }
 ];
 
@@ -213,6 +217,12 @@ const titleList = [
 
 export default {
   name: "OrderList",
+  components: {
+    RecycleState,
+    OrderState,
+    ConfirmDialog,
+    EditDialog
+  },
   data() {
     return {
       orderTimes: [],
@@ -242,14 +252,14 @@ export default {
         }
       },
       rules: {
-        userPhone: [{ validator: phoneValid, trigger: "change" }],
-        applyName: [
+        userPhone: [{ validator: Validate.phoneValid, trigger: "change" }],
+        alipayName: [
           { required: true, message: "请输入支付宝名称", trigger: "blur" },
           { min: 1, message: "请输入正确名称", trigger: "blur" }
         ],
-        applyAccount: [
+        alipayAccount: [
           {
-            validator: applyVaild,
+            validator: Validate.alipayVaild,
             required: true,
             trigger: "blur"
           }
@@ -258,11 +268,7 @@ export default {
       tableData: [],
       listLoading: false,
       dialogVisibleEdit: false,
-      dialogVisibl: false,
-      forms: {
-        applyName: "",
-        applyAccount: ""
-      },
+      dialogVisible: false,
       userInfo: {
         userId: this.$store.state.user.userInfo.name,
         orderNumber: ""
@@ -285,13 +291,20 @@ export default {
 
     // 根据条件查询列表
     handleGetListByMsg() {
-      if (this.orderTimes.length) {
+      // debugger;
+      if (this.orderTimes && this.orderTimes.length) {
         this.formObj.orderStartTime = this.orderTimes[0];
         this.formObj.orderEndTime = this.orderTimes[1];
+      } else {
+        this.formObj.orderStartTime = "";
+        this.formObj.orderEndTime = "";
       }
-      if (this.recoveryTime.length) {
+      if (this.recoveryTime && this.recoveryTime.length) {
         this.formObj.recoveryStartTime = this.recoveryTime[0];
         this.formObj.recoveryEndTime = this.recoveryTime[1];
+      } else {
+        this.formObj.recoveryStartTime = "";
+        this.formObj.recoveryEndTime = "";
       }
       this.$refs["formObj"].validate(valid => {
         if (valid) {
@@ -312,34 +325,48 @@ export default {
       e.target.value = e.target.value.replace(/[!~@#$%*&()_+\s^]/g, "");
     },
 
-    /**
-     * 查看订单详情
-     *
-     * */
+    // 查看订单详情
     handleRouter(orderNumber) {
       this.$router.push({
         path: `/recycleGoods/orderManage/orderDetail/${orderNumber}`
       });
     },
 
-    /**
-     * 点击按钮确认回款
-     *
-     * */
+    //点击按钮确认回款
     confirmRecycle(orderNumber) {
       this.userInfo.orderNumber = orderNumber;
-      this.dialogVisibl = true;
+      this.dialogVisible = true;
+    },
+
+    // 确认弹框关闭
+    handleClose(v) {
+      this.dialogVisible = v;
+      this.$router.push({
+        path: `/recycleGoods/orderManage/orderDetail/${
+          this.userInfo.orderNumber
+        }`
+      });
+    },
+
+    // 修改回复信息的 取消按钮
+    handleEditClose(v) {
+      this.dialogVisibleEdit = v;
     },
 
     // 回款弹窗
-    async handleConfirm() {
+    async handleConfirm(v) {
       const res = await RecycleGoodsService.recycleConfirmOrder(this.userInfo);
-      this.dialogVisibl = false;
+      this.dialogVisible = v;
       if (res.data == "SUCCESS") {
         Message({
           message: res.info,
           type: "success",
           duration: 2 * 1000
+        });
+        this.$router.push({
+          path: `/recycleGoods/orderManage/orderDetail/${
+            this.userInfo.orderNumber
+          }`
         });
       } else {
         Message({
@@ -348,58 +375,16 @@ export default {
           duration: 2 * 1000
         });
       }
-      this.getRecycleGoodsList();
     },
 
-    /**
-     * 修改回款信息
-     *
-     * */
+    // 修改回款信息
     handleEdit(orderNumber) {
       this.userInfo.orderNumber = orderNumber;
       this.dialogVisibleEdit = true;
-    },
-
-    // 确认 修改回复信息
-    async handleEditUserInfo() {
-      const obj = Object.assign(this.userInfo, this.forms);
-      const res = await RecycleGoodsService.recycleEditOrder(obj);
-      this.$refs["ruleForm"].validate(valid => {
-        if (valid) {
-          this.dialogVisibleEdit = false;
-          if (res.data == "SUCCESS") {
-            Message({
-              message: res.info,
-              type: "success",
-              duration: 2 * 1000
-            });
-          } else {
-            Message({
-              message: res.info,
-              type: "error",
-              duration: 2 * 1000
-            });
-          }
-          this.getRecycleGoodsList();
-        } else {
-          Message({
-            message: "请填写付款信息",
-            type: "warning",
-            duration: 2 * 1000
-          });
-          return false;
-        }
-      });
     }
   }
 };
 </script>
 
 <style lang="less" scoped>
-.confirm-box {
-  text-align: center;
-  .dialog-text {
-    font-size: 1.1rem;
-  }
-}
 </style>
