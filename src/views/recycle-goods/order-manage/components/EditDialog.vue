@@ -10,7 +10,7 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleEditClose">取 消</el-button>
+        <el-button @click="dialogVisibleEdit = false">取 消</el-button>
         <el-button type="primary" @click="handleEditUserInfo">确 定</el-button>
       </span>
     </el-dialog>
@@ -25,13 +25,8 @@ import { Message } from "element-ui";
 export default {
   name: "edit-dialog",
   props: {
-    dialogVisibleEdit: {
-      require: true,
-      type: Boolean
-    },
     userInfo: {
-      type: Object,
-      required: true
+      type: Object
     }
   },
   data() {
@@ -56,22 +51,19 @@ export default {
       forms: {
         alipayName: "",
         alipayAccount: ""
-      }
+      },
+      dialogVisibleEdit: false
     };
   },
   created() {},
   methods: {
-    handleEditClose() {
-      this.$emit("handleEditClose", false);
-    },
-
     // 确认 修改回复信息
     async handleEditUserInfo() {
       const obj = Object.assign(this.userInfo, this.forms);
       const res = await RecycleGoodsService.recycleEditOrder(obj);
       this.$refs["ruleForm"].validate(valid => {
         if (valid) {
-          this.handleEditClose();
+          this.dialogVisibleEdit = false;
           if (res.data == "SUCCESS") {
             Message({
               message: res.info,

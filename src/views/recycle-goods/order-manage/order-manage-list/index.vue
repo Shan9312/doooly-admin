@@ -146,13 +146,13 @@
             <el-button
               size="small"
               type="info"
-              v-if="scope.row.recoveryState == '3'"
+              v-if="scope.row.recoveryState == '3' && scope.row.orderState != '5'"
               @click="handleEdit(scope.row.orderNumber)"
-            >修改回收信息</el-button>
+            >修改付款信息</el-button>
             <el-button
               size="small"
               type="success"
-              v-if="scope.row.recoveryState == '3'"
+              v-if="scope.row.recoveryState == '3' && scope.row.orderState != '5'"
               @click="confirmRecycle(scope.row.orderNumber)"
             >确认回款</el-button>
           </template>
@@ -168,17 +168,9 @@
     </section>
     <!-- 弹窗 start-->
     <!-- 修改回复信息 -->
-    <edit-dialog
-      :dialogVisibleEdit="dialogVisibleEdit"
-      @handleEditClose="handleEditClose"
-      :userInfo="userInfo"
-    ></edit-dialog>
+    <edit-dialog ref="dialogChildEdit" :userInfo="userInfo"></edit-dialog>
     <!-- 确认回款 -->
-    <confirm-dialog
-      :dialogVisible="dialogVisible"
-      @handleClose="handleClose"
-      @handleConfirm="handleConfirm"
-    ></confirm-dialog>
+    <confirm-dialog ref="dialogChildConfirm" :userInfo="userInfo" @handleGetList="handleGetList"></confirm-dialog>
     <!-- 弹窗 end-->
   </div>
 </template>
@@ -271,8 +263,6 @@ export default {
       },
       tableData: [],
       listLoading: false,
-      dialogVisibleEdit: false,
-      dialogVisible: false,
       userInfo: {
         userId: this.$store.state.user.userInfo.name,
         orderNumber: ""
@@ -338,52 +328,17 @@ export default {
     //点击按钮确认回款
     confirmRecycle(orderNumber) {
       this.userInfo.orderNumber = orderNumber;
-      this.dialogVisible = true;
+      this.$refs.dialogChildConfirm.dialogVisible = true;
     },
 
-    // 确认弹框关闭
-    handleClose(v) {
-      this.dialogVisible = v;
-      this.$router.push({
-        path: `/recycleGoods/orderManage/orderDetail/${
-          this.userInfo.orderNumber
-        }`
-      });
-    },
-
-    // 修改回复信息的 取消按钮
-    handleEditClose(v) {
-      this.dialogVisibleEdit = v;
-    },
-
-    // 回款弹窗
-    async handleConfirm(v) {
-      const res = await RecycleGoodsService.recycleConfirmOrder(this.userInfo);
-      this.dialogVisible = v;
-      if (res.data == "SUCCESS") {
-        Message({
-          message: res.info,
-          type: "success",
-          duration: 2 * 1000
-        });
-        this.$router.push({
-          path: `/recycleGoods/orderManage/orderDetail/${
-            this.userInfo.orderNumber
-          }`
-        });
-      } else {
-        Message({
-          message: res.info,
-          type: "error",
-          duration: 2 * 1000
-        });
-      }
+    handleGetList(v) {
+      if (v) this.getRecycleGoodsList();
     },
 
     // 修改回款信息
     handleEdit(orderNumber) {
       this.userInfo.orderNumber = orderNumber;
-      this.dialogVisibleEdit = true;
+      this.$refs.dialogChildEdit.dialogVisibleEdit = true;
     }
   }
 };

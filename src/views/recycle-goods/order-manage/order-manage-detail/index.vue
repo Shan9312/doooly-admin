@@ -50,18 +50,20 @@
             <el-col :span="6">订单状态:</el-col>
             <el-col :span="18">
               <order-state :orderState="orderObj.orderState"></order-state>
-              <el-button
-                class="btn"
-                v-if="orderObj.recoveryState == '3'"
-                @click="dialogVisibleEdit = true"
-              >修改回收信息</el-button>
             </el-col>
           </el-row>
         </el-col>
         <el-col :span="12">
           <el-row>
             <el-col :span="6">支付宝姓名:</el-col>
-            <el-col :span="18">{{orderObj.alipayName}}</el-col>
+            <el-col :span="18">
+              {{orderObj.alipayName}}
+              <el-button
+                class="btn"
+                v-if="orderObj.orderState != '5' && orderObj.recoveryState == '3'"
+                @click="handleChildEdit"
+              >修改付款信息</el-button>
+            </el-col>
           </el-row>
         </el-col>
       </el-row>
@@ -118,11 +120,11 @@
           <el-row>
             <el-col :span="6">回收状态:</el-col>
             <el-col :span="18">
-              <recycle-state :recoveryState="orderObj.recoveryState"></recycle-state>
+              <recycle-state :recoveryState="orderObj.recoveryState" @click="handleChildConfirm"></recycle-state>
               <el-button
                 class="btn"
-                v-if="orderObj.recoveryState == '3'"
-                @click="dialogVisible = true"
+                v-if="orderObj.orderState != '5' && orderObj.recoveryState == '3'"
+                @click="handleChildConfirm"
               >确认回款</el-button>
             </el-col>
           </el-row>
@@ -153,17 +155,9 @@
     </div>
     <!-- 弹窗 start-->
     <!-- 修改回复信息 -->
-    <edit-dialog
-      :dialogVisibleEdit="dialogVisibleEdit"
-      @handleEditClose="handleEditClose"
-      :userInfo="userInfo"
-    ></edit-dialog>
+    <edit-dialog :userInfo="userInfo" ref="dialogEditChild"></edit-dialog>
     <!-- 确认回款 -->
-    <confirm-dialog
-      :dialogVisible="dialogVisible"
-      @handleClose="handleClose"
-      @handleConfirm="handleConfirm"
-    ></confirm-dialog>
+    <confirm-dialog @handleGetList="handleGetList" :userInfo="userInfo" ref="dialogConfirmChild"></confirm-dialog>
   </div>
 </template>
 
@@ -195,8 +189,6 @@ export default {
         recoveryTime: "",
         orderNumber: ""
       },
-      dialogVisibleEdit: false,
-      dialogVisible: false,
       userInfo: {
         userId: this.$store.state.user.userInfo.name,
         orderNumber: this.$route.params.id
@@ -215,35 +207,16 @@ export default {
       this.orderObj = data;
     },
 
-    // 取消按钮
-    handleClose(v) {
-      this.dialogVisible = v;
-      this.getOrderDetails();
+    // 弹出确认按钮
+    handleChildConfirm() {
+      this.$refs.dialogConfirmChild.dialogVisible = true;
     },
-
-    // 回款弹窗
-    async handleConfirm(v) {
-      const res = await RecycleGoodsService.recycleConfirmOrder(this.userInfo);
-      this.dialogVisible = v;
-      if (res.data == "SUCCESS") {
-        Message({
-          message: res.info,
-          type: "success",
-          duration: 2 * 1000
-        });
-        this.getOrderDetails();
-      } else {
-        Message({
-          message: res.info,
-          type: "error",
-          duration: 2 * 1000
-        });
-      }
+    //
+    handleChildEdit() {
+      this.$refs.dialogEditChild.dialogVisibleEdit = true;
     },
-
-    // 修改回复信息的 取消按钮
-    handleEditClose(v) {
-      this.dialogVisibleEdit = v;
+    handleGetList(v) {
+      if (v) this.getOrderDetails();
     }
   }
 };

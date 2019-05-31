@@ -14,24 +14,46 @@
 </template>
 
 <script>
+import { RecycleGoodsService } from "@/service";
+import { Message } from "element-ui";
+
 export default {
   name: "confirm-dialog",
   props: {
-    dialogVisible: {
-      require: true,
-      type: Boolean
+    userInfo: {
+      type: Object,
+      required: true
     }
   },
   data() {
-    return {};
+    return {
+      dialogVisible: false
+    };
   },
   created() {},
   methods: {
     handleClose() {
-      this.$emit("handleClose", false);
+      this.dialogVisible = false;
     },
-    handleConfirm() {
-      this.$emit("handleConfirm", false);
+
+    // 回款弹窗
+    async handleConfirm() {
+      const res = await RecycleGoodsService.recycleConfirmOrder(this.userInfo);
+      this.dialogVisible = false;
+      if (res.data == "SUCCESS") {
+        Message({
+          message: res.info,
+          type: "success",
+          duration: 2 * 1000
+        });
+        this.$emit("handleGetList", true);
+      } else {
+        Message({
+          message: res.info,
+          type: "error",
+          duration: 2 * 1000
+        });
+      }
     }
   }
 };
