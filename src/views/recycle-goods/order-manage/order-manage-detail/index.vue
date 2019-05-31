@@ -131,7 +131,7 @@
       <el-row :gutter="20" class="detail-row">
         <el-col :span="12">
           <el-row>
-            <el-col :span="6">实际总金额:</el-col>
+            <el-col :span="6">实付总金额:</el-col>
             <el-col :span="18">{{orderObj.actualPrice | fixedNum}}</el-col>
           </el-row>
         </el-col>
