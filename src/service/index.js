@@ -6,6 +6,7 @@ import HomeService from './home/home'
 import ReconExcelService from './reconExcel'
 import EnterExcelService from './enterpriseExcel'
 import RecycleGoodsService from './recycle-goods/recycle-goods'
+import SubjectService from './activity-subject/activity-subject'
 
 export {
   LoginService,
@@ -16,4 +17,5 @@ export {
   ReconExcelService,
   EnterExcelService,
   RecycleGoodsService,
+  SubjectService
 }
