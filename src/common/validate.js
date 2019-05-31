@@ -4,7 +4,7 @@ export default {
    * @param {*} str str登录用户名
    */
   isvalidUsername(str) {
-    const valid_map = ['admin', 'financial', 'operation']
+    const valid_map = ['admin', 'financial', 'operation', 'recycle']
     return valid_map.indexOf(str.trim()) >= 0
   },
 
