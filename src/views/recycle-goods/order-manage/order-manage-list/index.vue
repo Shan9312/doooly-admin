@@ -136,7 +136,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          min-width="180"
+          width="120"
           label="操作"
           align="center"
           class-name="small-padding fixed-width"
@@ -146,6 +146,7 @@
             <el-button
               size="small"
               type="info"
+              class="mindle-btn"
               v-if="scope.row.recoveryState == '3' && scope.row.orderState != '5'"
               @click="handleEdit(scope.row.orderNumber)"
             >修改付款信息</el-button>
@@ -345,4 +346,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.app-container {
+  .mindle-btn {
+    margin: 0.2rem 0;
+  }
+}
 </style>

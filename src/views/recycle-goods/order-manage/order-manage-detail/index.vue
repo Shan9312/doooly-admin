@@ -155,7 +155,12 @@
     </div>
     <!-- 弹窗 start-->
     <!-- 修改回复信息 -->
-    <edit-dialog :userInfo="userInfo" ref="dialogEditChild"></edit-dialog>
+    <edit-dialog
+      :userInfo="userInfo"
+      ref="dialogEditChild"
+      :isDetailPage="true"
+      @handleGetDeiatil="handleGetList"
+    ></edit-dialog>
     <!-- 确认回款 -->
     <confirm-dialog @handleGetList="handleGetList" :userInfo="userInfo" ref="dialogConfirmChild"></confirm-dialog>
   </div>

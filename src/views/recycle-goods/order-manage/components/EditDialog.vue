@@ -27,6 +27,9 @@ export default {
   props: {
     userInfo: {
       type: Object
+    },
+    isDetailPage: {
+      type: Boolean
     }
   },
   data() {
@@ -58,30 +61,10 @@ export default {
   created() {},
   methods: {
     // 确认 修改回复信息
-    async handleEditUserInfo() {
-      const obj = Object.assign(this.userInfo, this.forms);
-      const res = await RecycleGoodsService.recycleEditOrder(obj);
+    handleEditUserInfo() {
       this.$refs["ruleForm"].validate(valid => {
         if (valid) {
-          this.dialogVisibleEdit = false;
-          if (res.data == "SUCCESS") {
-            Message({
-              message: res.info,
-              type: "success",
-              duration: 2 * 1000
-            });
-            this.$router.push({
-              path: `/recycleGoods/orderManage/orderDetail/${
-                this.userInfo.orderNumber
-              }`
-            });
-          } else {
-            Message({
-              message: res.info,
-              type: "error",
-              duration: 2 * 1000
-            });
-          }
+          this.sendUserInfo();
         } else {
           Message({
             message: "请填写付款信息",
@@ -91,6 +74,32 @@ export default {
           return;
         }
       });
+    },
+    async sendUserInfo() {
+      const obj = Object.assign(this.userInfo, this.forms);
+      const res = await RecycleGoodsService.recycleEditOrder(obj);
+      this.dialogVisibleEdit = false;
+      if (res.data == "SUCCESS") {
+        Message({
+          message: res.info,
+          type: "success",
+          duration: 2 * 1000
+        });
+        this.$router.push({
+          path: `/recycleGoods/orderManage/orderDetail/${
+            this.userInfo.orderNumber
+          }`
+        });
+        if (this.isDetailPage) {
+          this.$emit("handleGetDeiatil", true);
+        }
+      } else {
+        Message({
+          message: res.info,
+          type: "error",
+          duration: 2 * 1000
+        });
+      }
     }
   }
 };
