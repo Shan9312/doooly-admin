@@ -28,7 +28,7 @@ const recycleRouter = {
     },
     {
       path: 'orderDetail/:id',
-      name: 'OrderDetail',
+      name: 'recycleOrderDetail',
       hidden: true,
       component: () => import( /* webpackChunkName: "recycle" */ '@/views/recycle-goods/order-manage/order-manage-detail/index'),
       meta: { title: '订单详情' },

@@ -3,10 +3,10 @@
     <el-dialog title="修改回收信息" :visible.sync="dialogVisibleEdit" width="30%" center>
       <el-form :model="forms" key="form2" :rules="rules" ref="ruleForm">
         <el-form-item label="支付宝姓名" label-width="100px" prop="alipayName">
-          <el-input v-model="forms.alipayName"></el-input>
+          <el-input v-model="forms.alipayName" maxlength="10"></el-input>
         </el-form-item>
         <el-form-item label="支付宝账号" label-width="100px" prop="alipayAccount">
-          <el-input v-model="forms.alipayAccount"></el-input>
+          <el-input v-model="forms.alipayAccount" maxlength="20"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -39,15 +39,14 @@ export default {
           {
             validator: Validate.alipayNameVaild,
             required: true,
-            trigger: "blur"
-          },
-          { min: 1, max: 10, message: "姓名不能超过10位", trigger: "blur" }
+            trigger: "change"
+          }
         ],
         alipayAccount: [
           {
             validator: Validate.alipayVaild,
             required: true,
-            trigger: "blur"
+            trigger: "change"
           }
         ]
       },
@@ -85,14 +84,15 @@ export default {
           type: "success",
           duration: 2 * 1000
         });
+        if (this.isDetailPage) {
+          this.$emit("handleGetDeiatil", true);
+          return;
+        }
         this.$router.push({
           path: `/recycleGoods/orderManage/orderDetail/${
             this.userInfo.orderNumber
           }`
         });
-        if (this.isDetailPage) {
-          this.$emit("handleGetDeiatil", true);
-        }
       } else {
         Message({
           message: res.info,
