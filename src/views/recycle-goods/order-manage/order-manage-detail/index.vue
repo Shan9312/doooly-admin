@@ -175,7 +175,7 @@ import EditDialog from "../components/EditDialog";
 import { Message } from "element-ui";
 
 export default {
-  name: "OrderDetail",
+  name: "recycleOrderDetail",
   components: {
     RecycleState,
     OrderState,
