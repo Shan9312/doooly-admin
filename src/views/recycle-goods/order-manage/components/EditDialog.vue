@@ -3,10 +3,10 @@
     <el-dialog title="修改回收信息" :visible.sync="dialogVisibleEdit" width="30%" center>
       <el-form :model="forms" key="form2" :rules="rules" ref="ruleForm">
         <el-form-item label="支付宝姓名" label-width="100px" prop="alipayName">
-          <el-input v-model="forms.alipayName" maxlength="10"></el-input>
+          <el-input v-model="forms.alipayName" maxlength="10" clearable></el-input>
         </el-form-item>
         <el-form-item label="支付宝账号" label-width="100px" prop="alipayAccount">
-          <el-input v-model="forms.alipayAccount" maxlength="20"></el-input>
+          <el-input v-model="forms.alipayAccount" maxlength="20" clearable></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -79,6 +79,10 @@ export default {
       const res = await RecycleGoodsService.recycleEditOrder(obj);
       this.dialogVisibleEdit = false;
       if (res.data == "SUCCESS") {
+        this.forms = {
+          alipayName: "",
+          alipayAccount: ""
+        };
         Message({
           message: res.info,
           type: "success",
