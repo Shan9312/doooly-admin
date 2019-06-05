@@ -1,5 +1,5 @@
 const path = require('path')
-const resolve = (dir) => {
+const resolve = dir => {
   return path.join(__dirname, '.', dir)
 }
 
@@ -12,8 +12,7 @@ module.exports = {
     config.module
       .rule('svg-sprite-loader')
       .test(/\.svg$/)
-      .include
-      .add(resolve('src/assets/icons/svg'))
+      .include.add(resolve('src/assets/icons/svg'))
       .end()
       .use('svg-sprite-loader')
       .loader('svg-sprite-loader')
@@ -30,18 +29,19 @@ module.exports = {
   devServer: {
     open: true,
     proxy: {
-      '/': {
-        target: 'http://114.215.198.87:8780/test_reconcili/',
+      // '/': {
+      //   target: 'http://114.215.198.87:8780/test_reconcili/',
+      //   ws: false,
+      //   changeOrigin: true,
+      //   // pathRewrite: { "^/pro_reconcili": "" }
+      // },
+      '/subject': {
+        target: 'http://114.215.198.87:8781/dev_reconcili/',
         ws: false,
         changeOrigin: true,
-        // pathRewrite: { "^/pro_reconcili": "" }
-      },
-      // '/': {
-      //   target: 'http://192.168.1.245:8082',
-      //   ws: false,
-      //   changeOrigin: true
-      // }
-    },
+        pathRewrite: { '^/subject': '' }
+      }
+    }
   },
-  publicPath: ''
+  publicPath: '/'
 }

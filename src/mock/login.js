@@ -1,30 +1,31 @@
 import { Utils } from '@/common'
 
 const userMap = [
-{
-  id: 1,
-  name: 'admin',
-  pwd: 'doooly@2019',
-  token: 'token_admin',
-  avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-  roles: ['admin']
-},
-{
-  id: 2,
-  name: 'financial',
-  pwd: 'financial@2019',
-  token: 'token_financial',
-  avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-  roles: ['financial']
-},
-{
-  id: 3,
-  name: 'operation',
-  pwd: 'operation@2019',
-  token: 'token_operation',
-  avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-  roles: ['operation']
-}]
+  {
+    id: 1,
+    name: 'admin',
+    pwd: 'doooly@2019',
+    token: 'token_admin',
+    avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
+    roles: ['admin']
+  },
+  {
+    id: 2,
+    name: 'financial',
+    pwd: 'financial@2019',
+    token: 'token_financial',
+    avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
+    roles: ['financial']
+  },
+  {
+    id: 3,
+    name: 'operation',
+    pwd: 'operation@2019',
+    token: 'token_operation',
+    avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
+    roles: ['operation']
+  }
+]
 
 const data = {
   code: 200,

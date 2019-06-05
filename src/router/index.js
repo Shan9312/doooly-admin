@@ -7,7 +7,6 @@ import Layout from '@/views/layout'
 import reconRouter from './modules/recon'
 import operationRouter from './modules/operation'
 
-
 /**
 * hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
 * alwaysShow: true               if set true, will always show the root menu, whatever its child routes length
@@ -79,7 +78,7 @@ export const asyncRouterMap = [
 ]
 
 export default new VueRouter({
-  mode: 'history',
+  mode: process.env.NODE_ENV == 'production' ? 'history' : 'hash',
   // base: '/reconcili/',
   routes: constantRouterMap,
   scrollBehavior: () => ({
