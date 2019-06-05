@@ -300,6 +300,7 @@ export default {
         this.formObj.recoveryStartTime = "";
         this.formObj.recoveryEndTime = "";
       }
+      this.formObj.pageNum = 1;
       this.$refs["formObj"].validate(valid => {
         if (valid) {
           this.getRecycleGoodsList();
