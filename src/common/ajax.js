@@ -25,17 +25,17 @@ const ajax = (method, url, data, options = {}) => {
   }
 
   return axios.request(options).then(res => {
-    const data = res.data;
-    if (data.code == 200) {
-      return Promise.resolve(data)
-    } else {
-      Message({
-        message: data.info || '服务器出错了',
-        type: 'error',
-        duration: 2 * 1000
-      })
-    }
-  })
+      const data = res.data;
+      if (data.code == 200) {
+        return Promise.resolve(data)
+      } else {
+        Message({
+          message: data.info || '服务器出错了',
+          type: 'error',
+          duration: 2 * 1000
+        })
+      }
+    })
     .catch(err => {
       console.log('err' + err)
       Message({

@@ -6,6 +6,7 @@ Vue.use(VueRouter)
 import Layout from '@/views/layout'
 import reconRouter from './modules/recon'
 import operationRouter from './modules/operation'
+import recycleRouter from './modules/recycle'
 
 /**
 * hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
@@ -70,6 +71,7 @@ export const constantRouterMap = [
 export const asyncRouterMap = [
   reconRouter,
   operationRouter,
+  recycleRouter,
   {
     path: '*',
     redirect: '/404',
