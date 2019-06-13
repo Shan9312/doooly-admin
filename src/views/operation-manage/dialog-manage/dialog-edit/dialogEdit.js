@@ -25,22 +25,34 @@ export default {
         callback()
       }
     }
+    const generateData = _ => {
+      const data = []
+      const cities = ['上海', '北京', '广州', '深圳', '南京', '西安', '成都']
+      cities.forEach((city, index) => {
+        data.push({
+          label: city,
+          key: index
+        })
+      })
+      return data
+    }
     return {
       actionUrl: process.env.VUE_APP_URL + '/fileUpload',
       loading: false,
+      companyData: generateData(),
       specialTopicInfo: {
         id: this.$route.params.id,
         title: '',
-        status: '1', // 下架状态 1.限时 2.永久
         endDate: '' // 下架时间
       },
-      modalImg: {
-        url: '',
+      modalData: {
+        status: '1', // 下架状态 1.限时 2.永久
+        companyVal: [],
+        imgUrl: '',
         linkUrl: '' // 点击图片的跳转地址
       },
-      componentList: [],
       editImgRules: {
-        url: [{ required: true, message: '请选择图片', trigger: 'change' }],
+        imgUrl: [{ required: true, message: '请选择图片', trigger: 'change' }],
         linkUrl: [{ validator: validateLinkUrl, trigger: 'blur' }]
       },
       specialTopicInfoRules: {
@@ -60,7 +72,6 @@ export default {
         let data = res.data
         this.specialTopicInfo = {
           title: data.specialTopicInfo.title,
-          status: data.specialTopicInfo.status === 1 ? '1' : '2',
           endDate: data.specialTopicInfo.endDate,
           id: data.specialTopicInfo.id
         }
@@ -68,7 +79,7 @@ export default {
     },
     beforeImgUpload(file) {
       const isJPG = file.type == 'image/jpeg' || file.type == 'image/png'
-      const isLt3M = file.size / 1024 / 1024 <= 3
+      const isLt3M = file.size / 1024 <= 500
       this.loading = true
       if (!isJPG) {
         this.loading = false
@@ -76,13 +87,13 @@ export default {
       }
       if (!isLt3M) {
         this.loading = false
-        this.$message.error('上传图片大小不能超过3MB!')
+        this.$message.error('上传图片大小不能超过500kb!')
       }
       return isJPG && isLt3M
     },
     handleImgSuccess(res, file) {
       if (res.data) {
-        this.$set(this.modalImg, 'url', res.data[0])
+        this.$set(this.modalData, 'imgUrl', res.data[0])
         this.loading = false
       }
     },
@@ -93,26 +104,7 @@ export default {
     async handleSaveSubject() {
       const topicRef = this.$refs['topicRef']
       const editImgRef = this.$refs['editImgRef']
-      // this.$refs['topicRef'].validate(async valid => {
-      //   const validateImg = await this.$refs['editImgRef'].validate(valid => {
-      //     if (!valid) return false
-      //     return true
-      //   })
-      //   debugger
-      //   if (!valid) return false
-      //   if (!validateImg) return false
-      //   debugger
-      //   let specialTopicInfo = { ...this.specialTopicInfo }
-      //   specialTopicInfo.status = Number(specialTopicInfo.status)
-      //   const res = await SubjectService.updateSpecialTopic([...this.componentList], { ...specialTopicInfo })
-      //   if (res && res.data) {
-      //     this.$message({
-      //       type: 'success',
-      //       message: '保存成功!'
-      //     })
-      //     this.$router.push('/operationManage/dialogEdit')
-      //   }
-      // })
+
       Promise.all([topicRef, editImgRef].map(this.getFormPromise)).then(res => {
         const validateResult = res.every(item => !!item)
         if (validateResult) {

@@ -7,7 +7,7 @@
             <el-input v-model="specialTopicInfo.title" minlength="1" maxlength='10' placeholder="请输入弹窗名称" style="width: 220px;"></el-input>
           </el-form-item>
         </el-col>
-        <el-col :span="10">
+        <el-col :span="12">
           <el-button type="primary" class="save-btn" @click="handleSaveSubject">保存</el-button>
         </el-col>
       </el-row>
@@ -18,39 +18,47 @@
             </el-date-picker>
           </el-form-item>
         </el-col>
-        <el-col :span="10">
+        <el-col :span="12">
           <el-form-item prop="endDate" label="失效时间">
             <el-date-picker v-model="specialTopicInfo.endDate" type="datetime" :editable='false' value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间">
             </el-date-picker>
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row>
-        <el-col>
-          <el-form-item label="弹窗用户" prop="status">
-            <el-radio v-model="specialTopicInfo.status" label=1>全部用户</el-radio>
-            <el-radio v-model="specialTopicInfo.status" label=2>企业</el-radio>
-            <el-radio v-model="specialTopicInfo.status" label=3>指定用户</el-radio>
-          </el-form-item>
-        </el-col>
-      </el-row>
+
     </el-form>
     <section class="dialog-con">
-      <p class="text">弹窗图片设置（图片600*600 支持PNG JPG）</p>
-      <el-form label-width='85px' ref="editImgRef" :model="modalImg" :rules="editImgRules">
-        <el-form-item class="dialog-img" prop="url">
-          <el-upload class="avatar-uploader" v-loading="loading" :action="actionUrl" drag :show-file-list="false" :before-upload="beforeImgUpload" :on-success="handleImgSuccess" :on-error="handleImgError">
-            <img v-if="modalImg.url" :src="modalImg.url" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-          </el-upload>
-        </el-form-item>
-        <el-form-item label="跳转地址" required>
-          <el-col :span="12">
-            <el-form-item prop="linkUrl" style="width: 300px;">
-              <el-input v-model="modalImg.linkUrl" placeholder="请输入正确的链接地址" clearable></el-input>
+      <el-form label-width='85px' ref="editImgRef" :model="modalData" :rules="editImgRules">
+        <el-row>
+          <el-col :span="10" min-width="50%">
+            <p class="text">弹窗图片设置（图片600*600 支持PNG JPG）</p>
+            <el-form-item class="dialog-img" prop="imgUrl">
+              <el-upload class="avatar-uploader" v-loading="loading" :action="actionUrl" drag :show-file-list="false" :before-upload="beforeImgUpload" :on-success="handleImgSuccess" :on-error="handleImgError">
+                <img v-if="modalData.imgUrl" :src="modalData.imgUrl" class="avatar">
+                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+              </el-upload>
+            </el-form-item>
+            <el-form-item label="跳转地址" required>
+              <el-col :span="12">
+                <el-form-item prop="linkUrl" style="width: 300px;">
+                  <el-input v-model="modalData.linkUrl" placeholder="请输入正确的链接地址" clearable></el-input>
+                </el-form-item>
+              </el-col>
             </el-form-item>
           </el-col>
-        </el-form-item>
+
+          <el-col :span="12" min-width="50%">
+            <el-form-item label="弹窗用户" prop="status">
+              <el-radio v-model="modalData.status" label=1>全部用户</el-radio>
+              <el-radio v-model="modalData.status" label=2>企业</el-radio>
+              <el-radio v-model="modalData.status" label=3>指定用户</el-radio>
+            </el-form-item>
+
+            <el-form-item label="参与企业" required>
+              <el-transfer filterable :titles="['未选择企业', '已选择企业']" v-model="modalData.companyVal" :data="companyData"></el-transfer>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
     </section>
   </div>
@@ -81,7 +89,7 @@ export default dialogEdit
     .text {
       text-indent: 17px;
       padding: 0;
-      margin: 0;
+      margin: 10px 0;
     }
     .dialog-img {
       width: 300px;
