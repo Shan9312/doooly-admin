@@ -4,10 +4,10 @@ export default {
    *
    * @param {页码} pageNum
    * @param {每页数量} pageSize
-   * @param {上下架状态 0.上架 1.下架} status
+   * @param {上下架状态 true.上架 false.下架} onShelf
    */
-  getHomePageList(pageNum, pageSize, status) {
-    return Ajax.get('/homepage/spread/page', { pageNum, pageSize, status })
+  getHomePageList(pageNum, pageSize, onShelf) {
+    return Ajax.get('/homepage/spread/page', { pageNum, pageSize, onShelf })
   },
   createHomePage(pageData) {
     return Ajax.post('/homepage/spread/insert', pageData)

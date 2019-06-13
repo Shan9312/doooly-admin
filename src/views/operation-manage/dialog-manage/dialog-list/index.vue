@@ -8,7 +8,7 @@
         <el-form>
           <el-form-item label="上架状态：">
             <el-col :span="9">
-              <el-select v-model="search.status" placeholder="请选择查询状态">
+              <el-select v-model="search.onShelf" placeholder="请选择查询状态">
                 <el-option v-for="(item,index) in shelfOptions" :key="index" :label="item.label" :value="item.value">
                 </el-option>
               </el-select>

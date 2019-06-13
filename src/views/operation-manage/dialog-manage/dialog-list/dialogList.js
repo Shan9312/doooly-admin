@@ -48,7 +48,7 @@ export default {
       search: {
         pageNum: 1,
         pageSize: 10,
-        status: '' // 上架状态 0.上架 1.下架 不传是全部
+        onShelf: '' // 上架状态 0.上架 1.下架 不传是全部
       },
       dialogModalVisible: false,
       specialTopicInfo: {
@@ -80,8 +80,8 @@ export default {
   },
   methods: {
     async getSubjectList() {
-      let { pageNum, pageSize, status } = this.search
-      let data = await DialogService.getHomePageList(pageNum, pageSize, status)
+      let { pageNum, pageSize, onShelf } = this.search
+      let data = await DialogService.getHomePageList(pageNum, pageSize, onShelf)
       console.log(data)
       if (data && data.data && data.data.list) {
         this.tableData = data.data.list
