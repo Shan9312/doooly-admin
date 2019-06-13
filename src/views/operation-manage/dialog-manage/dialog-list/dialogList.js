@@ -1,4 +1,4 @@
-import { SubjectService } from '@/service'
+import { DialogService } from '@/service'
 const titleList = [
   {
     prop: 'id',
@@ -6,23 +6,28 @@ const titleList = [
     width: '180'
   },
   {
-    prop: 'title',
+    prop: 'name',
     label: '弹窗名称',
     width: '180'
   },
   {
-    prop: 'shelfStatus',
+    prop: 'status',
     label: '弹窗状态',
     width: '100'
   },
   {
-    prop: 'updateDate',
+    prop: 'createDate',
     label: '创建时间',
     width: '200'
   },
   {
-    prop: 'updateDate',
+    prop: 'startDate',
     label: '生效时间',
+    width: '200'
+  },
+  {
+    prop: 'endDate',
+    label: '失效时间',
     width: '200'
   }
 ]
@@ -42,13 +47,14 @@ export default {
       total: 0,
       search: {
         pageNum: 1,
-        pageSize: 10
+        pageSize: 10,
+        status: '' // 上架状态 0.上架 1.下架 不传是全部
       },
       dialogModalVisible: false,
       specialTopicInfo: {
         status: '1', // 下架状态 1.限时 2.永久
         endDate: '', // 下架时间
-        shelfStatus: '' // 上架状态 1.上架 2.下架 不传是全部
+        shelfStatus: ''
       },
       currentRowData: {},
       putOnRules: {
@@ -60,11 +66,11 @@ export default {
           label: '全部'
         },
         {
-          value: '1',
+          value: '0',
           label: '上架'
         },
         {
-          value: '2',
+          value: '1',
           label: '下架'
         }
       ]
@@ -75,10 +81,11 @@ export default {
   },
   methods: {
     async getSubjectList() {
-      let { pageNum, pageSize, shelfStatus } = this.search
-      let data = await SubjectService.getSubjectList(pageNum, pageSize, shelfStatus)
-      if (data && data.data && data.data.specialTopicList) {
-        this.tableData = data.data.specialTopicList
+      let { pageNum, pageSize, status } = this.search
+      let data = await DialogService.getHomePageList(pageNum, pageSize, status)
+      console.log(data)
+      if (data && data.data && data.data.list) {
+        this.tableData = data.data.list
         this.total = data.data.total
       }
     },
@@ -106,7 +113,7 @@ export default {
       })
 
       if (res === 'confirm') {
-        let data = await SubjectService.deleteSubject(endDate, id, status, 2)
+        let data = await DialogService.deleteSubject(endDate, id, status, 2)
         if (data && data.data) {
           this.$message({
             type: 'success',
@@ -124,7 +131,7 @@ export default {
     async putOnShelf() {
       this.$refs['putOnRef'].validate(async valid => {
         if (!valid) return
-        let data = await SubjectService.deleteSubject(this.specialTopicInfo.endDate, this.currentRowData.id, Number(this.specialTopicInfo.status), 1)
+        let data = await DialogService.deleteSubject(this.specialTopicInfo.endDate, this.currentRowData.id, Number(this.specialTopicInfo.status), 1)
         if (data && data.data) {
           this.$message({
             type: 'success',

@@ -8,7 +8,7 @@
         <el-form>
           <el-form-item label="上架状态：">
             <el-col :span="9">
-              <el-select v-model="search.shelfStatus" placeholder="请选择查询状态">
+              <el-select v-model="search.status" placeholder="请选择查询状态">
                 <el-option v-for="(item,index) in shelfOptions" :key="index" :label="item.label" :value="item.value">
                 </el-option>
               </el-select>
@@ -24,9 +24,9 @@
     <el-table stripe :data="tableData" border style="width: 100%">
       <el-table-column v-for='(item,index) in titleList' :key="index" :prop="item.prop" :label="item.label" :min-width="item.width">
         <template slot-scope="scope">
-          <div v-if="item.prop == 'shelfStatus'">
-            <span v-if='scope.row.shelfStatus ===  1'>上架</span>
-            <span v-if='scope.row.shelfStatus ===  2'>下架</span>
+          <div v-if="item.prop == 'status'">
+            <span v-if='scope.row.status ===  0'>上架</span>
+            <span v-if='scope.row.status === 1'>下架</span>
           </div>
           <div v-else>
             {{scope.row[item.prop]}}
@@ -36,8 +36,8 @@
       <el-table-column label="操作" width="200px">
         <template slot-scope="scope">
           <el-button size="mini" @click="handleEdit(scope.row.id)">编辑/查看</el-button>
-          <el-button size="mini" type="success" v-if="scope.row.shelfStatus === 2" @click="handleShelf(scope.row)">上架</el-button>
-          <el-button size="mini" type="danger" v-if="scope.row.shelfStatus === 1" @click="handleShelf(scope.row)">下架</el-button>
+          <el-button size="mini" type="success" v-if="scope.row.status === 1" @click="handleShelf(scope.row)">上架</el-button>
+          <el-button size="mini" type="danger" v-if="scope.row.status === 0" @click="handleShelf(scope.row)">下架</el-button>
         </template>
       </el-table-column>
     </el-table>
