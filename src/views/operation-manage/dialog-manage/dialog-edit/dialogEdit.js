@@ -111,11 +111,11 @@ export default {
         console.log(this.modalData)
         const { id, name, startDate, endDate, imageUrl, formUrl, type } = this.modalData
         let response = null
-        if (id) {
-          // 有id代表修改
-          response = await DialogService.updateHomePage({ id, name, startDate, endDate, imageUrl, formUrl, type })
-        } else {
+        if (id == 'null') {
+          // 新增
           response = await DialogService.createHomePage({ name, startDate, endDate, imageUrl, formUrl, type })
+        } else {
+          response = await DialogService.updateHomePage({ id, name, startDate, endDate, imageUrl, formUrl, type })
         }
         if (response) {
           this.$router.push('/operationManage/dialogList')
