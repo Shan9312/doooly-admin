@@ -11,7 +11,7 @@ const titleList = [
     width: '180'
   },
   {
-    prop: 'status',
+    prop: 'onShelf',
     label: '弹窗状态',
     width: '100'
   },
@@ -35,7 +35,7 @@ export default {
   name: 'DialogList',
   data() {
     let validateEndDate = (rule, value, callback) => {
-      if (this.specialTopicInfo.status == 1 && !value) {
+      if (this.specialTopicInfo.onShelf == 1 && !value) {
         callback(new Error('请选择时间'))
       } else {
         callback()
@@ -52,9 +52,8 @@ export default {
       },
       dialogModalVisible: false,
       specialTopicInfo: {
-        status: '1', // 下架状态 1.限时 2.永久
         endDate: '', // 下架时间
-        shelfStatus: ''
+        onShelf: ''
       },
       currentRowData: {},
       putOnRules: {
@@ -90,17 +89,17 @@ export default {
       }
     },
     async handleShelf(objectData) {
-      if (objectData.shelfStatus == 1) {
+      if (objectData.onShelf == 1) {
         console.log('需要下架')
         this.pullOffShelf(objectData)
-      } else if (objectData.shelfStatus == 2) {
+      } else if (objectData.onShelf == 2) {
         this.resetFields('putOnRef')
         this.dialogModalVisible = true
         this.currentRowData = objectData
       }
     },
     async pullOffShelf(objectData) {
-      const { endDate, id, status } = objectData
+      const { endDate, id, onShelf } = objectData
       let res = await this.$confirm('确认下架专题, 是否继续?', '下架专题页', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -113,7 +112,7 @@ export default {
       })
 
       if (res === 'confirm') {
-        let data = await DialogService.deleteSubject(endDate, id, status, 2)
+        let data = await DialogService.deleteSubject(endDate, id, onShelf, 2)
         if (data && data.data) {
           this.$message({
             type: 'success',
@@ -131,7 +130,7 @@ export default {
     async putOnShelf() {
       this.$refs['putOnRef'].validate(async valid => {
         if (!valid) return
-        let data = await DialogService.deleteSubject(this.specialTopicInfo.endDate, this.currentRowData.id, Number(this.specialTopicInfo.status), 1)
+        let data = await DialogService.deleteSubject(this.specialTopicInfo.endDate, this.currentRowData.id, Number(this.specialTopicInfo.onShelf), 1)
         if (data && data.data) {
           this.$message({
             type: 'success',

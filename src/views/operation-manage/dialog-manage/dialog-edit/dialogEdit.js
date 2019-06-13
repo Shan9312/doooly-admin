@@ -1,16 +1,16 @@
-import { SubjectService } from '@/service'
+import { DialogService } from '@/service'
 import { Validate } from '@/common'
 export default {
   name: 'DialogEdit',
   data() {
     let validateLinkUrl = (rule, value, callback) => {
-      if (!Validate.isUrl(value)) {
+      if (value && !Validate.isUrl(value)) {
         callback(new Error('请输入正确的链接地址'))
       } else {
         callback()
       }
     }
-    let validateEndDate = (rule, value, callback) => {
+    let validateDate = (rule, value, callback) => {
       if (!value) {
         callback(new Error('请选择时间'))
       } else {
@@ -40,40 +40,42 @@ export default {
       actionUrl: process.env.VUE_APP_URL + '/fileUpload',
       loading: false,
       companyData: generateData(),
-      specialTopicInfo: {
-        id: this.$route.params.id,
-        title: '',
-        endDate: '' // 下架时间
-      },
       modalData: {
-        status: '1', // 下架状态 1.限时 2.永久
+        id: this.$route.params.id,
+        name: '',
+        startDate: '', // 生效时间
+        endDate: '', // 失效时间
+        type: '1', // 弹窗类型 1全部用户 2企业 3指定用户
         companyVal: [],
-        imgUrl: '',
-        linkUrl: '' // 点击图片的跳转地址
+        imageUrl: '',
+        formUrl: '' // 点击图片的跳转地址
       },
-      editImgRules: {
-        imgUrl: [{ required: true, message: '请选择图片', trigger: 'change' }],
-        linkUrl: [{ validator: validateLinkUrl, trigger: 'blur' }]
-      },
-      specialTopicInfoRules: {
-        title: [{ required: true, validator: validateTitle, trigger: 'blur' }],
-        endDate: [{ required: true, validator: validateEndDate, trigger: 'blur' }]
+      editRules: {
+        name: [{ required: true, validator: validateTitle, trigger: 'blur' }],
+        startDate: [{ required: true, validator: validateDate, trigger: 'blur' }],
+        endDate: [{ required: true, validator: validateDate, trigger: 'blur' }],
+        imageUrl: [{ required: true, message: '请选择图片', trigger: 'change' }],
+        formUrl: [{ validator: validateLinkUrl, trigger: 'blur' }]
       }
     }
   },
   created() {
-    if (this.specialTopicInfo.id == 'null') return
-    this.getSubjectDetail()
+    if (this.modalData.id == 'null') return
+    this.getPageDetail()
   },
   methods: {
-    async getSubjectDetail() {
-      const res = await SubjectService.subjectDetail(this.specialTopicInfo.id)
+    async getPageDetail() {
+      const res = await DialogService.getPageDetail(this.modalData.id)
       if (res && res.data) {
         let data = res.data
-        this.specialTopicInfo = {
-          title: data.specialTopicInfo.title,
-          endDate: data.specialTopicInfo.endDate,
-          id: data.specialTopicInfo.id
+        this.modalData = {
+          id: this.$route.params.id,
+          name: data.name,
+          startDate: data.startDate, // 生效时间
+          endDate: data.endDate, // 失效时间
+          type: data.type.toString(), // 弹窗类型 1全部用户 2企业 3指定用户
+          imageUrl: data.imageUrl,
+          formUrl: data.formUrl // 点击图片的跳转地址
         }
       }
     },
@@ -93,7 +95,7 @@ export default {
     },
     handleImgSuccess(res, file) {
       if (res.data) {
-        this.$set(this.modalData, 'imgUrl', res.data[0])
+        this.$set(this.modalData, 'imageUrl', res.data[0])
         this.loading = false
       }
     },
@@ -102,15 +104,21 @@ export default {
       this.$message.error('上传图片失败，请重新上传！')
     },
     async handleSaveSubject() {
-      const topicRef = this.$refs['topicRef']
-      const editImgRef = this.$refs['editImgRef']
-
-      Promise.all([topicRef, editImgRef].map(this.getFormPromise)).then(res => {
+      const dialogRef = this.$refs['dialogRef']
+      Promise.all([dialogRef].map(this.getFormPromise)).then(async res => {
         const validateResult = res.every(item => !!item)
-        if (validateResult) {
-          console.log('两个表单都校验通过')
+        if (!validateResult) return
+        console.log(this.modalData)
+        const { id, name, startDate, endDate, imageUrl, formUrl, type } = this.modalData
+        let response = null
+        if (id) {
+          // 有id代表修改
+          response = await DialogService.updateHomePage({ id, name, startDate, endDate, imageUrl, formUrl, type })
         } else {
-          console.log('两个表单未校验通过')
+          response = await DialogService.createHomePage({ name, startDate, endDate, imageUrl, formUrl, type })
+        }
+        if (response) {
+          this.$router.push('/operationManage/dialogList')
         }
       })
     },
