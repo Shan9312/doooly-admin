@@ -34,8 +34,8 @@ const titleList = [
 export default {
   name: 'DialogList',
   data() {
-    let validateEndDate = (rule, value, callback) => {
-      if (this.specialTopicInfo.onShelf == 1 && !value) {
+    let validateDate = (rule, value, callback) => {
+      if (!value) {
         callback(new Error('请选择时间'))
       } else {
         callback()
@@ -51,13 +51,14 @@ export default {
         onShelf: '' // 上架状态 0.上架 1.下架 不传是全部
       },
       dialogModalVisible: false,
-      specialTopicInfo: {
+      dialogInfo: {
         endDate: '', // 下架时间
-        onShelf: ''
+        startDate: '' // 上架时间
       },
       currentRowData: {},
       putOnRules: {
-        endDate: [{ required: true, validator: validateEndDate, trigger: 'blur' }]
+        startDate: [{ required: true, validator: validateDate, trigger: 'blur' }],
+        endDate: [{ required: true, validator: validateDate, trigger: 'blur' }]
       },
       shelfOptions: [
         {
@@ -76,30 +77,29 @@ export default {
     }
   },
   created() {
-    this.getSubjectList()
+    this.getHomePageList()
   },
   methods: {
-    async getSubjectList() {
+    async getHomePageList() {
       let { pageNum, pageSize, onShelf } = this.search
       let data = await DialogService.getHomePageList(pageNum, pageSize, onShelf)
-      console.log(data)
       if (data && data.data && data.data.list) {
         this.tableData = data.data.list
         this.total = data.data.total
       }
     },
     async handleShelf(objectData) {
-      if (objectData.onShelf == 1) {
+      if (objectData.onShelf) {
         console.log('需要下架')
         this.pullOffShelf(objectData)
-      } else if (objectData.onShelf == 2) {
+      } else {
         this.resetFields('putOnRef')
         this.dialogModalVisible = true
         this.currentRowData = objectData
       }
     },
     async pullOffShelf(objectData) {
-      const { endDate, id, onShelf } = objectData
+      const { id, onShelf } = objectData
       let res = await this.$confirm('确认下架专题, 是否继续?', '下架专题页', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -112,13 +112,13 @@ export default {
       })
 
       if (res === 'confirm') {
-        let data = await DialogService.deleteSubject(endDate, id, onShelf, 2)
-        if (data && data.data) {
+        let data = await DialogService.updateHomePage({ id, onShelf: !onShelf })
+        if (data && data.code == 200) {
           this.$message({
             type: 'success',
-            message: '下架架成功!'
+            message: '下架成功!'
           })
-          this.getSubjectList()
+          this.getHomePageList()
         } else {
           this.$message({
             type: 'error',
@@ -130,14 +130,16 @@ export default {
     async putOnShelf() {
       this.$refs['putOnRef'].validate(async valid => {
         if (!valid) return
-        let data = await DialogService.deleteSubject(this.specialTopicInfo.endDate, this.currentRowData.id, Number(this.specialTopicInfo.onShelf), 1)
-        if (data && data.data) {
+        let { startDate, endDate } = this.dialogInfo
+        let { id, onShelf } = this.currentRowData
+        let data = await DialogService.updateHomePage({ id, onShelf, startDate, endDate })
+        if (data && data.code == 200) {
           this.$message({
             type: 'success',
             message: '上架成功!'
           })
           this.dialogModalVisible = false
-          this.getSubjectList()
+          this.getHomePageList()
         }
       })
     },
@@ -146,7 +148,7 @@ export default {
     },
     handleSearch() {
       this.search.pageNum = 1 // 如果是点击查询，则页码需要重置，否则可能没数据
-      this.getSubjectList()
+      this.getHomePageList()
     },
     resetFields(formName) {
       if (!this.$refs[formName]) return

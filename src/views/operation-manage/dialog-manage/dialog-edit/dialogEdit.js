@@ -25,7 +25,7 @@ export default {
         callback()
       }
     }
-    const generateData = _ => {
+    const generateData = () => {
       const data = []
       const cities = ['上海', '北京', '广州', '深圳', '南京', '西安', '成都']
       cities.forEach((city, index) => {
@@ -81,17 +81,17 @@ export default {
     },
     beforeImgUpload(file) {
       const isJPG = file.type == 'image/jpeg' || file.type == 'image/png'
-      const isLt3M = file.size / 1024 <= 500
+      const isLt500k = file.size / 1024 <= 500
       this.loading = true
       if (!isJPG) {
         this.loading = false
         this.$message.error('上传图片只能是PNG、JPG格式!')
       }
-      if (!isLt3M) {
+      if (!isLt500k) {
         this.loading = false
         this.$message.error('上传图片大小不能超过500kb!')
       }
-      return isJPG && isLt3M
+      return isJPG && isLt500k
     },
     handleImgSuccess(res, file) {
       if (res.data) {
@@ -123,6 +123,7 @@ export default {
       })
     },
     getFormPromise(form) {
+      // 多个form表单校验
       return new Promise(resolve => {
         form.validate(res => {
           resolve(res)

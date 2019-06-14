@@ -42,13 +42,13 @@
       </el-table-column>
     </el-table>
     <el-dialog title="上架编辑页" :visible.sync="dialogModalVisible">
-      <el-form label-width='85px' :model="specialTopicInfo" :rules="putOnRules" ref="putOnRef">
-        <el-form-item label="状态" prop="onShelf">
-          <el-radio v-model="specialTopicInfo.onShelf" label=1>限时下架</el-radio>
-          <el-radio v-model="specialTopicInfo.onShelf" label=2>永久</el-radio>
+      <el-form label-width='85px' :model="dialogInfo" :rules="putOnRules" ref="putOnRef">
+        <el-form-item label="生效时间" prop="startDate">
+          <el-date-picker v-model="dialogInfo.startDate" type="datetime" :editable='false' value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间">
+          </el-date-picker>
         </el-form-item>
-        <el-form-item v-show="specialTopicInfo.onShelf" label="时间" prop="endDate">
-          <el-date-picker v-model="specialTopicInfo.endDate" type="datetime" :editable='false' value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间">
+        <el-form-item label="失效时间" prop="endDate">
+          <el-date-picker v-model="dialogInfo.endDate" type="datetime" :editable='false' value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间">
           </el-date-picker>
         </el-form-item>
       </el-form>
@@ -58,7 +58,7 @@
       </span>
 
     </el-dialog>
-    <pagination v-show="total > search.pageSize" :total="total" :page.sync="search.pageNum" :limit.sync="search.pageSize" @pagination="getSubjectList" />
+    <pagination v-show="total > search.pageSize" :total="total" :page.sync="search.pageNum" :limit.sync="search.pageSize" @pagination="getHomePageList" />
   </div>
 </template>
 
