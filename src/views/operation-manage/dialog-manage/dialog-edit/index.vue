@@ -50,7 +50,7 @@
             <!-- <el-radio v-model="modalData.type" label=3>指定用户</el-radio> -->
           </el-form-item>
 
-          <el-form-item label="参与企业" required  v-if="modalData.type == 2">
+          <el-form-item label="参与企业" required v-if="modalData.type == 2">
             <el-transfer filterable :titles="['未选择企业', '已选择企业']" v-model="modalData.groups" :data="companyAllData"></el-transfer>
           </el-form-item>
         </el-col>

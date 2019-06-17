@@ -132,7 +132,7 @@ export default {
         if (!valid) return
         let { startDate, endDate } = this.dialogInfo
         let { id, onShelf } = this.currentRowData
-        let data = await DialogService.updateHomePage({ id, onShelf, startDate, endDate })
+        let data = await DialogService.updateHomePage({ id, onShelf: !onShelf, startDate, endDate })
         if (data && data.code == 200) {
           this.$message({
             type: 'success',
