@@ -49,23 +49,13 @@ export default {
     }
   },
   created() {
-    if (this.modalData.id == 'null') return
     this.getPageDetail()
   },
   methods: {
     async getPageDetail() {
       // 获取所有的企业列表
-      const groupAllData = await DialogService.getGroupAll()
-      if (groupAllData && groupAllData.data) {
-        let companies = groupAllData.data
-        companies.forEach((item, index) => {
-          this.companyAllData.push({
-            label: item.groupName,
-            key: index,
-            id: item.id
-          })
-        })
-      }
+      await this.getGroupAll()
+      if (this.modalData.id == 'null') return
       // 获取弹窗详情页
       const res = await DialogService.getPageDetail(this.modalData.id)
       if (res && res.data) {
@@ -87,6 +77,19 @@ export default {
             if (item.id == group.id) {
               this.modalData.groups.push(index)
             }
+          })
+        })
+      }
+    },
+    async getGroupAll(){
+      const groupAllData = await DialogService.getGroupAll()
+      if (groupAllData && groupAllData.data) {
+        let companies = groupAllData.data
+        companies.forEach((item, index) => {
+          this.companyAllData.push({
+            label: item.groupName,
+            key: index,
+            id: item.id
           })
         })
       }
