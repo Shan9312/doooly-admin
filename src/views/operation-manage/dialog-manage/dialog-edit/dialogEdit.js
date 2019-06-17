@@ -60,7 +60,7 @@ export default {
       const res = await DialogService.getPageDetail(this.modalData.id)
       if (res && res.data) {
         let data = res.data
-        let selectedList = data.groups
+        let selectedList = data.groups || []
         this.modalData = {
           id: this.$route.params.id,
           name: data.name,
@@ -81,7 +81,7 @@ export default {
         })
       }
     },
-    async getGroupAll(){
+    async getGroupAll() {
       const groupAllData = await DialogService.getGroupAll()
       if (groupAllData && groupAllData.data) {
         let companies = groupAllData.data
