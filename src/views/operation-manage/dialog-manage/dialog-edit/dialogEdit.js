@@ -25,28 +25,17 @@ export default {
         callback()
       }
     }
-    const generateData = () => {
-      const data = []
-      const cities = ['上海', '北京', '广州', '深圳', '南京', '西安', '成都']
-      cities.forEach((city, index) => {
-        data.push({
-          label: city,
-          key: index
-        })
-      })
-      return data
-    }
     return {
       actionUrl: process.env.VUE_APP_URL + '/fileUpload',
       loading: false,
-      companyData: generateData(),
+      companyAllData: [],
       modalData: {
         id: this.$route.params.id,
         name: '',
         startDate: '', // 生效时间
         endDate: '', // 失效时间
         type: '1', // 弹窗类型 1全部用户 2企业 3指定用户
-        companyVal: [],
+        groups: [],
         imageUrl: '',
         formUrl: '' // 点击图片的跳转地址
       },
@@ -65,18 +54,41 @@ export default {
   },
   methods: {
     async getPageDetail() {
+      // 获取所有的企业列表
+      const groupAllData = await DialogService.getGroupAll()
+      if (groupAllData && groupAllData.data) {
+        let companies = groupAllData.data
+        companies.forEach((item, index) => {
+          this.companyAllData.push({
+            label: item.groupName,
+            key: index,
+            id: item.id
+          })
+        })
+      }
+      // 获取弹窗详情页
       const res = await DialogService.getPageDetail(this.modalData.id)
       if (res && res.data) {
         let data = res.data
+        let selectedList = data.groups
         this.modalData = {
           id: this.$route.params.id,
           name: data.name,
           startDate: data.startDate, // 生效时间
           endDate: data.endDate, // 失效时间
           type: data.type.toString(), // 弹窗类型 1全部用户 2企业 3指定用户
+          groups: [],
           imageUrl: data.imageUrl,
           formUrl: data.formUrl // 点击图片的跳转地址
         }
+        // 过滤已选中的企业
+        selectedList.map(item => {
+          this.companyAllData.map((group, index) => {
+            if (item.id == group.id) {
+              this.modalData.groups.push(index)
+            }
+          })
+        })
       }
     },
     beforeImgUpload(file) {
@@ -103,19 +115,33 @@ export default {
       this.loading = false
       this.$message.error('上传图片失败，请重新上传！')
     },
+    handleGroupsData() {
+      // 根据后端获取的企业列表数据，过滤选中的企业
+      let companyVal = JSON.parse(JSON.stringify(this.modalData.groups))
+      let selectedList = []
+      companyVal.forEach(item => {
+        selectedList.push(this.companyAllData[item])
+      })
+      return selectedList
+    },
     async handleSaveSubject() {
       const dialogRef = this.$refs['dialogRef']
       Promise.all([dialogRef].map(this.getFormPromise)).then(async res => {
         const validateResult = res.every(item => !!item)
         if (!validateResult) return
-        console.log(this.modalData)
+        if (this.modalData.type == 2 && this.modalData.groups.length === 0) {
+          this.$message.error('您还未勾选企业哦！')
+          return
+        }
         const { id, name, startDate, endDate, imageUrl, formUrl, type } = this.modalData
+        const groups = this.handleGroupsData()
         let response = null
         if (id == 'null') {
           // 新增
-          response = await DialogService.createHomePage({ name, startDate, endDate, imageUrl, formUrl, type })
+          response = await DialogService.createHomePage({ name, startDate, endDate, imageUrl, formUrl, groups, type })
         } else {
-          response = await DialogService.updateHomePage({ id, name, startDate, endDate, imageUrl, formUrl, type })
+          // 修改
+          response = await DialogService.updateHomePage({ id, name, startDate, endDate, imageUrl, formUrl, groups, type })
         }
         if (response) {
           this.$router.push('/operationManage/dialogList')

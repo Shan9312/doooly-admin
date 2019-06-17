@@ -43,15 +43,15 @@
           </el-form-item>
         </el-col>
 
-        <el-col :span="12" min-width="50%" v-if='false'>
+        <el-col :span="12" min-width="50%">
           <el-form-item label="弹窗用户" prop="status">
             <el-radio v-model="modalData.type" label=1>全部用户</el-radio>
             <el-radio v-model="modalData.type" label=2>企业</el-radio>
-            <el-radio v-model="modalData.type" label=3>指定用户</el-radio>
+            <!-- <el-radio v-model="modalData.type" label=3>指定用户</el-radio> -->
           </el-form-item>
 
-          <el-form-item label="参与企业" required>
-            <el-transfer filterable :titles="['未选择企业', '已选择企业']" v-model="modalData.companyVal" :data="companyData"></el-transfer>
+          <el-form-item label="参与企业" required  v-if="modalData.type == 2">
+            <el-transfer filterable :titles="['未选择企业', '已选择企业']" v-model="modalData.groups" :data="companyAllData"></el-transfer>
           </el-form-item>
         </el-col>
       </el-row>
