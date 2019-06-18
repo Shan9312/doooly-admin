@@ -36,7 +36,7 @@ module.exports = {
       //   // pathRewrite: { "^/pro_reconcili": "" }
       // },
       '/subject': {
-        target: 'http://114.215.198.87:8781/dev_reconcili/',
+        target: 'https://admin.doooly.com/dev_doooly-admin/',
         ws: false,
         changeOrigin: true,
         pathRewrite: { '^/subject': '' }
