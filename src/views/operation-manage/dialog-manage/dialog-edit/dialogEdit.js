@@ -53,8 +53,9 @@ export default {
   },
   methods: {
     async getPageDetail() {
+      /* 目前后端返回弹窗列表没做过滤，暂时隐藏掉企业勾选功能 to do list、 */
       // 获取所有的企业列表
-      await this.getGroupAll()
+      // await this.getGroupAll()
       if (this.modalData.id == 'null') return
       // 获取弹窗详情页
       const res = await DialogService.getPageDetail(this.modalData.id)

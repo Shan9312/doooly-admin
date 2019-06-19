@@ -42,8 +42,8 @@
             </el-col>
           </el-form-item>
         </el-col>
-
-        <el-col :span="12" min-width="50%">
+        <!-- 目前后端返回弹窗列表没做过滤，暂时隐藏掉企业勾选功能 to do list -->
+        <el-col :span="12" min-width="50%" v-if="false">
           <el-form-item label="弹窗用户" prop="status">
             <el-radio v-model="modalData.type" label=1>全部用户</el-radio>
             <el-radio v-model="modalData.type" label=2>企业</el-radio>
