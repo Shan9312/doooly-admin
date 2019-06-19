@@ -48,7 +48,7 @@ export default {
       search: {
         pageNum: 1,
         pageSize: 10,
-        onShelf: '' // 上架状态 0.上架 1.下架 不传是全部
+        onShelf: '' // 上架状态 0下架 1上架 不传是全部
       },
       dialogModalVisible: false,
       dialogInfo: {
@@ -66,11 +66,11 @@ export default {
           label: '全部'
         },
         {
-          value: '0',
+          value: '1',
           label: '上架'
         },
         {
-          value: '1',
+          value: '0',
           label: '下架'
         }
       ]

@@ -26,7 +26,7 @@ export default {
       }
     }
     return {
-      actionUrl: process.env.VUE_APP_URL + '/fileUpload',
+      actionUrl: process.env.VUE_APP_URL + 'fileUpload',
       loading: false,
       companyAllData: [],
       modalData: {
