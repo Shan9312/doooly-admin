@@ -117,7 +117,7 @@
               <el-form-item>
                 <kt-button
                   label="重置"
-                  perms="account:merchants:search"
+                  perms="account:merchants:reset"
                   type="primary"
                   @click="reset"
                 />

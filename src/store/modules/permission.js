@@ -35,7 +35,7 @@ function segmentation(route) {
  * @param routes asyncRouterMap
  * @param roles
  */
-function filterAsyncRouter(routes, name='') {
+function filterAsyncRouter(routes, name = '') {
   const res = []
   routes.forEach(item => {
     if (item.url && /\S/.test(item.url)) {
@@ -46,10 +46,7 @@ function filterAsyncRouter(routes, name='') {
       component: null,
       hidden: !item.isShow,
       name: capitalize(item.url),
-      meta: {
-        icon: 'nested',
-        title: item.name
-      }
+      meta: { icon: 'nested', title: item.name }
     }
     if (name) {
       route['component'] = () => import(`@/views/${name}/${segmentation(item.url)}/index`)
@@ -84,7 +81,7 @@ const permission = {
   actions: {
     GenerateRoutes({ commit }, data) {
       return new Promise((resolve, reject) => {
-        PermissionService.getPermission(data.roles).then(res => {
+        PermissionService.getPermission(data).then(res => {
           let dynamicRoutes = filterAsyncRouter(res.data)
           commit('SET_ROUTERS', dynamicRoutes)
           resolve(dynamicRoutes)
@@ -95,7 +92,7 @@ const permission = {
     },
     GenerateButtons({ commit }, data) {
       return new Promise((resolve, reject) => {
-        PermissionService.getButtonsList(data.roles).then(res => {
+        PermissionService.getButtonsList(data).then(res => {
           commit('SET_BUTTON', res.data)
           resolve()
         }).catch(err => {

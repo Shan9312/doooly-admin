@@ -24,15 +24,15 @@ router.beforeEach(async (to, from, next) => {
         try {
           const userInfo = sessionStorage.getItem('userInfo')
 
-          const roles = JSON.parse(userInfo).email
+          const params = JSON.parse(userInfo)
           // 获取用户信息
-          await store.dispatch('GetUserInfo', roles)
+          await store.dispatch('GetUserInfo', params.userId)
 
           // 根据用户信息获取对应的菜单路由
-          const accessRoutes = await store.dispatch('GenerateRoutes', { roles })
-          console.log(accessRoutes)
+          const accessRoutes = await store.dispatch('GenerateRoutes', { userId: params.userId, email: params.email })
+
           // 获取对应的菜单按钮
-          await store.dispatch('GenerateButtons', { roles })
+          await store.dispatch('GenerateButtons', {userId: params.userId, name: params.email})
 
           router.addRoutes(accessRoutes)
 

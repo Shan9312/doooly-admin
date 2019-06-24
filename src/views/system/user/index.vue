@@ -10,6 +10,8 @@
                 clearable
                 v-model="search.name"
                 placeholder="请输入用户名"
+                maxlength="10"
+                @keyup.native="onKeyup"
               ></el-input>
             </el-form-item>
           </el-col>
@@ -42,6 +44,13 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55"> </el-table-column>
+      <el-table-column
+        header-align="center"
+        align="center"
+        type="index"
+        width="50"
+      >
+      </el-table-column>
       <el-table-column
         prop="username"
         header-align="center"
@@ -159,7 +168,7 @@
           ></el-input>
         </el-form-item>
         <el-form-item label="姓名" prop="username">
-          <el-input v-model="dataForm.username" auto-complete="off"></el-input>
+          <el-input v-model="dataForm.username" auto-complete="off" maxlength="10"></el-input>
         </el-form-item>
         </el-form-item>
         <el-form-item label="机构" prop="deptName">
@@ -173,10 +182,10 @@
           </popup-tree-input>
         </el-form-item>
         <el-form-item label="邮箱" prop="email">
-          <el-input v-model="dataForm.email" auto-complete="off"></el-input>
+          <el-input v-model="dataForm.email" auto-complete="off" maxlength="40"></el-input>
         </el-form-item>
         <el-form-item label="手机" prop="phone">
-          <el-input v-model="dataForm.phone" auto-complete="off"></el-input>
+          <el-input v-model="dataForm.phone" auto-complete="off" maxlength="11"></el-input>
         </el-form-item>
         <el-form-item label="角色" prop="userRoles" v-if="!operation">
           <el-select
@@ -212,6 +221,7 @@
 </template>
 
 <script>
+  import { Validate } from "@/common";
   import { UserService } from "@/service";
   import { Utils } from "@/common";
 
@@ -219,6 +229,9 @@
     name: "User",
     data() {
       return {
+        onKeyup(e) {
+          e.target.value = e.target.value.replace(/[!~@#$%*&()_+\s^]/g, "");
+        },
         size: "small",
         search: {
           name: "",
@@ -231,20 +244,25 @@
         tableData: [],
         pageRequest: { pageNum: 1, pageSize: 10 },
         pageResult: [],
-
         operation: false, // true:新增, false:编辑
         dialogVisible: false, // 新增编辑界面是否显示
         editLoading: false,
         dataFormRules: {
-          username: [{ required: true, message: "请输入姓名", trigger: "blur" }],
-          email: [{ required: true, message: "请输入用户名", trigger: "blur" }],
-          phone: [{ required: true, message: "请输入邮箱", trigger: "blur" }]
+          username: [
+            {
+              required: true,
+              trigger: "blur",
+              validator: Validate.alipayNameVaild
+            }
+          ],
+          email: [{ required: true, trigger: "blur", validator: Validate.validateEmail }],
+          phone: [{ required: true, trigger: "blur", validator: Validate.phoneValid }]
         },
         // 新增编辑界面数据
         dataForm: {
           id: 0,
           username: "",
-          deptId: 1,
+          deptId: 0,
           deptName: "",
           email: "",
           phone: "",
@@ -280,14 +298,21 @@
       handleDelete(row) {
         this.$confirm("确认删除选中记录吗？", "提示", {
           type: "warning"
-        }).then(async () => {
-          let params = [{ id: row.id }];
-          const data = await UserService.deleteUser(params);
-          if (data) {
-            this.findPage();
-            this.$message({ message: "删除成功", type: "success" });
-          }
-        });
+        })
+          .then(async () => {
+            let params = [{ id: row.id }];
+            const data = await UserService.deleteUser(params);
+            if (data) {
+              this.findPage();
+              this.$message({ message: "删除成功", type: "success" });
+            }
+          })
+          .catch(() => {
+            this.$message({
+              type: "info",
+              message: "已取消删除"
+            });
+          });
       },
 
       // 删除多条数据
@@ -299,31 +324,45 @@
         }
         this.$confirm("确认删除选中记录吗？", "提示", {
           type: "warning"
-        }).then(async () => {
-          let params = [];
-          multipleSelection.map(item => {
-            params.push({ id: item.id });
+        })
+          .then(async () => {
+            let params = [];
+            multipleSelection.map(item => {
+              params.push({ id: item.id });
+            });
+            const data = await UserService.deleteUser(params);
+            if (data) {
+              this.findPage();
+              this.$message({ message: "删除成功", type: "success" });
+            }
+          })
+          .catch(() => {
+            this.$message({
+              type: "info",
+              message: "已取消删除"
+            });
           });
-          const data = await UserService.deleteUser(params);
-          if (data) {
-            this.findPage();
-            this.$message({ message: "删除成功", type: "success" });
-          }
-        });
       },
 
       // 重置密码
       handleReset(row) {
         this.$confirm("确认要重置密码吗？", "提示", {
           type: "warning"
-        }).then(async () => {
-          let params = { id: row.id, email: row.email };
-          const data = await UserService.resetPassword(params);
-          if (data) {
-            this.findPage();
-            this.$message({ message: "重置成功", type: "success" });
-          }
-        });
+        })
+          .then(async () => {
+            let params = { id: row.id, email: row.email };
+            const data = await UserService.resetPassword(params);
+            if (data) {
+              this.findPage();
+              this.$message({ message: "重置成功", type: "success" });
+            }
+          })
+          .catch(() => {
+            this.$message({
+              type: "info",
+              message: "已取消重置"
+            });
+          });
       },
 
       // 显示新增界面
@@ -334,7 +373,7 @@
           id: 0,
           username: "",
           password: "",
-          deptId: 1,
+          deptId: 0,
           deptName: "",
           email: "",
           phone: "",
@@ -374,11 +413,6 @@
               this.$message({ message: "操作成功", type: "success" });
               this.dialogVisible = false;
               this.$refs["dataForm"].resetFields();
-            } else {
-              this.$message({
-                message: "操作失败, ",
-                type: "error"
-              });
             }
             this.findPage();
           }

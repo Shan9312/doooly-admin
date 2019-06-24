@@ -9,6 +9,8 @@
               <el-input
                 v-model="search.name"
                 placeholder="请输入菜单名称"
+                @keyup.native="onKeyup"
+                maxlength="15"
               ></el-input>
             </el-form-item>
           </el-col>
@@ -18,7 +20,7 @@
                 label="查询"
                 perms="sys:menu:search"
                 type="primary"
-                @click="findTreeData"
+                @click="handlSearch"
               />
             </el-form-item>
             <el-form-item>
@@ -43,20 +45,19 @@
       border
     >
       <el-table-column
-        prop="id"
         header-align="center"
         align="center"
-        width="80"
-        label="ID"
+        type="index"
+        width="50"
       >
       </el-table-column>
-      <table-tree-column 
+      <table-tree-column
         prop="name"
         header-align="center"
         treeKey="id"
         label="名称"
       >
-      </table-tree-column >
+      </table-tree-column>
       <el-table-column
         prop="type"
         header-align="center"
@@ -206,7 +207,8 @@
                     /system/user, 此处填写/user
                   </p>
                   <p>
-                    3.动态路由匹配需使用路径后带：的形式添加，与Vue Router官方文档一致，如添加查看用户详情菜单{/user/:id}
+                    3.动态路由匹配需使用路径后带：的形式添加，与Vue
+                    Router官方文档一致，如添加查看用户详情菜单{/user/:id}
                   </p>
                   <p>
                     4.嵌套外部网页，如通过菜单打开百度网页，此处填写
@@ -224,14 +226,8 @@
         </el-form-item>
         <el-form-item v-if="dataForm.type === 1" label="菜单显示" prop="type">
           <el-radio-group v-model="dataForm.isShow">
-            <el-radio
-              :label="1"
-              >是</el-radio
-            >
-            <el-radio
-              :label="0"
-              >否</el-radio
-            >
+            <el-radio :label="1">是</el-radio>
+            <el-radio :label="0">否</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item
@@ -274,11 +270,37 @@
 </template>
 
 <script>
+  import { Validate } from "@/common";
   import { MenuService } from "@/service";
   import { Utils } from "@/common";
+
+  const filterList = (name, data) => {
+    let list = [];
+    data.map((item, i) => {
+      if (item.name.indexOf(name) >= 0) {
+        list.push(item);
+      } else {
+        if (item.children && item.children.length > 0) {
+          const _data = filterList(name, item.children);
+          const obj = {
+            ...item,
+            children: _data
+          };
+          if (_data && _data.length > 0) {
+            list.push(obj);
+          }
+        }
+      }
+    });
+    return list;
+  };
+
   export default {
     data() {
       return {
+        onKeyup(e) {
+          e.target.value = e.target.value.replace(/[!~@#$%*&()_+\s^]/g, "");
+        },
         size: "small",
         loading: false,
         search: {
@@ -301,9 +323,13 @@
           iconList: []
         },
         dataRule: {
-          name: [{ required: true, message: "菜单名称不能为空", trigger: "blur" }],
+          name: [
+            { required: true, trigger: "blur", validator: Validate.specialCharacters}
+          ],
           url: [{ required: true, message: "菜单路由不能为空", trigger: "blur" }],
-          perms: [{ required: true, message: "按钮授权标识不能为空", trigger: "blur" }],
+          perms: [
+            { required: true, message: "按钮授权标识不能为空", trigger: "blur" }
+          ]
         },
         popupTreeData: [],
         popupTreeProps: {
@@ -321,6 +347,18 @@
         this.popupTreeData = this.getParentMenuTree(data);
         this.loading = false;
       },
+
+      // 查询筛选数据
+      handlSearch() {
+        const { name } = this.search;
+        const { tableTreeDdata } = this;
+        if (name) {
+          this.tableTreeDdata = filterList(name, tableTreeDdata);
+        } else {
+          this.findTreeData();
+        }
+      },
+      
       // 获取上级菜单树
       getParentMenuTree: function(tableTreeDdata) {
         let parent = {
@@ -357,14 +395,21 @@
       handleDelete(row) {
         this.$confirm("确认删除选中记录吗？", "提示", {
           type: "warning"
-        }).then(async () => {
-          let params = this.getDeleteIds([], row);
-          const data = await MenuService.deleteMenu(params);
-          if (data) {
-            this.findTreeData();
-            this.$message({ message: "删除成功", type: "success" });
-          }
-        });
+        })
+          .then(async () => {
+            let params = this.getDeleteIds([], row);
+            const data = await MenuService.deleteMenu(params);
+            if (data) {
+              this.findTreeData();
+              this.$message({ message: "删除成功", type: "success" });
+            }
+          })
+          .catch(() => {
+            this.$message({
+              type: "info",
+              message: "已取消删除"
+            });
+          });
       },
       // 获取删除的包含子菜单的id列表
       getDeleteIds(ids, row) {
@@ -389,17 +434,24 @@
       submitForm() {
         this.$refs["dataForm"].validate(valid => {
           if (valid) {
-            this.$confirm("确认提交吗？", "提示", {}).then(async () => {
-              this.editLoading = true;
-              let params = Object.assign({}, this.dataForm);
-              const { data } = await MenuService.editMenu(params);
-              if (data) {
-                this.$message({ message: "操作成功", type: "success" });
-                this.$refs["dataForm"].resetFields();
-                this.dialogVisible = false;
-              }
-              this.findTreeData();
-            });
+            this.$confirm("确认提交吗？", "提示", {})
+              .then(async () => {
+                this.editLoading = true;
+                let params = Object.assign({}, this.dataForm);
+                const { data } = await MenuService.editMenu(params);
+                if (data) {
+                  this.$message({ message: "操作成功", type: "success" });
+                  this.$refs["dataForm"].resetFields();
+                  this.dialogVisible = false;
+                }
+                this.findTreeData();
+              })
+              .catch(() => {
+                this.$message({
+                  type: "info",
+                  message: "已取消操作"
+                });
+              });
           }
         });
       }

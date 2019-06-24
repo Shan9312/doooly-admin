@@ -4,9 +4,9 @@ import {
 } from 'element-ui'
 import { Auth, Utils } from '@/common'
 import Config from '@/common/config'
-// Config.PERMISSION_URL
+
 const settings = {
-  baseURL: '/',
+  baseURL: Config.BASE_URL,
   headers: { 'Content-Type': 'application/json', "Accept": "application/json, text/plain", }
 }
 const ajax = (method, url, data, options = {}) => {
@@ -30,7 +30,7 @@ const ajax = (method, url, data, options = {}) => {
       return Promise.resolve(data)
     } else {
       Message({
-        message: data.info || '服务器出错了',
+        message: data.info || data.msg || '服务器出错了',
         type: 'error',
         duration: 2 * 1000
       })

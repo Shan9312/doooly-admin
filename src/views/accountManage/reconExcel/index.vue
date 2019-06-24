@@ -47,7 +47,7 @@
                 class="filter-item"
                 label="导出订单明细"
                 icon="el-icon-download"
-                perms="account:merchants:export"
+                perms="account:recon:export"
                 type="primary"
                 @click="handleDownload"
               />

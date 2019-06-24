@@ -9,6 +9,8 @@
               <el-input
                 v-model="search.name"
                 placeholder="请输入角色名称"
+                @keyup.native="onKeyup"
+                maxlength="15"
               ></el-input>
             </el-form-item>
           </el-col>
@@ -58,10 +60,10 @@
         </template>
       </el-table-column>
       <el-table-column
-        prop="id"
         header-align="center"
         align="center"
-        label="ID"
+        type="index"
+        width="50"
       >
       </el-table-column>
       <el-table-column
@@ -226,12 +228,16 @@
 </template>
 
 <script>
+  import { Validate } from "@/common";
   import { RoleService } from "@/service";
   import { Utils } from "@/common";
   export default {
     name: "Role",
     data() {
       return {
+        onKeyup(e) {
+          e.target.value = e.target.value.replace(/[!~@#$%*&()_+\s^]/g, "");
+        },
         size: "small",
         loading: false,
         search: {
@@ -252,8 +258,6 @@
             minWidth: 120,
             formatter: this.dateFormat
           }
-          // {prop:"lastUpdateBy", label:"更新人", minWidth:100},
-          // {prop:"lastUpdateTime", label:"更新时间", minWidth:120, formatter:this.dateFormat}
         ],
         pageRequest: { pageNum: 1, pageSize: 10 },
         pageResult: [],
@@ -262,7 +266,7 @@
         dialogVisible: false, // 新增编辑界面是否显示
         editLoading: false,
         dataFormRules: {
-          name: [{ required: true, message: "请输入角色名", trigger: "blur" }]
+          name: [{ required: true, trigger: "blur", validator: Validate.specialCharacters }]
         },
         // 新增编辑界面数据
         dataForm: {
@@ -294,7 +298,7 @@
         this.total = data.totalSize;
         this.findTreeData();
       },
-      // 批量删除
+      // 删除数据
       handleDelete(row) {
         this.$confirm("确认删除选中记录吗？", "提示", {
           type: "warning"
@@ -305,10 +309,15 @@
             this.findPage();
             this.$message({ message: "删除成功", type: "success" });
           }
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          }); 
         });
       },
       // 显示新增界面
-      handleAdd: function() {
+      handleAdd () {
         this.dialogVisible = true;
         this.operation = true;
         this.dataForm = {
@@ -318,13 +327,13 @@
         };
       },
       // 显示编辑界面
-      handleEdit: function(row) {
+      handleEdit (row) {
         this.dialogVisible = true;
         this.operation = false;
         this.dataForm = Object.assign({}, row);
       },
       // 编辑
-      submitForm: function() {
+      submitForm () {
         this.$refs.dataForm.validate(async valid => {
           if (valid) {
             this.editLoading = true;
@@ -405,13 +414,6 @@
       // 角色菜单授权提交
       async submitAuthForm() {
         let roleId = this.selectRole.id;
-        if ("admin" == this.selectRole.name) {
-          this.$message({
-            message: "超级管理员拥有所有菜单权限，不允许修改！",
-            type: "error"
-          });
-          return;
-        }
         this.authLoading = true;
         let checkedNodes = this.$refs.menuTree.getCheckedNodes(false, true);
         let roleMenus = [];
@@ -425,6 +427,7 @@
           this.$message({ message: "操作成功", type: "success" });
         }
       },
+
       renderContent(h, { node, data, store }) {
         return (
           <div class="column-container">

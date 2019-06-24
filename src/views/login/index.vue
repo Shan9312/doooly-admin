@@ -19,7 +19,7 @@
           type="text"
           auto-complete="on"
           maxlength="40"
-          placeholder="请输入用户名"
+          placeholder="请输入用户邮箱"
         />
       </el-form-item>
       <el-form-item prop="password">
@@ -60,13 +60,6 @@
   export default {
     name: "Login",
     data() {
-      const validateUsername = (rule, value, callback) => {
-        if (!Validate.isvalidUsername(value)) {
-          callback(new Error("请输入正确的用户名"));
-        } else {
-          callback();
-        }
-      };
       const validatePass = (rule, value, callback) => {
         if (value.length < 6) {
           callback(new Error("密码不能小于6位"));
@@ -76,15 +69,15 @@
       };
       return {
         loginForm: {
-          username: "bing.wang@reach-core.com",
-          password: "123456"
+          username: "admin@qq.com",
+          password: "TYR9DB"
         },
         loginRules: {
           username: [
             {
               required: true,
               trigger: "blur",
-              // validator: validateUsername
+              validator: Validate.validateEmail
             }
           ],
           password: [

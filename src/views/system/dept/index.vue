@@ -10,6 +10,8 @@
                 clearable
                 v-model="search.name"
                 placeholder="请输入机构名称"
+                @keyup.native="onKeyup"
+                maxlength="15"
               ></el-input>
             </el-form-item>
           </el-col>
@@ -44,11 +46,10 @@
       border
     >
       <el-table-column
-        prop="id"
         header-align="center"
         align="center"
-        width="80"
-        label="ID"
+        type="index"
+        width="50"
       >
       </el-table-column>
       <table-tree-column
@@ -174,28 +175,37 @@
 </template>
 
 <script>
+  import { Validate } from "@/common";
   import { DeptService } from "@/service";
   import { Utils } from "@/common";
+  
   const filterList = (name, data) => {
-    let list = [], count = 0;
+    let list = [];
     data.map((item, i) => {
       if (item.name.indexOf(name) >= 0) {
-        list.push(item)
+        list.push(item);
       } else {
         if (item.children && item.children.length > 0) {
-          // list = [...filterList(name, item.children), ...list]
-          const res = filterList(name, item.children)
-          if (res.length > 0) {
-            console.log(res)
+          const _data = filterList(name, item.children);
+          const obj = {
+            ...item,
+            children: _data
+          };
+          if (_data && _data.length > 0) {
+            list.push(obj);
           }
         }
       }
-    })
-    return list
-  }
+    });
+    return list;
+  };
+
   export default {
     data() {
       return {
+        onKeyup(e) {
+          e.target.value = e.target.value.replace(/[!~@#$%*&()_+\s^]/g, "");
+        },
         size: "small",
         loading: false,
         search: {
@@ -213,12 +223,7 @@
           orderNum: 0
         },
         dataRule: {
-          name: [
-            { required: true, message: "机构名称不能为空", trigger: "blur" }
-          ],
-          parentName: [
-            { required: true, message: "上级机构不能为空", trigger: "change" }
-          ]
+          name: [{ required: true,  trigger: "blur", validator: Validate.specialCharacters }]
         },
         popupTreeData: [],
         popupTreeProps: {
@@ -240,12 +245,11 @@
       // 查询筛选数据
       handlSearch() {
         const { name } = this.search;
-        const {tableTreeDdata} = this;
+        const { tableTreeDdata } = this;
         if (name) {
-          this.tableTreeDdata = filterList(name, tableTreeDdata)
-          console.log(this.tableTreeDdata)
+          this.tableTreeDdata = filterList(name, tableTreeDdata);
         } else {
-          this.findTreeData()
+          this.findTreeData();
         }
       },
 
@@ -279,14 +283,21 @@
       handleDelete(row) {
         this.$confirm("确认删除选中记录吗？", "提示", {
           type: "warning"
-        }).then(async () => {
-          let params = this.getDeleteIds([], row);
-          const res = await DeptService.deleteDept(params);
-          if (res) {
-            this.findTreeData();
-            this.$message({ message: "删除成功", type: "success" });
-          }
-        });
+        })
+          .then(async () => {
+            let params = this.getDeleteIds([], row);
+            const res = await DeptService.deleteDept(params);
+            if (res) {
+              this.findTreeData();
+              this.$message({ message: "删除成功", type: "success" });
+            }
+          })
+          .catch(() => {
+            this.$message({
+              type: "info",
+              message: "已取消删除"
+            });
+          });
       },
       // 获取删除的包含子机构的id列表
       getDeleteIds(ids, row) {
