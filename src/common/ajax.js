@@ -3,12 +3,12 @@ import {
   Message
 } from 'element-ui'
 import { Auth, Utils } from '@/common'
-
+import Config from '@/common/config'
+// Config.PERMISSION_URL
 const settings = {
-  baseURL: process.env.VUE_APP_URL,
-  headers: { 'Content-Type': 'application/json' }
+  baseURL: '/',
+  headers: { 'Content-Type': 'application/json', "Accept": "application/json, text/plain", }
 }
-
 const ajax = (method, url, data, options = {}) => {
   options = Object.assign(options, {
     method,
@@ -21,21 +21,21 @@ const ajax = (method, url, data, options = {}) => {
 
   const token = Auth.getToken()
   if (token) {
-    options.headers['x-token'] = token
+    options.headers['Authorization'] = token
   }
 
   return axios.request(options).then(res => {
-      const data = res.data;
-      if (data.code == 200) {
-        return Promise.resolve(data)
-      } else {
-        Message({
-          message: data.info || '服务器出错了',
-          type: 'error',
-          duration: 2 * 1000
-        })
-      }
-    })
+    const data = res.data;
+    if (data.code == 200) {
+      return Promise.resolve(data)
+    } else {
+      Message({
+        message: data.info || '服务器出错了',
+        type: 'error',
+        duration: 2 * 1000
+      })
+    }
+  })
     .catch(err => {
       console.log('err' + err)
       Message({

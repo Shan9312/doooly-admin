@@ -38,7 +38,7 @@
 -------------------------- */
 /* Alert
 -------------------------- */
-/* Message Box
+/* MessageBox
 -------------------------- */
 /* Message
 -------------------------- */
@@ -63,6 +63,8 @@
 /* Table
 -------------------------- */
 /* Pagination
+-------------------------- */
+/* Popup
 -------------------------- */
 /* Popover
 -------------------------- */
@@ -105,6 +107,12 @@
 /* Main
 --------------------------*/
 /* Timeline
+--------------------------*/
+/* Backtop
+--------------------------*/
+/* Link
+--------------------------*/
+/* Calendar
 --------------------------*/
 /* Break-point
 --------------------------*/
@@ -156,7 +164,7 @@
 -------------------------- */
 /* Alert
 -------------------------- */
-/* Message Box
+/* MessageBox
 -------------------------- */
 /* Message
 -------------------------- */
@@ -181,6 +189,8 @@
 /* Table
 -------------------------- */
 /* Pagination
+-------------------------- */
+/* Popup
 -------------------------- */
 /* Popover
 -------------------------- */
@@ -223,6 +233,12 @@
 /* Main
 --------------------------*/
 /* Timeline
+--------------------------*/
+/* Backtop
+--------------------------*/
+/* Link
+--------------------------*/
+/* Calendar
 --------------------------*/
 /* Break-point
 --------------------------*/
@@ -272,7 +288,7 @@
 -------------------------- */
 /* Alert
 -------------------------- */
-/* Message Box
+/* MessageBox
 -------------------------- */
 /* Message
 -------------------------- */
@@ -297,6 +313,8 @@
 /* Table
 -------------------------- */
 /* Pagination
+-------------------------- */
+/* Popup
 -------------------------- */
 /* Popover
 -------------------------- */
@@ -339,6 +357,12 @@
 /* Main
 --------------------------*/
 /* Timeline
+--------------------------*/
+/* Backtop
+--------------------------*/
+/* Link
+--------------------------*/
+/* Calendar
 --------------------------*/
 /* Break-point
 --------------------------*/
@@ -382,7 +406,7 @@
 -------------------------- */
 /* Alert
 -------------------------- */
-/* Message Box
+/* MessageBox
 -------------------------- */
 /* Message
 -------------------------- */
@@ -407,6 +431,8 @@
 /* Table
 -------------------------- */
 /* Pagination
+-------------------------- */
+/* Popup
 -------------------------- */
 /* Popover
 -------------------------- */
@@ -449,6 +475,12 @@
 /* Main
 --------------------------*/
 /* Timeline
+--------------------------*/
+/* Backtop
+--------------------------*/
+/* Link
+--------------------------*/
+/* Calendar
 --------------------------*/
 /* Break-point
 --------------------------*/
@@ -498,7 +530,7 @@
 -------------------------- */
 /* Alert
 -------------------------- */
-/* Message Box
+/* MessageBox
 -------------------------- */
 /* Message
 -------------------------- */
@@ -523,6 +555,8 @@
 /* Table
 -------------------------- */
 /* Pagination
+-------------------------- */
+/* Popup
 -------------------------- */
 /* Popover
 -------------------------- */
@@ -565,10 +599,17 @@
 /* Main
 --------------------------*/
 /* Timeline
+--------------------------*/
+/* Backtop
+--------------------------*/
+/* Link
+--------------------------*/
+/* Calendar
 --------------------------*/
 /* Break-point
 --------------------------*/
 .el-textarea {
+  position: relative;
   display: inline-block;
   width: 100%;
   vertical-align: bottom;
@@ -591,6 +632,8 @@
     transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1); }
     .el-textarea__inner::-webkit-input-placeholder {
       color: #C0C4CC; }
+    .el-textarea__inner::-moz-placeholder {
+      color: #C0C4CC; }
     .el-textarea__inner::-ms-input-placeholder {
       color: #C0C4CC; }
     .el-textarea__inner::placeholder {
@@ -600,17 +643,30 @@
     .el-textarea__inner:focus {
       outline: none;
       border-color: #409EFF; }
+  .el-textarea .el-input__count {
+    color: #909399;
+    background: #FFFFFF;
+    position: absolute;
+    font-size: 12px;
+    bottom: 5px;
+    right: 10px; }
   .el-textarea.is-disabled .el-textarea__inner {
-    background-color: #f5f7fa;
+    background-color: #F5F7FA;
     border-color: #E4E7ED;
     color: #C0C4CC;
     cursor: not-allowed; }
     .el-textarea.is-disabled .el-textarea__inner::-webkit-input-placeholder {
       color: #C0C4CC; }
+    .el-textarea.is-disabled .el-textarea__inner::-moz-placeholder {
+      color: #C0C4CC; }
     .el-textarea.is-disabled .el-textarea__inner::-ms-input-placeholder {
       color: #C0C4CC; }
     .el-textarea.is-disabled .el-textarea__inner::placeholder {
       color: #C0C4CC; }
+  .el-textarea.is-exceed .el-textarea__inner {
+    border-color: #F56C6C; }
+  .el-textarea.is-exceed .el-input__count {
+    color: #F56C6C; }
 
 .el-input {
   position: relative;
@@ -636,12 +692,26 @@
   .el-input .el-input__clear {
     color: #C0C4CC;
     font-size: 14px;
-    line-height: 16px;
     cursor: pointer;
     -webkit-transition: color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
     transition: color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1); }
     .el-input .el-input__clear:hover {
       color: #909399; }
+  .el-input .el-input__count {
+    height: 100%;
+    display: -webkit-inline-box;
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    color: #909399;
+    font-size: 12px; }
+    .el-input .el-input__count .el-input__count-inner {
+      background: #FFFFFF;
+      line-height: initial;
+      display: inline-block;
+      padding: 0 5px; }
   .el-input__inner {
     -webkit-appearance: none;
     background-color: #FFFFFF;
@@ -661,6 +731,8 @@
     transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
     width: 100%; }
     .el-input__inner::-webkit-input-placeholder {
+      color: #C0C4CC; }
+    .el-input__inner::-moz-placeholder {
       color: #C0C4CC; }
     .el-input__inner::-ms-input-placeholder {
       color: #C0C4CC; }
@@ -711,11 +783,13 @@
     outline: none;
     border-color: #409EFF; }
   .el-input.is-disabled .el-input__inner {
-    background-color: #f5f7fa;
+    background-color: #F5F7FA;
     border-color: #E4E7ED;
     color: #C0C4CC;
     cursor: not-allowed; }
     .el-input.is-disabled .el-input__inner::-webkit-input-placeholder {
+      color: #C0C4CC; }
+    .el-input.is-disabled .el-input__inner::-moz-placeholder {
       color: #C0C4CC; }
     .el-input.is-disabled .el-input__inner::-ms-input-placeholder {
       color: #C0C4CC; }
@@ -723,6 +797,10 @@
       color: #C0C4CC; }
   .el-input.is-disabled .el-input__icon {
     cursor: not-allowed; }
+  .el-input.is-exceed .el-input__inner {
+    border-color: #F56C6C; }
+  .el-input.is-exceed .el-input__suffix .el-input__count {
+    color: #F56C6C; }
   .el-input--suffix .el-input__inner {
     padding-right: 30px; }
   .el-input--prefix .el-input__inner {
@@ -759,8 +837,8 @@
     vertical-align: middle;
     display: table-cell; }
   .el-input-group__append, .el-input-group__prepend {
-    background-color: #f5f7fa;
-    color: #A4A6A5;
+    background-color: #F5F7FA;
+    color: #909399;
     vertical-align: middle;
     display: table-cell;
     position: relative;
@@ -834,7 +912,7 @@
     width: 40px;
     height: auto;
     text-align: center;
-    background: #f5f7fa;
+    background: #F5F7FA;
     color: #606266;
     cursor: pointer;
     font-size: 13px; }
@@ -962,7 +1040,7 @@
 -------------------------- */
 /* Alert
 -------------------------- */
-/* Message Box
+/* MessageBox
 -------------------------- */
 /* Message
 -------------------------- */
@@ -987,6 +1065,8 @@
 /* Table
 -------------------------- */
 /* Pagination
+-------------------------- */
+/* Popup
 -------------------------- */
 /* Popover
 -------------------------- */
@@ -1029,6 +1109,12 @@
 /* Main
 --------------------------*/
 /* Timeline
+--------------------------*/
+/* Backtop
+--------------------------*/
+/* Link
+--------------------------*/
+/* Calendar
 --------------------------*/
 /* Break-point
 --------------------------*/
@@ -1078,7 +1164,7 @@
 -------------------------- */
 /* Alert
 -------------------------- */
-/* Message Box
+/* MessageBox
 -------------------------- */
 /* Message
 -------------------------- */
@@ -1103,6 +1189,8 @@
 /* Table
 -------------------------- */
 /* Pagination
+-------------------------- */
+/* Popup
 -------------------------- */
 /* Popover
 -------------------------- */
@@ -1145,6 +1233,12 @@
 /* Main
 --------------------------*/
 /* Timeline
+--------------------------*/
+/* Backtop
+--------------------------*/
+/* Link
+--------------------------*/
+/* Calendar
 --------------------------*/
 /* Break-point
 --------------------------*/
@@ -1279,7 +1373,7 @@
 -------------------------- */
 /* Alert
 -------------------------- */
-/* Message Box
+/* MessageBox
 -------------------------- */
 /* Message
 -------------------------- */
@@ -1304,6 +1398,8 @@
 /* Table
 -------------------------- */
 /* Pagination
+-------------------------- */
+/* Popup
 -------------------------- */
 /* Popover
 -------------------------- */
@@ -1346,6 +1442,12 @@
 /* Main
 --------------------------*/
 /* Timeline
+--------------------------*/
+/* Backtop
+--------------------------*/
+/* Link
+--------------------------*/
+/* Calendar
 --------------------------*/
 /* Break-point
 --------------------------*/
@@ -1466,6 +1568,19 @@
   -webkit-transform: translateX(-50%);
   transform: translateX(-50%); }
 
+.el-slider__marks {
+  top: 0;
+  left: 12px;
+  width: 18px;
+  height: 100%; }
+  .el-slider__marks-text {
+    position: absolute;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    font-size: 14px;
+    color: #909399;
+    margin-top: 15px; }
+
 .el-slider.is-vertical {
   position: relative; }
   .el-slider.is-vertical .el-slider__runway {
@@ -1523,3 +1638,8 @@
       .el-slider.is-vertical.el-slider--with-input .el-slider__input:active .el-input-number__decrease,
       .el-slider.is-vertical.el-slider--with-input .el-slider__input:active .el-input-number__increase {
         border-color: #409EFF; }
+  .el-slider.is-vertical .el-slider__marks-text {
+    margin-top: 0;
+    left: 15px;
+    -webkit-transform: translateY(50%);
+    transform: translateY(50%); }

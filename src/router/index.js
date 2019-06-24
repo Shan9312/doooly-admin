@@ -4,9 +4,6 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
 import Layout from '@/views/layout'
-import reconRouter from './modules/recon'
-import operationRouter from './modules/operation'
-import recycleRouter from './modules/recycle'
 
 /**
 * hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
@@ -21,64 +18,63 @@ import recycleRouter from './modules/recycle'
     breadcrumb: false            if false, the item will hidden in breadcrumb(default is true)
   }
 **/
+
 export const constantRouterMap = [
-{
-  path: '/redirect',
-  component: Layout,
-  hidden: true,
-  children: [
   {
-    path: '/redirect/:path*',
-    component: () => import('@/views/redirect/index')
-  }]
-},
-{
-  path: '/login',
-  name: 'Login',
-  hidden: true,
-  component: () => import( /* webpackChunkName: "main" */ '@/views/login')
-},
-{
-  path: '/',
-  name: 'Home',
-  redirect: '/home',
-  component: Layout,
-  children: [{
-    path: 'home',
-    component: () => import( /* webpackChunkName: "main" */ '@/views/home'),
-    meta: { title: '主页', icon: 'example' }
-  }, {
-    path: 'user',
-    name: 'User',
+    path: '/redirect',
+    component: Layout,
     hidden: true,
-    component: () => import( /* webpackChunkName: "main" */ '@/views/home/user'),
-    meta: { title: '用户列表', icon: 'example' }
+    children: [
+      {
+        path: '/redirect/:path*',
+        component: () => import('@/views/redirect/index')
+      }]
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    hidden: true,
+    component: () => import( /* webpackChunkName: "main" */ '@/views/login')
+  },
+  {
+    path: '/',
+    name: 'Home',
+    redirect: '/home',
+    component: Layout,
+    children: [{
+      path: 'home',
+      component: () => import( /* webpackChunkName: "main" */ '@/views/home'),
+      meta: { title: '主页', icon: 'example' }
+    },
+      // {
+      //   path: 'user',
+      //   name: 'User',
+      //   hidden: true,
+      //   component: () => import( /* webpackChunkName: "main" */ '@/views/home/user'),
+      //   meta: { title: '用户列表', icon: 'example' }
+      // }
+    ]
+  },
+  {
+    path: '/404',
+    name: 'Page404',
+    hidden: true,
+    component: () => import( /* webpackChunkName: "error-page" */ '@/views/error-page/404')
+  },
+  {
+    path: '/401',
+    name: 'Page401',
+    hidden: true,
+    component: () => import( /* webpackChunkName: "error-page" */ '@/views/error-page/401')
   }]
-},
-{
-  path: '/404',
-  name: 'Page404',
-  hidden: true,
-  component: () => import( /* webpackChunkName: "error-page" */ '@/views/error-page/404')
-},
-{
-  path: '/401',
-  name: 'Page401',
-  hidden: true,
-  component: () => import( /* webpackChunkName: "error-page" */ '@/views/error-page/401')
-}]
 
 export const asyncRouterMap = [
-  reconRouter,
-  operationRouter,
-  recycleRouter,
   {
     path: '*',
     redirect: '/404',
     hidden: true
   }
 ]
-
 export default new VueRouter({
   mode: process.env.NODE_ENV == 'production' ? 'history' : 'hash',
   // base: '/reconcili/',

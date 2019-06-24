@@ -36,7 +36,7 @@
 -------------------------- */
 /* Alert
 -------------------------- */
-/* Message Box
+/* MessageBox
 -------------------------- */
 /* Message
 -------------------------- */
@@ -61,6 +61,8 @@
 /* Table
 -------------------------- */
 /* Pagination
+-------------------------- */
+/* Popup
 -------------------------- */
 /* Popover
 -------------------------- */
@@ -103,6 +105,12 @@
 /* Main
 --------------------------*/
 /* Timeline
+--------------------------*/
+/* Backtop
+--------------------------*/
+/* Link
+--------------------------*/
+/* Calendar
 --------------------------*/
 /* Break-point
 --------------------------*/
@@ -146,7 +154,7 @@
 -------------------------- */
 /* Alert
 -------------------------- */
-/* Message Box
+/* MessageBox
 -------------------------- */
 /* Message
 -------------------------- */
@@ -171,6 +179,8 @@
 /* Table
 -------------------------- */
 /* Pagination
+-------------------------- */
+/* Popup
 -------------------------- */
 /* Popover
 -------------------------- */
@@ -214,6 +224,12 @@
 --------------------------*/
 /* Timeline
 --------------------------*/
+/* Backtop
+--------------------------*/
+/* Link
+--------------------------*/
+/* Calendar
+--------------------------*/
 /* Break-point
 --------------------------*/
 /* Break-points
@@ -232,7 +248,7 @@
   .hidden-sm-and-up {
     display: none !important; } }
 
-@media only screen and (min-width: 768px) and (max-width: 992px - 1) {
+@media only screen and (min-width: 768px) and (max-width: 991px) {
   .hidden-sm-only {
     display: none !important; } }
 
@@ -244,7 +260,7 @@
   .hidden-md-and-up {
     display: none !important; } }
 
-@media only screen and (min-width: 992px) and (max-width: 1200px - 1) {
+@media only screen and (min-width: 992px) and (max-width: 1199px) {
   .hidden-md-only {
     display: none !important; } }
 
@@ -256,7 +272,7 @@
   .hidden-lg-and-up {
     display: none !important; } }
 
-@media only screen and (min-width: 1200px) and (max-width: 1920px - 1) {
+@media only screen and (min-width: 1200px) and (max-width: 1919px) {
   .hidden-lg-only {
     display: none !important; } }
 

@@ -1,5 +1,4 @@
 import Layout from '@/views/layout'
-
 const reconRouter = {
   path: '/accountManage',
   component: Layout,
@@ -15,7 +14,7 @@ const reconRouter = {
     path: 'accountEntry',
     name: 'AccountEntry',
     component: () => import( /* webpackChunkName: "form" */ '@/views/account-manage/account-entry/index'),
-    meta: { title: '入账流水对账列表', icon: 'nested'}
+    meta: { title: '入账流水对账列表', icon: 'nested' },
   }, {
     path: 'merchantsOrder',
     name: 'MerchantsOrder',

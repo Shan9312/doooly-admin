@@ -7,50 +7,53 @@ import { Auth } from '@/common'
 
 NProgress.configure({ showSpinner: false })
 
-// 判断登录权限
-// function hasPermission(roles, permissionRoles) {
-//   if (roles.includes('admin')) return true // admin permission passed directly
-//   if (!permissionRoles) return true
-//   return roles.some(role => permissionRoles.indexOf(role) >= 0)
-// }
+const whiteList = ['/login', '/auth-redirect']
 
-const WHITE_LIST = ['/login', '/auth-redirect']
-
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   NProgress.start()
-  if (!Auth.getToken()) {
-    if (WHITE_LIST.indexOf(to.path) !== -1) {
-      next()
+  if (Auth.getToken()) {
+    if (to.path === '/login') {
+      // if is logged in, redirect to the home page
+      next({ path: '/' })
+      NProgress.done()
     } else {
-      next(`/login?redirect=${to.path}`)
+      const hasRoles = store.getters.roles && store.getters.roles.length > 0
+      if (hasRoles) {
+        next()
+      } else {
+        try {
+          const userInfo = sessionStorage.getItem('userInfo')
+
+          const roles = JSON.parse(userInfo).email
+          // 获取用户信息
+          await store.dispatch('GetUserInfo', roles)
+
+          // 根据用户信息获取对应的菜单路由
+          const accessRoutes = await store.dispatch('GenerateRoutes', { roles })
+          console.log(accessRoutes)
+          // 获取对应的菜单按钮
+          await store.dispatch('GenerateButtons', { roles })
+
+          router.addRoutes(accessRoutes)
+
+          next({ ...to, replace: true })
+        } catch (error) {
+          // 移除登录信息
+          await store.dispatch('ResetToken')
+          Message.error('登录失败')
+          next(`/login?redirect=${to.path}`)
+          NProgress.done()
+        }
+      }
     }
   } else {
-    if (to.path === '/login') {
-      next({ path: '/' })
-    } else {
-      if (store.getters.roles.length === 0 || from.path == '/login') {
-        store.dispatch('GetUserInfo').then(res => {
-          const data = res.data
-          const roles = data.roles
-          store.dispatch('GenerateRoutes', { roles }).then(() => {
-            router.addRoutes(store.getters.addRouters)
-            next({ ...to, replace: true })
-          })
-        }).catch((err) => {
-          store.dispatch('Logout').then(() => {
-            Message.error(err)
-            next({ path: '/' })
-          })
-        })
-      }
-      // 没有动态改变权限的需求可直接next() 删除下方权限判断 ↓
-      // if (hasPermission(store.getters.roles, to.meta.roles)) {
-      //   next()
-      // } else {
-      //   next({ path: '/401', replace: true, query: { noGoBack: true }})
-      // }
-      // // 可删 ↑
+    if (whiteList.indexOf(to.path) !== -1) {
+      // in the free login whitelist, go directly
       next()
+    } else {
+      // other pages that do not have permission to access are redirected to the login page.
+      next(`/login?redirect=${to.path}`)
+      NProgress.done()
     }
   }
 })

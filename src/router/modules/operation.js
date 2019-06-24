@@ -19,7 +19,7 @@ const operationRouter = {
       meta: { title: '活动专题列表', icon: 'nested' }
     },
     {
-      path: 'edit/:id',
+      path: 'activitySubjectEdit/:id',
       name: 'ActivitySubjectEdit',
       hidden: true,
       meta: { title: '专题编辑页', icon: 'nested' },

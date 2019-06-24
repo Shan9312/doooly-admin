@@ -39,7 +39,7 @@
 -------------------------- */
 /* Alert
 -------------------------- */
-/* Message Box
+/* MessageBox
 -------------------------- */
 /* Message
 -------------------------- */
@@ -64,6 +64,8 @@
 /* Table
 -------------------------- */
 /* Pagination
+-------------------------- */
+/* Popup
 -------------------------- */
 /* Popover
 -------------------------- */
@@ -106,6 +108,12 @@
 /* Main
 --------------------------*/
 /* Timeline
+--------------------------*/
+/* Backtop
+--------------------------*/
+/* Link
+--------------------------*/
+/* Calendar
 --------------------------*/
 /* Break-point
 --------------------------*/
@@ -157,7 +165,7 @@
 -------------------------- */
 /* Alert
 -------------------------- */
-/* Message Box
+/* MessageBox
 -------------------------- */
 /* Message
 -------------------------- */
@@ -182,6 +190,8 @@
 /* Table
 -------------------------- */
 /* Pagination
+-------------------------- */
+/* Popup
 -------------------------- */
 /* Popover
 -------------------------- */
@@ -224,6 +234,12 @@
 /* Main
 --------------------------*/
 /* Timeline
+--------------------------*/
+/* Backtop
+--------------------------*/
+/* Link
+--------------------------*/
+/* Calendar
 --------------------------*/
 /* Break-point
 --------------------------*/
@@ -273,7 +289,7 @@
 -------------------------- */
 /* Alert
 -------------------------- */
-/* Message Box
+/* MessageBox
 -------------------------- */
 /* Message
 -------------------------- */
@@ -298,6 +314,8 @@
 /* Table
 -------------------------- */
 /* Pagination
+-------------------------- */
+/* Popup
 -------------------------- */
 /* Popover
 -------------------------- */
@@ -341,6 +359,12 @@
 --------------------------*/
 /* Timeline
 --------------------------*/
+/* Backtop
+--------------------------*/
+/* Link
+--------------------------*/
+/* Calendar
+--------------------------*/
 /* Break-point
 --------------------------*/
 .el-progress {
@@ -356,9 +380,9 @@
     .el-progress__text i {
       vertical-align: middle;
       display: block; }
-  .el-progress--circle {
+  .el-progress--circle, .el-progress--dashboard {
     display: inline-block; }
-    .el-progress--circle .el-progress__text {
+    .el-progress--circle .el-progress__text, .el-progress--dashboard .el-progress__text {
       position: absolute;
       top: 50%;
       left: 0;
@@ -367,7 +391,7 @@
       margin: 0;
       -webkit-transform: translate(0, -50%);
       transform: translate(0, -50%); }
-      .el-progress--circle .el-progress__text i {
+      .el-progress--circle .el-progress__text i, .el-progress--dashboard .el-progress__text i {
         vertical-align: middle;
         display: inline-block; }
   .el-progress--without-text .el-progress__text {
@@ -380,13 +404,17 @@
     padding-right: 0;
     margin-right: 0; }
   .el-progress.is-success .el-progress-bar__inner {
-    background-color: #1AC062; }
+    background-color: #67C23A; }
   .el-progress.is-success .el-progress__text {
-    color: #1AC062; }
+    color: #67C23A; }
+  .el-progress.is-warning .el-progress-bar__inner {
+    background-color: #E6A23C; }
+  .el-progress.is-warning .el-progress__text {
+    color: #E6A23C; }
   .el-progress.is-exception .el-progress-bar__inner {
-    background-color: #FD5656; }
+    background-color: #F56C6C; }
   .el-progress.is-exception .el-progress__text {
-    color: #FD5656; }
+    color: #F56C6C; }
 
 .el-progress-bar {
   padding-right: 50px;
@@ -477,7 +505,7 @@
 -------------------------- */
 /* Alert
 -------------------------- */
-/* Message Box
+/* MessageBox
 -------------------------- */
 /* Message
 -------------------------- */
@@ -502,6 +530,8 @@
 /* Table
 -------------------------- */
 /* Pagination
+-------------------------- */
+/* Popup
 -------------------------- */
 /* Popover
 -------------------------- */
@@ -544,6 +574,12 @@
 /* Main
 --------------------------*/
 /* Timeline
+--------------------------*/
+/* Backtop
+--------------------------*/
+/* Link
+--------------------------*/
+/* Calendar
 --------------------------*/
 /* Break-point
 --------------------------*/
@@ -655,7 +691,7 @@
     .el-upload-list__item:first-child {
       margin-top: 10px; }
     .el-upload-list__item .el-icon-upload-success {
-      color: #1AC062; }
+      color: #67C23A; }
     .el-upload-list__item .el-icon-close {
       display: none;
       position: absolute;
@@ -676,7 +712,7 @@
       opacity: 1;
       color: #409EFF; }
     .el-upload-list__item:hover {
-      background-color: #f5f7fa; }
+      background-color: #F5F7FA; }
       .el-upload-list__item:hover .el-icon-close {
         display: inline-block; }
       .el-upload-list__item:hover .el-progress__text {
@@ -851,7 +887,8 @@
     float: left;
     position: relative;
     z-index: 1;
-    margin-left: -80px; }
+    margin-left: -80px;
+    background-color: #FFFFFF; }
   .el-upload-list--picture .el-upload-list__item-name {
     display: block;
     margin-top: 20px; }

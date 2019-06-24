@@ -38,7 +38,7 @@
 -------------------------- */
 /* Alert
 -------------------------- */
-/* Message Box
+/* MessageBox
 -------------------------- */
 /* Message
 -------------------------- */
@@ -63,6 +63,8 @@
 /* Table
 -------------------------- */
 /* Pagination
+-------------------------- */
+/* Popup
 -------------------------- */
 /* Popover
 -------------------------- */
@@ -105,6 +107,12 @@
 /* Main
 --------------------------*/
 /* Timeline
+--------------------------*/
+/* Backtop
+--------------------------*/
+/* Link
+--------------------------*/
+/* Calendar
 --------------------------*/
 /* Break-point
 --------------------------*/
@@ -154,7 +162,7 @@
 -------------------------- */
 /* Alert
 -------------------------- */
-/* Message Box
+/* MessageBox
 -------------------------- */
 /* Message
 -------------------------- */
@@ -179,6 +187,8 @@
 /* Table
 -------------------------- */
 /* Pagination
+-------------------------- */
+/* Popup
 -------------------------- */
 /* Popover
 -------------------------- */
@@ -222,6 +232,12 @@
 --------------------------*/
 /* Timeline
 --------------------------*/
+/* Backtop
+--------------------------*/
+/* Link
+--------------------------*/
+/* Calendar
+--------------------------*/
 /* Break-point
 --------------------------*/
 .el-step {
@@ -250,11 +266,11 @@
       color: #C0C4CC;
       border-color: #C0C4CC; }
     .el-step__head.is-success {
-      color: #1AC062;
-      border-color: #1AC062; }
+      color: #67C23A;
+      border-color: #67C23A; }
     .el-step__head.is-error {
-      color: #FD5656;
-      border-color: #FD5656; }
+      color: #F56C6C;
+      border-color: #F56C6C; }
     .el-step__head.is-finish {
       color: #409EFF;
       border-color: #409EFF; }
@@ -327,9 +343,9 @@
     .el-step__title.is-wait {
       color: #C0C4CC; }
     .el-step__title.is-success {
-      color: #1AC062; }
+      color: #67C23A; }
     .el-step__title.is-error {
-      color: #FD5656; }
+      color: #F56C6C; }
     .el-step__title.is-finish {
       color: #409EFF; }
   .el-step__description {
@@ -343,9 +359,9 @@
     .el-step__description.is-wait {
       color: #C0C4CC; }
     .el-step__description.is-success {
-      color: #1AC062; }
+      color: #67C23A; }
     .el-step__description.is-error {
-      color: #FD5656; }
+      color: #F56C6C; }
     .el-step__description.is-finish {
       color: #409EFF; }
   .el-step.is-horizontal {

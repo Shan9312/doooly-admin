@@ -38,7 +38,7 @@
 -------------------------- */
 /* Alert
 -------------------------- */
-/* Message Box
+/* MessageBox
 -------------------------- */
 /* Message
 -------------------------- */
@@ -63,6 +63,8 @@
 /* Table
 -------------------------- */
 /* Pagination
+-------------------------- */
+/* Popup
 -------------------------- */
 /* Popover
 -------------------------- */
@@ -105,6 +107,12 @@
 /* Main
 --------------------------*/
 /* Timeline
+--------------------------*/
+/* Backtop
+--------------------------*/
+/* Link
+--------------------------*/
+/* Calendar
 --------------------------*/
 /* Break-point
 --------------------------*/
@@ -154,7 +162,7 @@
 -------------------------- */
 /* Alert
 -------------------------- */
-/* Message Box
+/* MessageBox
 -------------------------- */
 /* Message
 -------------------------- */
@@ -179,6 +187,8 @@
 /* Table
 -------------------------- */
 /* Pagination
+-------------------------- */
+/* Popup
 -------------------------- */
 /* Popover
 -------------------------- */
@@ -222,6 +232,12 @@
 --------------------------*/
 /* Timeline
 --------------------------*/
+/* Backtop
+--------------------------*/
+/* Link
+--------------------------*/
+/* Calendar
+--------------------------*/
 /* Break-point
 --------------------------*/
 .el-notification {
@@ -248,7 +264,8 @@
   .el-notification.left {
     left: 16px; }
   .el-notification__group {
-    margin-left: 13px; }
+    margin-left: 13px;
+    margin-right: 8px; }
   .el-notification__title {
     font-weight: bold;
     font-size: 16px;
@@ -276,11 +293,11 @@
     .el-notification__closeBtn:hover {
       color: #606266; }
   .el-notification .el-icon-success {
-    color: #1AC062; }
+    color: #67C23A; }
   .el-notification .el-icon-error {
-    color: #FD5656; }
+    color: #F56C6C; }
   .el-notification .el-icon-info {
-    color: #A4A6A5; }
+    color: #909399; }
   .el-notification .el-icon-warning {
     color: #E6A23C; }
 

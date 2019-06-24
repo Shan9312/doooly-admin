@@ -29,12 +29,12 @@ module.exports = {
   devServer: {
     open: true,
     proxy: {
-      // '/': {
-      //   target: 'http://114.215.198.87:8780/test_reconcili/',
-      //   ws: false,
-      //   changeOrigin: true,
-      //   // pathRewrite: { "^/pro_reconcili": "" }
-      // },
+      '/': {
+        target: 'http://admin.doooly.com/dev_doooly-admin/',
+        ws: false,
+        changeOrigin: true,
+        // pathRewrite: { "^/pro_reconcili": "" }
+      },
       '/subject': {
         target: 'http://114.215.198.87:8781/dev_reconcili/',
         ws: false,

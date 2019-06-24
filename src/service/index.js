@@ -7,6 +7,11 @@ import ReconExcelService from './reconExcel'
 import EnterExcelService from './enterpriseExcel'
 import RecycleGoodsService from './recycle-goods/recycle-goods'
 import SubjectService from './activity-subject/activity-subject'
+import PermissionService from './permission'
+import DeptService from './dept/depy'
+import UserService from './user/user'
+import RoleService from './role/role'
+import MenuService from './menu/menu'
 
 export {
   LoginService,
@@ -17,5 +22,10 @@ export {
   ReconExcelService,
   EnterExcelService,
   RecycleGoodsService,
-  SubjectService
+  SubjectService,
+  PermissionService,
+  DeptService,
+  UserService,
+  RoleService,
+  MenuService
 }

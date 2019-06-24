@@ -38,7 +38,7 @@
 -------------------------- */
 /* Alert
 -------------------------- */
-/* Message Box
+/* MessageBox
 -------------------------- */
 /* Message
 -------------------------- */
@@ -63,6 +63,8 @@
 /* Table
 -------------------------- */
 /* Pagination
+-------------------------- */
+/* Popup
 -------------------------- */
 /* Popover
 -------------------------- */
@@ -105,6 +107,12 @@
 /* Main
 --------------------------*/
 /* Timeline
+--------------------------*/
+/* Backtop
+--------------------------*/
+/* Link
+--------------------------*/
+/* Calendar
 --------------------------*/
 /* Break-point
 --------------------------*/
@@ -154,7 +162,7 @@
 -------------------------- */
 /* Alert
 -------------------------- */
-/* Message Box
+/* MessageBox
 -------------------------- */
 /* Message
 -------------------------- */
@@ -179,6 +187,8 @@
 /* Table
 -------------------------- */
 /* Pagination
+-------------------------- */
+/* Popup
 -------------------------- */
 /* Popover
 -------------------------- */
@@ -222,11 +232,20 @@
 --------------------------*/
 /* Timeline
 --------------------------*/
+/* Backtop
+--------------------------*/
+/* Link
+--------------------------*/
+/* Calendar
+--------------------------*/
 /* Break-point
 --------------------------*/
 .el-carousel {
-  overflow-x: hidden;
   position: relative; }
+  .el-carousel--horizontal {
+    overflow-x: hidden; }
+  .el-carousel--vertical {
+    overflow-y: hidden; }
   .el-carousel__container {
     position: relative;
     height: 300px; }
@@ -261,13 +280,19 @@
   .el-carousel__indicators {
     position: absolute;
     list-style: none;
-    bottom: 0;
-    left: 50%;
-    -webkit-transform: translateX(-50%);
-    transform: translateX(-50%);
     margin: 0;
     padding: 0;
     z-index: 2; }
+    .el-carousel__indicators--horizontal {
+      bottom: 0;
+      left: 50%;
+      -webkit-transform: translateX(-50%);
+      transform: translateX(-50%); }
+    .el-carousel__indicators--vertical {
+      right: 0;
+      top: 50%;
+      -webkit-transform: translateY(-50%);
+      transform: translateY(-50%); }
     .el-carousel__indicators--outside {
       bottom: 26px;
       text-align: center;
@@ -293,12 +318,18 @@
       .el-carousel__indicators--labels .el-carousel__indicator {
         padding: 6px 4px; }
   .el-carousel__indicator {
-    display: inline-block;
     background-color: transparent;
-    padding: 12px 4px;
     cursor: pointer; }
     .el-carousel__indicator:hover button {
       opacity: 0.72; }
+    .el-carousel__indicator--horizontal {
+      display: inline-block;
+      padding: 12px 4px; }
+    .el-carousel__indicator--vertical {
+      padding: 4px 12px; }
+      .el-carousel__indicator--vertical .el-carousel__button {
+        width: 2px;
+        height: 15px; }
     .el-carousel__indicator.is-active button {
       opacity: 1; }
   .el-carousel__button {
