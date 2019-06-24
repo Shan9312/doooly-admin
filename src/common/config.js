@@ -1,3 +1,3 @@
 export default {
-  BASE_URL: 'http://admin.doooly.com/dev_doooly-admin/',
+  BASE_URL: 'http://admin.doooly.com/test_doooly-admin/',
 };
