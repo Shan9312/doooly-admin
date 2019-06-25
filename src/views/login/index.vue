@@ -69,8 +69,8 @@
       };
       return {
         loginForm: {
-          username: "admin@qq.com",
-          password: "TYR9DB"
+          username: "",
+          password: ""
         },
         loginRules: {
           username: [
