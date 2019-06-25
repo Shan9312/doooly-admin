@@ -6,7 +6,7 @@ import { Auth, Utils } from '@/common'
 import Config from '@/common/config'
 
 const settings = {
-  baseURL: Config.BASE_URL,
+  baseURL: process.env.NODE_ENV == 'production' ? Config.BASE_URL : '/',
   headers: { 'Content-Type': 'application/json', "Accept": "application/json, text/plain", }
 }
 const ajax = (method, url, data, options = {}) => {
