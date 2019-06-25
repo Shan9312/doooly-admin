@@ -46,7 +46,7 @@ function filterAsyncRouter(routes, name = '') {
       component: null,
       hidden: !item.isShow,
       name: capitalize(item.url),
-      meta: { icon: 'nested', title: item.name }
+      meta: { icon: item.icon, title: item.name }
     }
     if (name) {
       route['component'] = () => import(`@/views/${name}/${segmentation(item.url)}/index`)

@@ -33,7 +33,7 @@ router.beforeEach(async (to, from, next) => {
 
           // 获取对应的菜单按钮
           await store.dispatch('GenerateButtons', {userId: params.userId, name: params.email})
-
+          
           router.addRoutes(accessRoutes)
 
           next({ ...to, replace: true })

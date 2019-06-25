@@ -223,7 +223,8 @@
           orderNum: 0
         },
         dataRule: {
-          name: [{ required: true,  trigger: "blur", validator: Validate.specialCharacters }]
+          name: [{ required: true,  trigger: "blur", validator: Validate.specialCharacters }],
+          parentName: [{required: true,  trigger: "blur", message: '请选择机构名称'}]
         },
         popupTreeData: [],
         popupTreeProps: {
@@ -256,7 +257,7 @@
       // 获取机构树
       getParentMenuTree(tableTreeDdata) {
         let parent = {
-          parentId: 0,
+          parentId: '0',
           name: "顶级菜单",
           children: tableTreeDdata
         };
@@ -274,11 +275,14 @@
           orderNum: 0
         };
       },
+      
       // 显示编辑界面
       handleEdit(row) {
         this.dialogVisible = true;
         Object.assign(this.dataForm, row);
+        console.log(this.dataForm)
       },
+
       // 删除
       handleDelete(row) {
         this.$confirm("确认删除选中记录吗？", "提示", {
@@ -299,6 +303,7 @@
             });
           });
       },
+
       // 获取删除的包含子机构的id列表
       getDeleteIds(ids, row) {
         ids.push({ id: row.id });
@@ -311,26 +316,22 @@
       },
       // 机构树选中
       handleTreeSelectChange(data) {
-        this.dataForm.parentId = data.id;
+        this.dataForm.parentId = data.parentId;
         this.dataForm.parentName = data.name;
       },
       // 表单提交
       submitForm() {
+        console.log(this.dataForm)
         this.$refs["dataForm"].validate(async valid => {
           if (valid) {
             let params = Object.assign({}, this.dataForm);
             this.editLoading = true;
-            const { data } = await DeptService.editDept(params);
+            const data = await DeptService.editDept(params);
             this.editLoading = false;
             if (data) {
               this.$message({ message: "操作成功", type: "success" });
               this.dialogVisible = false;
               this.$refs["dataForm"].resetFields();
-            } else {
-              this.$message({
-                message: "操作失败",
-                type: "error"
-              });
             }
             this.findTreeData();
           }

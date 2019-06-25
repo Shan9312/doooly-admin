@@ -50,11 +50,10 @@
         hasChildren: 'hasChildren',
         date: 'date'
       }"
-      @row-click="handleRoleSelectChange"
     >
       <el-table-column label="选择" width="50" align="center">
         <template scope="scope">
-          <el-radio class="radio" v-model="radio" :label="scope.$index"
+          <el-radio class="radio" @change="handleRoleSelectChange(scope.row)" v-model="radio" :label="scope.$index"
             >&nbsp;</el-radio
           >
         </template>
@@ -191,7 +190,6 @@
         v-loading="menuLoading"
         element-loading-text="拼命加载中"
         :check-strictly="false"
-        @check-change="handleMenuCheckChange"
       >
       </el-tree>
       <div
@@ -266,7 +264,13 @@
         dialogVisible: false, // 新增编辑界面是否显示
         editLoading: false,
         dataFormRules: {
-          name: [{ required: true, trigger: "blur", validator: Validate.specialCharacters }]
+          name: [
+            {
+              required: true,
+              trigger: "blur",
+              validator: Validate.specialCharacters
+            }
+          ]
         },
         // 新增编辑界面数据
         dataForm: {
@@ -302,22 +306,24 @@
       handleDelete(row) {
         this.$confirm("确认删除选中记录吗？", "提示", {
           type: "warning"
-        }).then(async () => {
-          let params = [{ id: row.id }];
-          const data = await RoleService.deleteRole(params);
-          if (data) {
-            this.findPage();
-            this.$message({ message: "删除成功", type: "success" });
-          }
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          }); 
-        });
+        })
+          .then(async () => {
+            let params = [{ id: row.id }];
+            const data = await RoleService.deleteRole(params);
+            if (data) {
+              this.findPage();
+              this.$message({ message: "删除成功", type: "success" });
+            }
+          })
+          .catch(() => {
+            this.$message({
+              type: "info",
+              message: "已取消删除"
+            });
+          });
       },
       // 显示新增界面
-      handleAdd () {
+      handleAdd() {
         this.dialogVisible = true;
         this.operation = true;
         this.dataForm = {
@@ -327,13 +333,13 @@
         };
       },
       // 显示编辑界面
-      handleEdit (row) {
+      handleEdit(row) {
         this.dialogVisible = true;
         this.operation = false;
         this.dataForm = Object.assign({}, row);
       },
       // 编辑
-      submitForm () {
+      submitForm() {
         this.$refs.dataForm.validate(async valid => {
           if (valid) {
             this.editLoading = true;
@@ -361,37 +367,24 @@
         this.menuLoading = false;
         this.menuData = data;
       },
-      
+
       // 角色选择改变监听
       async handleRoleSelectChange(val) {
         if (val == null) {
           return;
         }
         this.selectRole = val;
-        const {data} = await RoleService.getRoleMenus(val.id)
+        const { data } = await RoleService.getRoleMenus(val.id);
         this.currentRoleMenus = data;
         this.$refs.menuTree.setCheckedNodes(data);
       },
-      // 树节点选择监听
-      handleMenuCheckChange(data, check, subCheck) {
-        if (check) {
-          // 节点选中时同步选中父节点
-          let parentId = data.parentId;
-          this.$refs.menuTree.setChecked(parentId, true, false);
-        } else {
-          // 节点取消选中时同步取消选中子节点
-          if (data.children != null) {
-            data.children.forEach(element => {
-              this.$refs.menuTree.setChecked(element.id, false, false);
-            });
-          }
-        }
-      },
+
       // 重置选择
       resetSelection() {
         this.checkAll = false;
         this.$refs.menuTree.setCheckedNodes(this.currentRoleMenus);
       },
+
       // 全选操作
       handleCheckAll() {
         if (this.checkAll) {
@@ -402,6 +395,7 @@
           this.$refs.menuTree.setCheckedNodes([]);
         }
       },
+
       // 递归全选
       checkAllMenu(menuData, allMenus) {
         menuData.forEach(menu => {
@@ -411,17 +405,18 @@
           }
         });
       },
+
       // 角色菜单授权提交
       async submitAuthForm() {
         let roleId = this.selectRole.id;
         this.authLoading = true;
-        let checkedNodes = this.$refs.menuTree.getCheckedNodes(false, true);
+        let checkedNodes = this.$refs.menuTree.getCheckedNodes();
         let roleMenus = [];
         for (let i = 0, len = checkedNodes.length; i < len; i++) {
           let roleMenu = { roleId: roleId, menuId: checkedNodes[i].id };
           roleMenus.push(roleMenu);
         }
-        const {data} = await RoleService.saveRoleMenus(roleMenus)
+        const { data } = await RoleService.saveRoleMenus(roleMenus);
         this.authLoading = false;
         if (data) {
           this.$message({ message: "操作成功", type: "success" });
