@@ -22,7 +22,7 @@ router.beforeEach(async (to, from, next) => {
         next()
       } else {
         try {
-          const userInfo = sessionStorage.getItem('userInfo')
+          const userInfo = Auth.getUserInfo()
 
           const params = JSON.parse(userInfo)
           // 获取用户信息

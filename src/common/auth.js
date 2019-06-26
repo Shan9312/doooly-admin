@@ -9,5 +9,8 @@ export default {
   },
   removeToken() {
     return sessionStorage.clear()
+  },
+  getUserInfo() {
+    return sessionStorage.getItem('userInfo')
   }
 }

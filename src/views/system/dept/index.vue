@@ -179,7 +179,7 @@
 <script>
   import { Validate } from "@/common";
   import { DeptService } from "@/service";
-  import { Utils } from "@/common";
+  import { Utils, Auth } from "@/common";
   // 模糊查询树结构中的数据，并返回当前整个树结构
   const filterList = (name, data) => {
     let list = [];
@@ -201,19 +201,19 @@
     });
     return list;
   };
-  
+
   // 列表排序
   const sortList = data => {
-    let list = []
+    let list = [];
     list = data.sort((a, b) => {
       return a.orderNum - b.orderNum;
     });
     list.map(item => {
       if (item.children && item.children.length > 0) {
-        sortList(item.children)
+        sortList(item.children);
       }
-    })
-    return list
+    });
+    return list;
   };
 
   export default {
@@ -259,8 +259,7 @@
       async findTreeData() {
         this.loading = true;
         const { data } = await DeptService.getDeptList();
-        // this.tableTreeDdata = data;
-        this.tableTreeDdata = sortList(data)
+        this.tableTreeDdata = sortList(data);
         this.popupTreeData = this.getParentMenuTree(data);
         this.loading = false;
       },
@@ -288,13 +287,15 @@
 
       // 显示新增界面
       handleAdd() {
+        const userInfo = JSON.parse(Auth.getUserInfo());
         this.dialogVisible = true;
         this.dataForm = {
           id: 0,
           name: "",
           parentId: 0,
           parentName: "顶级菜单",
-          orderNum: 0
+          orderNum: 0,
+          createBy: userInfo.name
         };
       },
 
@@ -372,3 +373,4 @@
 
 <style scoped>
 </style>
+

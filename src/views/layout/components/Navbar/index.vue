@@ -43,12 +43,13 @@
   import { UserService } from "@/service";
   import Breadcrumb from "./Breadcrumb";
   import Hamburger from "./Hamburger";
+  import { Auth } from '@/common';
 
   export default {
     computed: {
       ...mapGetters(["sidebar"]),
       userInfo() {
-        const userInfo = sessionStorage.getItem("userInfo");
+        const userInfo = Auth.getUserInfo()
         return JSON.parse(userInfo);
       }
     },

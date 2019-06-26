@@ -229,7 +229,7 @@
 <script>
   import { Validate } from "@/common";
   import { RoleService } from "@/service";
-  import { Utils } from "@/common";
+  import { Utils, Auth } from "@/common";
   export default {
     name: "Role",
     data() {
@@ -326,12 +326,14 @@
       },
       // 显示新增界面
       handleAdd() {
+        const userInfo = JSON.parse(Auth.getUserInfo());
         this.dialogVisible = true;
         this.operation = true;
         this.dataForm = {
           id: 0,
           name: "",
-          remark: ""
+          remark: "",
+          createBy: userInfo.name
         };
       },
       // 显示编辑界面
