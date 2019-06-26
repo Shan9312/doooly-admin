@@ -140,7 +140,9 @@
             :data="popupTreeData"
             :props="popupTreeProps"
             :prop="
-              dataForm.parentName == null || dataForm.parentName == '' ? '顶级菜单' : dataForm.parentName
+              dataForm.parentName == null || dataForm.parentName == ''
+                ? '顶级菜单'
+                : dataForm.parentName
             "
             :nodeKey="'' + dataForm.parentId"
             :currentChangeHandle="handleTreeSelectChange"
@@ -178,7 +180,7 @@
   import { Validate } from "@/common";
   import { DeptService } from "@/service";
   import { Utils } from "@/common";
-
+  // 模糊查询树结构中的数据，并返回当前整个树结构
   const filterList = (name, data) => {
     let list = [];
     data.map((item, i) => {
@@ -198,6 +200,20 @@
       }
     });
     return list;
+  };
+  
+  // 列表排序
+  const sortList = data => {
+    let list = []
+    list = data.sort((a, b) => {
+      return a.orderNum - b.orderNum;
+    });
+    list.map(item => {
+      if (item.children && item.children.length > 0) {
+        sortList(item.children)
+      }
+    })
+    return list
   };
 
   export default {
@@ -219,7 +235,7 @@
           id: 0,
           name: "",
           parentId: 0,
-          parentName: [],
+          parentName: "顶级菜单",
           orderNum: 0
         },
         dataRule: {
@@ -229,11 +245,7 @@
               trigger: "blur",
               validator: Validate.specialCharacters
             }
-          ],
-          // parentName: [
-          //   { required: true, trigger: "blur", message: "请选择机构名称" },
-          //   { required: true, trigger: "change", message: "请选择机构名称" }
-          // ]
+          ]
         },
         popupTreeData: [],
         popupTreeProps: {
@@ -248,9 +260,7 @@
         this.loading = true;
         const { data } = await DeptService.getDeptList();
         // this.tableTreeDdata = data;
-        this.tableTreeDdata = data.sort((a, b) => {
-          return a.orderNum - b.orderNum;
-        });
+        this.tableTreeDdata = sortList(data)
         this.popupTreeData = this.getParentMenuTree(data);
         this.loading = false;
       },
@@ -269,7 +279,7 @@
       // 获取机构树
       getParentMenuTree(tableTreeDdata) {
         let parent = {
-          parentId: "0",
+          id: "0",
           name: "顶级菜单",
           children: tableTreeDdata
         };
@@ -283,7 +293,7 @@
           id: 0,
           name: "",
           parentId: 0,
-          parentName: "",
+          parentName: "顶级菜单",
           orderNum: 0
         };
       },
@@ -341,7 +351,7 @@
             if (data) {
               this.$message({ message: "操作成功", type: "success" });
               this.dialogVisible = false;
-              this.$refs["dataForm"].resetFields();
+              this.$refs["dataForm"].clearValidate();
             }
             this.findTreeData();
           }

@@ -7,6 +7,7 @@
           <el-col :span="11" :offset="1">
             <el-form-item label="角色名称">
               <el-input
+                clearable
                 v-model="search.name"
                 placeholder="请输入角色名称"
                 @keyup.native="onKeyup"
@@ -198,7 +199,7 @@
         <el-checkbox
           v-model="checkAll"
           @change="handleCheckAll"
-          :disabled="this.selectRole.id == null"
+          :disabled="this.radio == null"
           ><b>全选</b></el-checkbox
         >
       </div>
@@ -210,14 +211,14 @@
           perms="sys:role:edit"
           type="primary"
           @click="resetSelection"
-          :disabled="this.selectRole.id == null"
+          :disabled="this.radio == null"
         />
         <kt-button
           label="提交"
           perms="sys:role:edit"
           type="primary"
           @click="submitAuthForm"
-          :disabled="this.selectRole.id == null"
+          :disabled="this.radio == null"
           :loading="authLoading"
         />
       </div>
@@ -243,7 +244,7 @@
           pageNum: 1,
           pageSize: 20
         },
-        radio: "",
+        radio: null,
         total: 0,
         columns: [
           { prop: "id", label: "ID", minWidth: 50 },
@@ -301,6 +302,7 @@
         this.pageResult = data.content;
         this.total = data.totalSize;
         this.findTreeData();
+        this.radio = null // 更新数据后将选择的radio置空
       },
       // 删除数据
       handleDelete(row) {
@@ -349,12 +351,7 @@
             if (data) {
               this.$message({ message: "操作成功", type: "success" });
               this.dialogVisible = false;
-              this.$refs["dataForm"].resetFields();
-            } else {
-              this.$message({
-                message: "操作失败",
-                type: "error"
-              });
+              this.$refs["dataForm"].clearValidate();
             }
             this.findPage();
           }
@@ -374,6 +371,7 @@
           return;
         }
         this.selectRole = val;
+        this.checkAll = false;
         const { data } = await RoleService.getRoleMenus(val.id);
         this.currentRoleMenus = data;
         this.$refs.menuTree.setCheckedNodes(data);
@@ -455,7 +453,7 @@
         }
       }
     },
-    mounted() {
+    created() {
       this.findPage();
     }
   };

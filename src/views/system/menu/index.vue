@@ -8,6 +8,7 @@
             <el-form-item label="菜单名称">
               <el-input
                 v-model="search.name"
+                clearable
                 placeholder="请输入菜单名称"
                 @keyup.native="onKeyup"
                 maxlength="15"
@@ -441,7 +442,7 @@
                 const { data } = await MenuService.editMenu(params);
                 if (data) {
                   this.$message({ message: "操作成功", type: "success" });
-                  this.$refs["dataForm"].resetFields();
+                  this.$refs["dataForm"].clearValidate();
                   this.dialogVisible = false;
                 }
                 this.findTreeData();

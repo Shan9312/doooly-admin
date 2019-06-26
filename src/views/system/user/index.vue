@@ -412,7 +412,7 @@
             if (data) {
               this.$message({ message: "操作成功", type: "success" });
               this.dialogVisible = false;
-              this.$refs["dataForm"].resetFields();
+              this.$refs["dataForm"].clearValidate();
             }
             this.findPage();
           }
