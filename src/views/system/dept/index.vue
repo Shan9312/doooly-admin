@@ -140,7 +140,7 @@
             :data="popupTreeData"
             :props="popupTreeProps"
             :prop="
-              dataForm.parentName == null ? '顶级菜单' : dataForm.parentName
+              dataForm.parentName == null || dataForm.parentName == '' ? '顶级菜单' : dataForm.parentName
             "
             :nodeKey="'' + dataForm.parentId"
             :currentChangeHandle="handleTreeSelectChange"
@@ -178,7 +178,7 @@
   import { Validate } from "@/common";
   import { DeptService } from "@/service";
   import { Utils } from "@/common";
-  
+
   const filterList = (name, data) => {
     let list = [];
     data.map((item, i) => {
@@ -223,8 +223,17 @@
           orderNum: 0
         },
         dataRule: {
-          name: [{ required: true,  trigger: "blur", validator: Validate.specialCharacters }],
-          parentName: [{required: true,  trigger: "blur", message: '请选择机构名称'}]
+          name: [
+            {
+              required: true,
+              trigger: "blur",
+              validator: Validate.specialCharacters
+            }
+          ],
+          // parentName: [
+          //   { required: true, trigger: "blur", message: "请选择机构名称" },
+          //   { required: true, trigger: "change", message: "请选择机构名称" }
+          // ]
         },
         popupTreeData: [],
         popupTreeProps: {
@@ -238,7 +247,10 @@
       async findTreeData() {
         this.loading = true;
         const { data } = await DeptService.getDeptList();
-        this.tableTreeDdata = data;
+        // this.tableTreeDdata = data;
+        this.tableTreeDdata = data.sort((a, b) => {
+          return a.orderNum - b.orderNum;
+        });
         this.popupTreeData = this.getParentMenuTree(data);
         this.loading = false;
       },
@@ -257,7 +269,7 @@
       // 获取机构树
       getParentMenuTree(tableTreeDdata) {
         let parent = {
-          parentId: '0',
+          parentId: "0",
           name: "顶级菜单",
           children: tableTreeDdata
         };
@@ -275,12 +287,11 @@
           orderNum: 0
         };
       },
-      
+
       // 显示编辑界面
       handleEdit(row) {
         this.dialogVisible = true;
         Object.assign(this.dataForm, row);
-        console.log(this.dataForm)
       },
 
       // 删除
@@ -316,12 +327,11 @@
       },
       // 机构树选中
       handleTreeSelectChange(data) {
-        this.dataForm.parentId = data.parentId;
+        this.dataForm.parentId = data.id;
         this.dataForm.parentName = data.name;
       },
       // 表单提交
       submitForm() {
-        console.log(this.dataForm)
         this.$refs["dataForm"].validate(async valid => {
           if (valid) {
             let params = Object.assign({}, this.dataForm);

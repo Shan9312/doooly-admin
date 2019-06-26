@@ -39,7 +39,7 @@ const ajax = (method, url, data, options = {}) => {
     .catch(err => {
       console.log('err' + err)
       Message({
-        message: '网络连接出错了，请刷新重试~',
+        message: '网络连接出错了，请刷新页面重试~',
         type: 'error',
         duration: 2 * 1000
       })
