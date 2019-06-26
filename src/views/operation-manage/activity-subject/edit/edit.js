@@ -101,7 +101,7 @@ export default {
     }
     return {
       componentName: 'img-module',
-      actionUrl: process.env.VUE_APP_URL + '/fileUpload',
+      actionUrl: process.env.VUE_APP_URL + 'fileUpload',
       loading: false,
       specialTopicInfo: {
         id: this.$route.params.id,
