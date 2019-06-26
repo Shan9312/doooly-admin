@@ -357,7 +357,7 @@
       // 查看订单详情
       handleRouter(orderNumber) {
         this.$router.push({
-          path: `/recycleGoods/orderManage/orderDetail/${orderNumber}`
+          path: `/recycleGoods/orderDetail/${orderNumber}`
         });
       },
 

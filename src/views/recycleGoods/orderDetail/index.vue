@@ -1,5 +1,5 @@
 <template>
-  <div class="order-detail-wapper">
+  <div class="order-detail-wapper app-container">
     <!-- 订单详情 -->
     <div>
       <el-row :gutter="20" class="detail-row">
@@ -196,7 +196,7 @@
         </el-col>
         <el-col :span="12">
           <!-- 返回按钮 -->
-          <router-link :to="{ path: '/recycleGoods/orderManage/orderList' }">
+          <router-link :to="{ path: '/recycleGoods/orderManage' }">
             <el-button type="primary" plain class="btn">返回</el-button>
           </router-link>
         </el-col>
