@@ -1,6 +1,6 @@
 import ImgModule from '../components/ImgModule.vue'
 import { SubjectService } from '@/service'
-import { Validate } from '@/common'
+import { Validate, Auth } from '@/common'
 const ModuleImgUrl = require('@/assets/image/operation/bg.png')
 // changeStatus 默认状态是1，为新增。addStatus表示本地新增的模板，为后面保存图片信息时所用
 const ModuleList = [
@@ -16,9 +16,9 @@ const ModuleList = [
         imgUrl: ModuleImgUrl,
         url: 'http://www.baidu.com',
         type: 9,
-        sort: 1,
-      },
-    ],
+        sort: 1
+      }
+    ]
   },
   {
     modularType: 2,
@@ -32,16 +32,16 @@ const ModuleList = [
         imgUrl: ModuleImgUrl,
         url: 'http://www.baidu.com',
         type: 9,
-        sort: 1,
+        sort: 1
       },
       {
         changeStatus: 1,
         imgUrl: ModuleImgUrl,
         url: 'http://www.baidu.com',
         type: 9,
-        sort: 2,
-      },
-    ],
+        sort: 2
+      }
+    ]
   },
   {
     modularType: 3,
@@ -55,24 +55,24 @@ const ModuleList = [
         imgUrl: ModuleImgUrl,
         url: 'http://www.baidu.com',
         type: 9,
-        sort: 1,
+        sort: 1
       },
       {
         changeStatus: 1,
         imgUrl: ModuleImgUrl,
         url: 'http://www.baidu.com',
         type: 9,
-        sort: 2,
+        sort: 2
       },
       {
         changeStatus: 1,
         imgUrl: ModuleImgUrl,
         url: 'http://www.baidu.com',
         type: 9,
-        sort: 3,
-      },
-    ],
-  },
+        sort: 3
+      }
+    ]
+  }
 ]
 export default {
   name: 'ActivitySubjectEdit',
@@ -99,56 +99,58 @@ export default {
         callback()
       }
     }
+    const token = Auth.getToken()
     return {
       componentName: 'img-module',
       actionUrl: process.env.VUE_APP_URL + 'fileUpload',
+      headers: { Authorization: token },
       loading: false,
       specialTopicInfo: {
         id: this.$route.params.id,
         title: '',
         bgColor: '#fff',
         status: '1', // 下架状态 1.限时 2.永久
-        endDate: '', // 下架时间
+        endDate: '' // 下架时间
       },
       dialogModalVisible: false, // 编辑框
       modalImg: {
         url: '',
         name: '',
         urlType: '', // 跳转地址的类型，内购、品牌馆等
-        linkUrl: '', // 点击图片的跳转地址
+        linkUrl: '' // 点击图片的跳转地址
       },
       componentList: [],
       templateList: [
         {
           modularType: 1,
-          imgUrl: ModuleImgUrl,
+          imgUrl: ModuleImgUrl
         },
         {
           modularType: 2,
-          imgUrl: ModuleImgUrl,
+          imgUrl: ModuleImgUrl
         },
         {
           modularType: 3,
-          imgUrl: ModuleImgUrl,
-        },
+          imgUrl: ModuleImgUrl
+        }
       ],
       urlOptions: [
         {
           value: '1',
-          label: '链接',
+          label: '链接'
         },
         {
           value: '2',
-          label: '品牌馆链接',
+          label: '品牌馆链接'
         },
         {
           value: '3',
-          label: '内购网链接',
+          label: '内购网链接'
         },
         {
           value: '9',
-          label: '无',
-        },
+          label: '无'
+        }
       ],
       parentIndex: null,
       currentIndex: null,
@@ -156,16 +158,16 @@ export default {
         name: [{ required: true, validator: validateTitle, message: '请输入图片名称', trigger: 'blur' }],
         url: [{ required: true, message: '请选择图片', trigger: 'change' }],
         urlType: [{ required: true, message: '请选择链接类型', trigger: 'change' }],
-        linkUrl: [{ validator: validateLinkUrl, trigger: 'blur' }],
+        linkUrl: [{ validator: validateLinkUrl, trigger: 'blur' }]
       },
       specialTopicInfoRules: {
         title: [{ required: true, validator: validateTitle, trigger: 'blur' }],
-        endDate: [{ required: true, validator: validateEndDate, trigger: 'blur' }],
-      },
+        endDate: [{ required: true, validator: validateEndDate, trigger: 'blur' }]
+      }
     }
   },
   components: {
-    ImgModule,
+    ImgModule
   },
   created() {
     if (this.specialTopicInfo.id == 'null') return
@@ -183,7 +185,7 @@ export default {
           title: data.specialTopicInfo.title,
           status: data.specialTopicInfo.status === 1 ? '1' : '2',
           endDate: data.specialTopicInfo.endDate,
-          id: data.specialTopicInfo.id,
+          id: data.specialTopicInfo.id
         }
       }
     },
@@ -229,7 +231,7 @@ export default {
           url: subItem.imgUrl,
           name: subItem.name,
           urlType: urlTypeList[0].value, // 跳转地址的类型，内购、品牌馆等
-          linkUrl: subItem.url, // 点击图片的跳转地址
+          linkUrl: subItem.url // 点击图片的跳转地址
         }
       }
       this.dialogModalVisible = true
@@ -256,8 +258,10 @@ export default {
     handleImgSuccess(res, file) {
       if (res.data) {
         this.$set(this.modalImg, 'url', res.data[0])
-        this.loading = false
+      } else {
+        this.$message.error(res.info)
       }
+      this.loading = false
     },
     handleImgError(err, file) {
       this.loading = false
@@ -281,7 +285,7 @@ export default {
           imgUrl: this.modalImg.url,
           url: this.modalImg.linkUrl, // 跳转地址
           type: this.modalImg.urlType, // 链接类型
-          sort: this.currentIndex + 1, // 排序
+          sort: this.currentIndex + 1 // 排序
         })
         // 关掉弹框
         this.dialogModalVisible = false
@@ -317,7 +321,7 @@ export default {
         if (res && res.data) {
           this.$message({
             type: 'success',
-            message: '保存成功!',
+            message: '保存成功!'
           })
           this.$router.push('/operationManage/activitySubject')
         }
@@ -334,11 +338,11 @@ export default {
     },
     refreshSelectedTag(view) {
       this.$store.dispatch('delCachedView', view)
-    },
+    }
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {
       vm.refreshSelectedTag(vm.$route)
     })
-  },
+  }
 }
