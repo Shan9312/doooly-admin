@@ -53,7 +53,7 @@
       }"
     >
       <el-table-column label="选择" width="50" align="center">
-        <template scope="scope">
+        <template slot-scope="scope">
           <el-radio class="radio" @change="handleRoleSelectChange(scope.row)" v-model="radio" :label="scope.$index"
             >&nbsp;</el-radio
           >
