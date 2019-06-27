@@ -133,7 +133,7 @@
         style="text-align:left;"
       >
         <el-form-item label="名称" prop="name">
-          <el-input v-model="dataForm.name" placeholder="名称"></el-input>
+          <el-input v-model.trim="dataForm.name" placeholder="名称"></el-input>
         </el-form-item>
         <el-form-item label="上级机构" prop="parentName">
           <popup-tree-input

@@ -163,7 +163,7 @@
         </el-form-item>
         <el-form-item :label="menuTypeList[dataForm.type] + '名称'" prop="name">
           <el-input
-            v-model="dataForm.name"
+            v-model.trim="dataForm.name"
             :placeholder="menuTypeList[dataForm.type] + '名称'"
           ></el-input>
         </el-form-item>
@@ -183,7 +183,7 @@
         </el-form-item>
         <el-form-item v-if="dataForm.type === 2" label="授权标识" prop="perms">
           <el-input
-            v-model="dataForm.perms"
+            v-model.trim="dataForm.perms"
             placeholder="如: sys:user:add, sys:user:edit, sys:user:delete"
           ></el-input>
         </el-form-item>
@@ -191,7 +191,7 @@
           <el-row>
             <el-col :span="22">
               <el-input
-                v-model="dataForm.url"
+                v-model.trim="dataForm.url"
                 placeholder="菜单路由"
               ></el-input>
             </el-col>
@@ -247,7 +247,7 @@
           <el-row>
             <el-col :span="22">
               <el-input
-                v-model="dataForm.icon"
+                v-model.trim="dataForm.icon"
                 v-popover:iconListPopover
                 :readonly="false"
                 placeholder="菜单图标名称（如：fa fa-home fa-lg）"

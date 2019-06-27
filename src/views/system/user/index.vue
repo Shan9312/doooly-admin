@@ -168,7 +168,7 @@
           ></el-input>
         </el-form-item>
         <el-form-item label="姓名" prop="username">
-          <el-input v-model="dataForm.username" auto-complete="off" maxlength="10"></el-input>
+          <el-input v-model.trim="dataForm.username" auto-complete="off" maxlength="10"></el-input>
         </el-form-item>
         </el-form-item>
         <el-form-item label="机构" prop="deptName">
@@ -182,10 +182,10 @@
           </popup-tree-input>
         </el-form-item>
         <el-form-item label="邮箱" prop="email">
-          <el-input v-model="dataForm.email" auto-complete="off" maxlength="40"></el-input>
+          <el-input v-model.trim="dataForm.email" auto-complete="off" maxlength="40"></el-input>
         </el-form-item>
         <el-form-item label="手机" prop="phone">
-          <el-input v-model="dataForm.phone" auto-complete="off" maxlength="11"></el-input>
+          <el-input v-model.trim="dataForm.phone" auto-complete="off" maxlength="11"></el-input>
         </el-form-item>
         <el-form-item label="角色" prop="userRoles" v-if="!operation">
           <el-select

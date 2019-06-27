@@ -151,11 +151,11 @@
           ></el-input>
         </el-form-item>
         <el-form-item label="角色名" prop="name">
-          <el-input v-model="dataForm.name" auto-complete="off"></el-input>
+          <el-input v-model.trim="dataForm.name" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="备注 " prop="remark">
           <el-input
-            v-model="dataForm.remark"
+            v-model.trim="dataForm.remark"
             auto-complete="off"
             type="textarea"
           ></el-input>
