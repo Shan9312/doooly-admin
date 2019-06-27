@@ -9,9 +9,9 @@ export default {
   getHomePageList(pageNum, pageSize, onShelf) {
     return Ajax.get('/homepage/spread/page', { pageNum, pageSize, onShelf })
   },
-    /**
-   * 
-   * @param {*} pageData 
+  /**
+   *
+   * @param {*} pageData
    * eg:{name, startDate, endDate, imageUrl, formUrl, groups, type }
    * name：弹窗名称
    * startDate：生效时间
@@ -25,15 +25,15 @@ export default {
     return Ajax.post('/homepage/spread/insert', pageData)
   },
   /**
-   * 
-   * @param {弹窗id} id 
+   *
+   * @param {弹窗id} id
    */
   getPageDetail(id) {
     return Ajax.get('/homepage/spread/detail', { id })
   },
   /**
-   * 
-   * @param {*} pageData 
+   *
+   * @param {*} pageData
    * eg:{ id, name, startDate, endDate, imageUrl, formUrl, groups, type }
    * id：弹窗id
    * name：弹窗名称
@@ -49,5 +49,8 @@ export default {
   },
   getGroupAll() {
     return Ajax.post('/reconciliInfo/groupAll')
+  },
+  readExcel(formData) {
+    return Ajax.post('/homepage/spread/readExcel/user', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
   }
 }

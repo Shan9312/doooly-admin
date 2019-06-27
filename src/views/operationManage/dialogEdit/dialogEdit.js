@@ -1,5 +1,5 @@
 import { DialogService } from '@/service'
-import { Validate } from '@/common'
+import { Validate, Auth } from '@/common'
 export default {
   name: 'DialogEdit',
   data() {
@@ -25,8 +25,10 @@ export default {
         callback()
       }
     }
+    const token = Auth.getToken()
     return {
       actionUrl: process.env.VUE_APP_URL + 'fileUpload',
+      headers: { Authorization: token },
       loading: false,
       companyAllData: [],
       modalData: {
@@ -36,6 +38,7 @@ export default {
         endDate: '', // 失效时间
         type: '1', // 弹窗类型 1全部用户 2企业 3指定用户
         groups: [],
+        users: [],
         imageUrl: '',
         formUrl: '' // 点击图片的跳转地址
       },
@@ -55,7 +58,7 @@ export default {
     async getPageDetail() {
       /* 目前后端返回弹窗列表没做过滤，暂时隐藏掉企业勾选功能 to do list、 */
       // 获取所有的企业列表
-      // await this.getGroupAll()
+      await this.getGroupAll()
       if (this.modalData.id == 'null') return
       // 获取弹窗详情页
       const res = await DialogService.getPageDetail(this.modalData.id)
@@ -69,6 +72,7 @@ export default {
           endDate: data.endDate, // 失效时间
           type: data.type.toString(), // 弹窗类型 1全部用户 2企业 3指定用户
           groups: [],
+          users: [],
           imageUrl: data.imageUrl,
           formUrl: data.formUrl // 点击图片的跳转地址
         }
@@ -95,6 +99,40 @@ export default {
         })
       }
     },
+    handleDownload() {
+      import('@/vendor/Export2Excel').then(excel => {
+        const tHeader = ['企业ID', '员工工号', '兜礼卡号']
+        const filterVal = []
+        const list = []
+        const data = this.formatJson(filterVal, list)
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: '弹窗-指定用户模板' + new Date().toLocaleDateString()
+        })
+      })
+    },
+    // async changeUploadExcel(event) {
+    //   let files = event.target.files
+    //   let formData = new FormData()
+    //   formData.append('file', files[0])
+    //   // 此处必须将控制导入的input值进行置空，否则不会触发change事件，会导致同一个文件不能二次导入
+    //   event.target.value = null
+    //   const res = await DialogService.readExcel(formData)
+    //   if (res && res.data) {
+    //     this.$message.success('导入数据成功!')
+    //     this.modalData.users = res.data
+    //   }
+    // },
+    async changeUploadExcel(file){
+      let formData = new FormData() 
+      formData.append('file', file.raw)
+      const res = await DialogService.readExcel(formData)
+      if (res && res.data) {
+        this.$message.success('导入数据成功!')
+        this.modalData.users = res.data
+      }
+    },
     beforeImgUpload(file) {
       const isJPG = file.type == 'image/jpeg' || file.type == 'image/png'
       const isLt500k = file.size / 1024 <= 500
@@ -109,6 +147,7 @@ export default {
       }
       return isJPG && isLt500k
     },
+    beforeExcelUpload(file) {},
     handleImgSuccess(res, file) {
       if (res.data) {
         this.$set(this.modalData, 'imageUrl', res.data[0])
@@ -137,15 +176,19 @@ export default {
           this.$message.error('您还未勾选企业哦！')
           return
         }
-        const { id, name, startDate, endDate, imageUrl, formUrl, type } = this.modalData
+        if (this.modalData.type == 3 && this.modalData.users.length === 0) {
+          this.$message.error('您还未导入员工数据哦！')
+          return
+        }
+        const { id, name, startDate, endDate, imageUrl, formUrl, type, users } = this.modalData
         const groups = this.handleGroupsData()
         let response = null
         if (id == 'null') {
           // 新增
-          response = await DialogService.createHomePage({ name, startDate, endDate, imageUrl, formUrl, groups, type })
+          response = await DialogService.createHomePage({ name, startDate, endDate, imageUrl, formUrl, groups, type, users })
         } else {
           // 修改
-          response = await DialogService.updateHomePage({ id, name, startDate, endDate, imageUrl, formUrl, groups, type })
+          response = await DialogService.updateHomePage({ id, name, startDate, endDate, imageUrl, formUrl, groups, type, users })
         }
         if (response) {
           this.$router.push('/operationManage/dialogList')
@@ -166,6 +209,14 @@ export default {
     },
     refreshSelectedTag(view) {
       this.$store.dispatch('delCachedView', view)
+    },
+    // 格式化需要导出的数据
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v =>
+        filterVal.map(j => {
+          return v[j]
+        })
+      )
     }
   },
   beforeRouteEnter(to, from, next) {

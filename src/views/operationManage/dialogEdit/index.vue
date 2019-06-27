@@ -8,13 +8,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <kt-button
-            label="保存"
-            type="primary"
-            class="save-btn"
-            perms="operation:dialogEdit:save"
-            @click="handleSaveSubject"
-          />
+          <kt-button label="保存" type="primary" class="save-btn" perms="operation:dialogEdit:save" @click="handleSaveSubject" />
         </el-col>
       </el-row>
       <el-row>
@@ -35,7 +29,7 @@
         <el-col :span="10" min-width="50%">
           <p class="text">弹窗图片设置（图片600*600 支持PNG JPG）</p>
           <el-form-item class="dialog-img" prop="imageUrl">
-            <el-upload class="avatar-uploader" v-loading="loading" :action="actionUrl" drag :show-file-list="false" :before-upload="beforeImgUpload" :on-success="handleImgSuccess" :on-error="handleImgError">
+            <el-upload class="avatar-uploader" v-loading="loading" :action="actionUrl" :headers="headers" drag :show-file-list="false" :before-upload="beforeImgUpload" :on-success="handleImgSuccess" :on-error="handleImgError">
               <img v-if="modalData.imageUrl" :src="modalData.imageUrl" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
@@ -49,15 +43,29 @@
           </el-form-item>
         </el-col>
         <!-- 目前后端返回弹窗列表没做过滤，暂时隐藏掉企业勾选功能 to do list -->
-        <el-col :span="12" min-width="50%" v-if="false">
+        <el-col :span="12" min-width="50%">
           <el-form-item label="弹窗用户" prop="status">
             <el-radio v-model="modalData.type" label=1>全部用户</el-radio>
             <el-radio v-model="modalData.type" label=2>企业</el-radio>
-            <!-- <el-radio v-model="modalData.type" label=3>指定用户</el-radio> -->
+            <el-radio v-model="modalData.type" label=3>指定用户</el-radio>
           </el-form-item>
 
           <el-form-item label="参与企业" required v-if="modalData.type == 2">
             <el-transfer filterable :titles="['未选择企业', '已选择企业']" v-model="modalData.groups" :data="companyAllData"></el-transfer>
+          </el-form-item>
+          <el-form-item v-if="modalData.type == 3">
+            <el-row>
+              <el-col :span="12">
+                <!-- <kt-button label="下载导入模板" type="primary" perms="operation:dialogEdit:download" icon="el-icon-download" @click="handleDownload" /> -->
+                <el-button @click="handleDownload">下载导入模板</el-button>
+              </el-col>
+              <el-col :span="12">
+                <!-- <kt-button label="导入数据" type="primary" perms="operation:dialogEdit:upload" icon="el-icon-upload" @click="handleUpload" /> -->
+                <el-upload action='' :auto-upload='false' :show-file-list='false' :on-change='changeUploadExcel'>
+                  <el-button>导入数据</el-button>
+                </el-upload>
+              </el-col>
+            </el-row>
           </el-form-item>
         </el-col>
       </el-row>
