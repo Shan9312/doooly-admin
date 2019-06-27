@@ -65,7 +65,7 @@
         label="机构"
       ></el-table-column>
       <el-table-column
-        prop="roleNames"
+        prop="roles"
         header-align="center"
         align="center"
         label="角色"
@@ -255,8 +255,12 @@
               validator: Validate.alipayNameVaild
             }
           ],
-          email: [{ required: true, trigger: "blur", validator: Validate.validateEmail }],
-          phone: [{ required: true, trigger: "blur", validator: Validate.phoneValid }]
+          email: [
+            { required: true, trigger: "blur", validator: Validate.validateEmail }
+          ],
+          phone: [
+            { required: true, trigger: "blur", validator: Validate.phoneValid }
+          ]
         },
         // 新增编辑界面数据
         dataForm: {
@@ -397,16 +401,24 @@
         this.$refs.dataForm.validate(async valid => {
           if (valid) {
             this.editLoading = true;
-            let params = Object.assign({}, this.dataForm);
-            let userRoles = [];
+            let params = Object.assign({}, this.dataForm),
+              roles = this.roles;
+            let userRoles = []; // 角色关系列表
+            let rolesName = []; // 角色名称列表
             for (let i = 0, len = params.userRoles.length; i < len; i++) {
-              let userRole = {
-                userId: params.id,
-                roleId: params.userRoles[i]
-              };
-              userRoles.push(userRole);
+              for (let j = 0; j < roles.length; j++) {
+                if (roles[j].id == params.userRoles[i]) { // 循环查找对应的角色列表
+                  let userRole = {
+                    userId: params.id,
+                    roleId: params.userRoles[i],
+                  };
+                  rolesName.push(roles[j].name)
+                  userRoles.push(userRole);
+                }
+              }
             }
             params.userRoles = userRoles;
+            params.roles = rolesName.join(',') // 角色名称用，拆分提交
             const data = await UserService.editUser(params);
             this.editLoading = false;
             if (data) {

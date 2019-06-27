@@ -330,7 +330,7 @@
           url: [{ required: true, message: "菜单路由不能为空", trigger: "blur" }],
           perms: [
             { required: true, message: "按钮授权标识不能为空", trigger: "blur" }
-          ]
+          ],
         },
         popupTreeData: [],
         popupTreeProps: {
@@ -404,12 +404,10 @@
               this.findTreeData();
               this.$message({ message: "删除成功", type: "success" });
             }
+            window.location.reload(); // 操作菜单或者按钮后需要重新刷新页面获取菜单和按钮
           })
           .catch(() => {
-            this.$message({
-              type: "info",
-              message: "已取消删除"
-            });
+
           });
       },
       // 获取删除的包含子菜单的id列表
@@ -445,13 +443,13 @@
                   this.$refs["dataForm"].clearValidate();
                   this.dialogVisible = false;
                 }
-                this.findTreeData();
+                window.location.reload(); // 操作菜单或者按钮后需要重新刷新页面获取菜单和按钮
               })
               .catch(() => {
-                this.$message({
-                  type: "info",
-                  message: "已取消操作"
-                });
+                // this.$message({
+                //   type: "info",
+                //   message: "已取消操作"
+                // });
               });
           }
         });

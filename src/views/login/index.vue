@@ -32,7 +32,7 @@
           name="password"
           auto-complete="on"
           placeholder="请输入密码"
-          maxlength="16"
+          maxlength="20"
           @keyup.enter.native="handleLogin"
         />
         <span class="show-pwd" @click="showPwd">

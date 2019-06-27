@@ -42,7 +42,6 @@ router.beforeEach(async (to, from, next) => {
         } catch (error) {
           // 移除登录信息
           await store.dispatch('ResetToken')
-          Message.error('登录失败')
           next(`/login?redirect=${to.path}`)
           NProgress.done()
         }
