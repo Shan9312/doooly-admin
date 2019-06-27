@@ -67,14 +67,14 @@
       >
       </el-table-column>
       <el-table-column
-        prop="remark"
+        prop="name"
         header-align="center"
         align="center"
         label="角色名"
       >
       </el-table-column>
       <el-table-column
-        prop="name"
+        prop="remark"
         header-align="center"
         align="center"
         label="备注"
@@ -150,12 +150,12 @@
             auto-complete="off"
           ></el-input>
         </el-form-item>
-        <el-form-item label="角色名" prop="remark">
-          <el-input v-model="dataForm.remark" auto-complete="off"></el-input>
+        <el-form-item label="角色名" prop="name">
+          <el-input v-model="dataForm.name" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="备注 " prop="name">
+        <el-form-item label="备注 " prop="remark">
           <el-input
-            v-model="dataForm.name"
+            v-model="dataForm.remark"
             auto-complete="off"
             type="textarea"
           ></el-input>
@@ -265,7 +265,7 @@
         dialogVisible: false, // 新增编辑界面是否显示
         editLoading: false,
         dataFormRules: {
-          remark: [
+          name: [
             {
               required: true,
               trigger: "blur",
@@ -416,7 +416,7 @@
           let roleMenu = { roleId: roleId, menuId: checkedNodes[i].id };
           roleMenus.push(roleMenu);
         }
-        const { data } = await RoleService.saveRoleMenus(roleMenus);
+        const data = await RoleService.saveRoleMenus(roleMenus);
         this.authLoading = false;
         if (data) {
           this.$message({ message: "操作成功", type: "success" });

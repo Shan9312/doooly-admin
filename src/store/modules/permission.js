@@ -1,4 +1,4 @@
-import { constantRouterMap } from '@/router'
+import { constantRouterMap, specialRouters } from '@/router'
 import { PermissionService } from '@/service'
 import Layout from '@/views/layout'
 

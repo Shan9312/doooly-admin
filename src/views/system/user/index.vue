@@ -197,7 +197,7 @@
             <el-option
               v-for="item in roles"
               :key="item.id"
-              :label="item.remark"
+              :label="item.name"
               :value="item.id"
             >
             </el-option>

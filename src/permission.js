@@ -4,6 +4,7 @@ import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import { Message } from 'element-ui'
 import { Auth } from '@/common'
+import { specialRouters } from '@/router'
 
 NProgress.configure({ showSpinner: false })
 
@@ -34,7 +35,8 @@ router.beforeEach(async (to, from, next) => {
           // 获取对应的菜单按钮
           await store.dispatch('GenerateButtons', {userId: params.userId, name: params.email})
           
-          router.addRoutes(accessRoutes)
+          // specialRouters  404页面必须放在路由最后!!
+          router.addRoutes(accessRoutes.concat(specialRouters))
 
           next({ ...to, replace: true })
         } catch (error) {

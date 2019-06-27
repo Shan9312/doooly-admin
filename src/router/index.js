@@ -66,15 +66,17 @@ export const constantRouterMap = [
     name: 'Page401',
     hidden: true,
     component: () => import( /* webpackChunkName: "error-page" */ '@/views/error-page/401')
-  }]
+  }
+]
 
-export const asyncRouterMap = [
+export const specialRouters = [
   {
     path: '*',
     redirect: '/404',
     hidden: true
   }
 ]
+
 export default new VueRouter({
   mode: process.env.NODE_ENV == 'production' ? 'history' : 'hash',
   // base: '/reconcili/',
