@@ -45,6 +45,11 @@ const user = {
       })
     },
 
+    // 刷新页面
+    SetRoles({ commit }) {
+      commit('SET_ROLES', [])
+    },
+
     // 退出
     Logout({ commit }) {
       commit('SET_USER_INFO', {})

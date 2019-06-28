@@ -102,6 +102,15 @@
       >
       </el-table-column>
       <el-table-column
+        prop="buttonUrl"
+        header-align="center"
+        align="center"
+        width="150"
+        :show-overflow-tooltip="true"
+        label="授权接口地址"
+      >
+      </el-table-column>
+      <el-table-column
         prop="orderNum"
         header-align="center"
         align="center"
@@ -185,6 +194,12 @@
           <el-input
             v-model.trim="dataForm.perms"
             placeholder="如: sys:user:add, sys:user:edit, sys:user:delete"
+          ></el-input>
+        </el-form-item>
+        <el-form-item v-if="dataForm.type === 2" label="接口地址" prop="perms">
+          <el-input
+            v-model.trim="dataForm.buttonUrl"
+            placeholder="请填写接口地址"
           ></el-input>
         </el-form-item>
         <el-form-item v-if="dataForm.type === 1" label="菜单路由" prop="url">
@@ -320,17 +335,22 @@
           isShow: 1,
           perms: "",
           orderNum: 0,
+          buttonUrl: '',
           icon: "",
           iconList: []
         },
         dataRule: {
           name: [
-            { required: true, trigger: "blur", validator: Validate.specialCharacters}
+            {
+              required: true,
+              trigger: "blur",
+              validator: Validate.specialCharacters
+            }
           ],
           url: [{ required: true, message: "菜单路由不能为空", trigger: "blur" }],
           perms: [
             { required: true, message: "按钮授权标识不能为空", trigger: "blur" }
-          ],
+          ]
         },
         popupTreeData: [],
         popupTreeProps: {
@@ -359,7 +379,7 @@
           this.findTreeData();
         }
       },
-      
+
       // 获取上级菜单树
       getParentMenuTree: function(tableTreeDdata) {
         let parent = {
@@ -380,6 +400,7 @@
           parentId: 0,
           parentName: "",
           url: "",
+          buttonUrl: '',
           isShow: 1,
           perms: "",
           orderNum: 0,
@@ -404,11 +425,9 @@
               this.findTreeData();
               this.$message({ message: "删除成功", type: "success" });
             }
-            window.location.reload(); // 操作菜单或者按钮后需要重新刷新页面获取菜单和按钮
+            this.$store.dispatch("SetRoles"); // 操作菜单或者按钮后需要重新刷新页面获取菜单和按钮
           })
-          .catch(() => {
-
-          });
+          .catch(() => {});
       },
       // 获取删除的包含子菜单的id列表
       getDeleteIds(ids, row) {
@@ -437,13 +456,14 @@
               .then(async () => {
                 this.editLoading = true;
                 let params = Object.assign({}, this.dataForm);
-                const { data } = await MenuService.editMenu(params);
+                const data = await MenuService.editMenu(params);
                 if (data) {
                   this.$message({ message: "操作成功", type: "success" });
                   this.$refs["dataForm"].clearValidate();
                   this.dialogVisible = false;
                 }
-                window.location.reload(); // 操作菜单或者按钮后需要重新刷新页面获取菜单和按钮
+                this.$store.dispatch("SetRoles"); // 操作菜单或者按钮后需要重新刷新页面获取菜单和按钮
+                this.findTreeData();
               })
               .catch(() => {
                 // this.$message({

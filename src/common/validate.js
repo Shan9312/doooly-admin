@@ -99,7 +99,6 @@ export default {
    */
   alipayNameVaild(rule, value, callback) {
     const reg = /^[\u4E00-\u9FA5A-Za-z\s]+(·[\u4E00-\u9FA5A-Za-z]+)*$/;
-    console.log(rule)
     if (rule.required) {
       if (!value) {
         callback(new Error('请输入姓名'));
