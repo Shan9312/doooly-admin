@@ -2,7 +2,7 @@
   <div class="menu app-container">
     <!--工具栏-->
     <div class="menu-form">
-      <el-form :inline="true" :model="search">
+      <el-form :inline="true" :model="search" @submit.native.prevent>
         <el-row>
           <el-col :span="11" :offset="1">
             <el-form-item label="菜单名称">

@@ -2,7 +2,7 @@
   <div class="role app-container">
     <!--工具栏-->
     <div class="role-form">
-      <el-form :inline="true" :model="search">
+      <el-form :inline="true" :model="search" @submit.native.prevent>
         <el-row>
           <el-col :span="11" :offset="1">
             <el-form-item label="角色名称">
@@ -54,7 +54,11 @@
     >
       <el-table-column label="选择" width="50" align="center">
         <template slot-scope="scope">
-          <el-radio class="radio" @change="handleRoleSelectChange(scope.row)" v-model="radio" :label="scope.$index"
+          <el-radio
+            class="radio"
+            @change="handleRoleSelectChange(scope.row)"
+            v-model="radio"
+            :label="scope.$index"
             >&nbsp;</el-radio
           >
         </template>
@@ -142,6 +146,7 @@
         :rules="dataFormRules"
         ref="dataForm"
         :size="size"
+        @submit.native.prevent
       >
         <el-form-item label="ID" prop="id" v-if="false">
           <el-input
@@ -302,7 +307,7 @@
         this.pageResult = data.content;
         this.total = data.totalSize;
         this.findTreeData();
-        this.radio = null // 更新数据后将选择的radio置空
+        this.radio = null; // 更新数据后将选择的radio置空
       },
       // 删除数据
       handleDelete(row) {
@@ -416,7 +421,7 @@
           let roleMenu = { roleId: roleId, menuId: checkedNodes[i].id };
           roleMenus.push(roleMenu);
         }
-        console.log(roleMenus)
+        console.log(roleMenus);
         const data = await RoleService.saveRoleMenus(roleMenus);
         this.authLoading = false;
         if (data) {
