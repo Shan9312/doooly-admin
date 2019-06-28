@@ -208,14 +208,14 @@
       >
         <kt-button
           label="重置"
-          perms="sys:role:edit"
           type="primary"
+          perms="sys:role:submit"
           @click="resetSelection"
           :disabled="this.radio == null"
         />
         <kt-button
           label="提交"
-          perms="sys:role:edit"
+          perms="sys:role:submit"
           type="primary"
           @click="submitAuthForm"
           :disabled="this.radio == null"
@@ -410,12 +410,13 @@
       async submitAuthForm() {
         let roleId = this.selectRole.id;
         this.authLoading = true;
-        let checkedNodes = this.$refs.menuTree.getCheckedNodes();
+        let checkedNodes = this.$refs.menuTree.getCheckedNodes(false, true);
         let roleMenus = [];
         for (let i = 0, len = checkedNodes.length; i < len; i++) {
           let roleMenu = { roleId: roleId, menuId: checkedNodes[i].id };
           roleMenus.push(roleMenu);
         }
+        console.log(roleMenus)
         const data = await RoleService.saveRoleMenus(roleMenus);
         this.authLoading = false;
         if (data) {
