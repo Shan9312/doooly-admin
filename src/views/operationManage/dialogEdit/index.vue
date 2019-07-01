@@ -61,7 +61,7 @@
               </el-col>
               <el-col :span="12">
                 <!-- <kt-button label="导入数据" type="primary" perms="operation:dialogEdit:upload" icon="el-icon-upload" @click="handleUpload" /> -->
-                <el-upload action='' :auto-upload='false' :show-file-list='false' :on-change='changeUploadExcel'>
+                <el-upload action='' :auto-upload='false' :on-change='changeUploadExcel'>
                   <el-button>导入数据</el-button>
                 </el-upload>
               </el-col>

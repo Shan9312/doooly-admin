@@ -124,8 +124,8 @@ export default {
     //     this.modalData.users = res.data
     //   }
     // },
-    async changeUploadExcel(file){
-      let formData = new FormData() 
+    async changeUploadExcel(file) {
+      let formData = new FormData()
       formData.append('file', file.raw)
       const res = await DialogService.readExcel(formData)
       if (res && res.data) {
@@ -151,8 +151,10 @@ export default {
     handleImgSuccess(res, file) {
       if (res.data) {
         this.$set(this.modalData, 'imageUrl', res.data[0])
-        this.loading = false
+      } else {
+        this.$message.error(res.info)
       }
+      this.loading = false
     },
     handleImgError(err, file) {
       this.loading = false
