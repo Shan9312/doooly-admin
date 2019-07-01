@@ -380,8 +380,8 @@
         this.selectRole = val;
         this.checkAll = false;
         const { data } = await RoleService.getRoleMenus(val.id);
-        this.currentRoleMenus = data;
-        this.$refs.menuTree.setCheckedNodes(data);
+        this.currentRoleMenus = data.filter(item => item.perms)
+        this.$refs.menuTree.setCheckedNodes(this.currentRoleMenus);
       },
 
       // 重置选择

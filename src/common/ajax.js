@@ -4,9 +4,8 @@ import {
 } from 'element-ui'
 import { Auth, Utils, Config } from '@/common'
 
-
 const settings = {
-  baseURL: process.env.NODE_ENV == 'production' ? Config.BASE_URL : '/',
+  baseURL: process.env.VUE_APP_URL,
   headers: { 'Content-Type': 'application/json', "Accept": "application/json, text/plain", }
 }
 const ajax = (method, url, data, options = {}) => {
