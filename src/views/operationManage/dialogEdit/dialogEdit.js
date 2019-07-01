@@ -125,12 +125,20 @@ export default {
     //   }
     // },
     async changeUploadExcel(file) {
+      let fileSize = file.size;
+      if (fileSize > 500 * 1024) return this.$message.error('文件不能超过500kb');
       let formData = new FormData()
       formData.append('file', file.raw)
       const res = await DialogService.readExcel(formData)
       if (res && res.data) {
-        this.$message.success('导入数据成功!')
-        this.modalData.users = res.data
+        let failCount = res.data.failUsers && res.data.failUsers.length;
+        if (failCount) {
+          return this.$message.error(`${failCount}条数据导入失败`);
+        }
+        this.$message.success('导入数据成功');
+        this.modalData.users = res.data.users;
+      } else {
+        this.$message.error('导入数据失败')
       }
     },
     beforeImgUpload(file) {
