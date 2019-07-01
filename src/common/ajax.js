@@ -2,8 +2,8 @@ import axios from 'axios'
 import {
   Message
 } from 'element-ui'
-import { Auth, Utils } from '@/common'
-import Config from '@/common/config'
+import { Auth, Utils, Config } from '@/common'
+
 
 const settings = {
   baseURL: process.env.NODE_ENV == 'production' ? Config.BASE_URL : '/',
@@ -16,7 +16,7 @@ const ajax = (method, url, data, options = {}) => {
     data,
     baseURL: options.baseURL || settings.baseURL,
     headers: options.headers || settings.headers,
-    timeout: 5000
+    timeout: 60000
   })
 
   const token = Auth.getToken()

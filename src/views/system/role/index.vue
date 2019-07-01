@@ -421,7 +421,6 @@
           let roleMenu = { roleId: roleId, menuId: checkedNodes[i].id };
           roleMenus.push(roleMenu);
         }
-        console.log(roleMenus);
         const data = await RoleService.saveRoleMenus(roleMenus);
         this.authLoading = false;
         if (data) {
