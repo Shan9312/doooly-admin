@@ -4,7 +4,6 @@ import {
 } from 'element-ui'
 import { Auth, Utils, Config } from '@/common'
 import router from '@/router'
-// import store from '@/store'
 
 const settings = {
   baseURL: process.env.VUE_APP_URL,
@@ -30,7 +29,11 @@ const ajax = (method, url, data, options = {}) => {
     if (data.code == 200) {
       return Promise.resolve(data)
     } else if (data.code == 401) {
-      // store.dispatch('ResetToken')
+      Message({
+        message: '账号信息过期，请重新登录！',
+        type: 'error',
+        duration: 2 * 1000
+      })
       Auth.removeToken()
       router.replace({
         path: 'login',
