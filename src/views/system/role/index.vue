@@ -421,10 +421,7 @@
           let roleMenu = { roleId: roleId, menuId: checkedNodes[i].id };
           roleMenus.push(roleMenu);
         }
-        const userInfo = Auth.getUserInfo()
-
-        const params = JSON.parse(userInfo)
-        const data = await RoleService.saveRoleMenus(roleMenus, params.userId);
+        const data = await RoleService.saveRoleMenus(roleMenus);
         this.authLoading = false;
         if (data) {
           this.$message({ message: "操作成功", type: "success" });
