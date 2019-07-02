@@ -48,7 +48,7 @@
           </el-col>
           <el-col :span="2">
             <el-form-item>
-              <kt-button
+              <pe-button
                 label="查询"
                 perms="account:accountEntry:search"
                 type="primary"
@@ -105,7 +105,7 @@
           </el-col>
           <el-col :span="2">
             <el-form-item>
-              <kt-button
+              <pe-button
                 label="重置"
                 perms="account:accountEntry:reset"
                 type="primary"
@@ -169,14 +169,14 @@
           class-name="small-padding fixed-width"
         >
           <template slot-scope="scope">
-            <kt-button
+            <pe-button
               v-if="scope.row.status >= 3"
               label="异常处理"
               perms="account:accountEntry:edit"
               type="danger"
               @click="handleUpdate(scope.row)"
             />
-            <kt-button
+            <pe-button
               v-if="scope.row.status == 2"
               label="查看"
               perms="account:accountEntry:view"

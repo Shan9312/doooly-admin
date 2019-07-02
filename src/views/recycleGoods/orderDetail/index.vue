@@ -66,7 +66,7 @@
                 }}</span>
                 <span v-else>{{ orderObj.alipayName }}</span>
               </div>
-              <kt-button
+              <pe-button
                 label="修改付款信息"
                 class="btn"
                 perms="recycle:orderDetail:edit"
@@ -174,7 +174,7 @@
                 @click="handleChildConfirm"
                 >确认回款</el-button
               >
-              <kt-button
+              <pe-button
                 label="确认回款"
                 class="btn"
                 perms="recycle:orderDetail:confirm"

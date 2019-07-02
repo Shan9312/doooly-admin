@@ -107,7 +107,7 @@
           <el-col :span="5">
             <span class="search-btn">
               <el-form-item>
-                <kt-button
+                <pe-button
                   label="查询"
                   perms="account:merchants:search"
                   type="primary"
@@ -115,7 +115,7 @@
                 />
               </el-form-item>
               <el-form-item>
-                <kt-button
+                <pe-button
                   label="重置"
                   perms="account:merchants:reset"
                   type="primary"
@@ -126,7 +126,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item>
-              <kt-button
+              <pe-button
                 :loading="downloadLoading"
                 label="导出订单明细"
                 icon="el-icon-download"

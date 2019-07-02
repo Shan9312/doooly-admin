@@ -17,7 +17,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item>
-              <kt-button
+              <pe-button
                 label="查询"
                 perms="sys:dept:search"
                 type="primary"
@@ -25,7 +25,7 @@
               />
             </el-form-item>
             <el-form-item>
-              <kt-button
+              <pe-button
                 label="新增"
                 perms="sys:dept:add"
                 type="primary"
@@ -98,14 +98,14 @@
         label="操作"
       >
         <template slot-scope="scope">
-          <kt-button
+          <pe-button
             size="small"
             icon="fa fa-edit"
             label="编辑"
             perms="sys:dept:edit"
             @click="handleEdit(scope.row)"
           />
-          <kt-button
+          <pe-button
             size="small"
             icon="fa fa-trash"
             label="删除"

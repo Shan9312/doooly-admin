@@ -70,7 +70,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item>
-              <kt-button
+              <pe-button
                 label="查询"
                 perms="account:enterprise:search"
                 type="primary"
@@ -78,7 +78,7 @@
               />
             </el-form-item>
             <el-form-item>
-              <kt-button
+              <pe-button
                 label="导出明细"
                 icon="el-icon-download"
                 perms="account:enterprise:export"

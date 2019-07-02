@@ -21,8 +21,8 @@ export default {
   },
 
   // 角色菜单授权提交
-  saveRoleMenus(body) {
-    return Ajax.post('/role/saveRoleMenus', body)
+  saveRoleMenus(body, userId) {
+    return Ajax.post(`/role/saveRoleMenus?userId=${userId}`, body)
   },
 
   // 新增编辑角色
