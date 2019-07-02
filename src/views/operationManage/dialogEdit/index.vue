@@ -8,7 +8,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <kt-button label="保存" type="primary" class="save-btn" perms="operation:dialogEdit:save" @click="handleSaveSubject" />
+          <pe-button label="保存" type="primary" class="save-btn" perms="operation:dialogEdit:save" @click="handleSaveSubject" />
         </el-col>
       </el-row>
       <el-row>
@@ -56,11 +56,11 @@
           <el-form-item v-if="modalData.type == 3">
             <el-row>
               <el-col :span="12">
-                <!-- <kt-button label="下载导入模板" type="primary" perms="operation:dialogEdit:download" icon="el-icon-download" @click="handleDownload" /> -->
+                <!-- <pe-button label="下载导入模板" type="primary" perms="operation:dialogEdit:download" icon="el-icon-download" @click="handleDownload" /> -->
                 <el-button @click="handleDownload">下载导入模板</el-button>
               </el-col>
               <el-col :span="12">
-                <!-- <kt-button label="导入数据" type="primary" perms="operation:dialogEdit:upload" icon="el-icon-upload" @click="handleUpload" /> -->
+                <!-- <pe-button label="导入数据" type="primary" perms="operation:dialogEdit:upload" icon="el-icon-upload" @click="handleUpload" /> -->
                 <el-upload action='' :auto-upload='false' :show-file-list='false' :on-change='changeUploadExcel'>
                   <el-button>导入数据</el-button>
                 </el-upload>

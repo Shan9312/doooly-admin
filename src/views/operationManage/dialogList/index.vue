@@ -2,7 +2,7 @@
   <div class="app-container subject-list">
     <el-row>
       <el-col :span="6">
-        <kt-button
+        <pe-button
           label="新增弹窗"
           perms="operation:dialogList:add"
           type="primary"
@@ -24,7 +24,7 @@
               </el-select>
             </el-col>
             <el-col :span="6">
-              <kt-button
+              <pe-button
                 label="查询"
                 perms="operation:dialogList:search"
                 type="primary"
@@ -55,13 +55,13 @@
       </el-table-column>
       <el-table-column label="操作" width="200px">
         <template slot-scope="scope">
-          <kt-button
+          <pe-button
             label="编辑/查看"
             size="mini"
             perms="operation:dialogList:edit"
             @click="handleEdit(scope.row.id)"
           />
-          <kt-button
+          <pe-button
             label="上架"
             size="mini"
             type="success"
@@ -69,7 +69,7 @@
             perms="operation:dialogList:shelf"
             @click="handleShelf(scope.row)"
           />
-          <kt-button
+          <pe-button
             label="下架"
             size="mini"
             type="danger"

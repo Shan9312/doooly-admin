@@ -2,7 +2,7 @@
   <div class="app-container subject-list">
     <el-row>
       <el-col :span="6">
-        <kt-button
+        <pe-button
           label="新建专题"
           perms="operation:ActivitySubject:add"
           type="primary"
@@ -27,7 +27,7 @@
               </el-select>
             </el-col>
             <el-col :span="6">
-              <kt-button
+              <pe-button
                 label="查询"
                 perms="operation:ActivitySubject:search"
                 type="primary"
@@ -54,19 +54,19 @@
       </el-table-column>
       <el-table-column label="操作" width="300px">
         <template slot-scope="scope">
-          <kt-button
+          <pe-button
             label="编辑/查看"
             size="mini"
             perms="operation:ActivitySubject:edit"
             @click="handleEdit(scope.row.id)"
           />
-          <kt-button
+          <pe-button
             label="复制"
             size="mini"
             perms="operation:ActivitySubject:copy"
             @click="handleCopy(scope.row.id)"
           />
-          <kt-button
+          <pe-button
             label="上架"
             size="mini"
             type="success"
@@ -74,7 +74,7 @@
             perms="operation:ActivitySubject:shelves"
             @click="handleShelf(scope.row)"
           />
-          <kt-button
+          <pe-button
             label="下架"
             size="mini"
             type="danger"

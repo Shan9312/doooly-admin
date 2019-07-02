@@ -43,7 +43,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item>
-              <kt-button
+              <pe-button
                 class="filter-item"
                 label="导出订单明细"
                 icon="el-icon-download"

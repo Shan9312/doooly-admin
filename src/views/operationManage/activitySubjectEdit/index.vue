@@ -26,7 +26,7 @@
             <el-radio v-model="specialTopicInfo.status" label="2"
               >永久</el-radio
             >
-            <kt-button
+            <pe-button
               label="保存"
               type="primary"
               class="save-btn"
@@ -138,7 +138,7 @@
               </div>
             </el-aside>
             <el-main>
-              <kt-button
+              <pe-button
                 label="添加"
                 type="primary"
                 class="btn"
