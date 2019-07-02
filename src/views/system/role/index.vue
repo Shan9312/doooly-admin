@@ -380,7 +380,7 @@
         this.selectRole = val;
         this.checkAll = false;
         const { data } = await RoleService.getRoleMenus(val.id);
-        this.currentRoleMenus = data.filter(item => item.perms)
+        this.currentRoleMenus = data.filter(item => item.perms || (!item.children && item.url))
         this.$refs.menuTree.setCheckedNodes(this.currentRoleMenus);
       },
 
@@ -422,7 +422,6 @@
           roleMenus.push(roleMenu);
         }
         const userInfo = Auth.getUserInfo()
-
         const params = JSON.parse(userInfo)
         const data = await RoleService.saveRoleMenus(roleMenus, params.userId);
         this.authLoading = false;
