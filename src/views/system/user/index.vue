@@ -37,6 +37,7 @@
       </el-form>
     </div>
     <el-table
+      border
       ref="multipleTable"
       :data="pageResult"
       tooltip-effect="dark"
