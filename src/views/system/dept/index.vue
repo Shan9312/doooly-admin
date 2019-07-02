@@ -287,7 +287,6 @@
 
       // 显示新增界面
       handleAdd() {
-        const userInfo = JSON.parse(Auth.getUserInfo());
         this.dialogVisible = true;
         this.dataForm = {
           id: 0,
@@ -295,7 +294,6 @@
           parentId: 0,
           parentName: "顶级菜单",
           orderNum: 0,
-          createBy: userInfo.name
         };
       },
 
@@ -343,10 +341,12 @@
       },
       // 表单提交
       submitForm() {
+        const userInfo = Auth.getUserInfo()
         this.$refs["dataForm"].validate(async valid => {
           if (valid) {
             let params = Object.assign({}, this.dataForm);
             this.editLoading = true;
+            params.createBy = JSON.parse(userInfo).name
             const data = await DeptService.editDept(params);
             this.editLoading = false;
             if (data) {
