@@ -46,8 +46,8 @@
         <el-col :span="12" min-width="50%">
           <el-form-item label="弹窗用户" prop="status">
             <el-radio v-model="modalData.type" label=1>全部用户</el-radio>
-            <el-radio v-model="modalData.type" label=2>企业</el-radio>
-            <el-radio v-model="modalData.type" label=3>指定用户</el-radio>
+            <!-- <el-radio v-model="modalData.type" label=2>企业</el-radio>
+            <el-radio v-model="modalData.type" label=3>指定用户</el-radio> -->
           </el-form-item>
 
           <el-form-item label="参与企业" required v-if="modalData.type == 2">
