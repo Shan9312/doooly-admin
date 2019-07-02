@@ -3,6 +3,8 @@ import {
   Message
 } from 'element-ui'
 import { Auth, Utils, Config } from '@/common'
+import router from '@/router'
+// import store from '@/store'
 
 const settings = {
   baseURL: process.env.VUE_APP_URL,
@@ -27,6 +29,13 @@ const ajax = (method, url, data, options = {}) => {
     const data = res.data;
     if (data.code == 200) {
       return Promise.resolve(data)
+    } else if (data.code == 401) {
+      // store.dispatch('ResetToken')
+      Auth.removeToken()
+      router.replace({
+        path: 'login',
+        query: {redirect: router.currentRoute.fullPath}
+      })
     } else {
       Message({
         message: data.info || data.msg || '服务器出错了',
