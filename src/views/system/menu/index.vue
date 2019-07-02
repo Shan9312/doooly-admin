@@ -335,7 +335,7 @@
           isShow: 1,
           perms: "",
           orderNum: 0,
-          buttonUrl: '',
+          buttonUrl: "",
           icon: "",
           iconList: []
         },
@@ -400,7 +400,7 @@
           parentId: 0,
           parentName: "",
           url: "",
-          buttonUrl: '',
+          buttonUrl: "",
           isShow: 1,
           perms: "",
           orderNum: 0,
@@ -423,9 +423,14 @@
             const data = await MenuService.deleteMenu(params);
             if (data) {
               this.findTreeData();
-              this.$message({ message: "删除成功", type: "success" });
+              this.$message({
+                message: "删除成功，请刷新页面！",
+                type: "success"
+              });
             }
-            this.$store.dispatch("SetRoles"); // 操作菜单或者按钮后需要重新刷新页面获取菜单和按钮
+            setTimeout(() => {
+              window.location.reload(); // 操作菜单或者按钮后需要重新刷新页面获取菜单和按钮
+            }, 1500);
           })
           .catch(() => {});
       },
@@ -458,12 +463,16 @@
                 let params = Object.assign({}, this.dataForm);
                 const data = await MenuService.editMenu(params);
                 if (data) {
-                  this.$message({ message: "操作成功", type: "success" });
+                  this.$message({
+                    message: "操作成功，请刷新页面！",
+                    type: "success"
+                  });
                   this.$refs["dataForm"].clearValidate();
                   this.dialogVisible = false;
                 }
-                this.$store.dispatch("SetRoles"); // 操作菜单或者按钮后需要重新刷新页面获取菜单和按钮
-                this.findTreeData();
+                setTimeout(() => {
+                  window.location.reload(); // 操作菜单或者按钮后需要重新刷新页面获取菜单和按钮
+                }, 1500);
               })
               .catch(() => {
                 // this.$message({
