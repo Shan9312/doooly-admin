@@ -186,19 +186,24 @@ export default {
           this.$message.error('您还未勾选企业哦！')
           return
         }
-        if (this.modalData.type == 3 && this.modalData.users.length === 0) {
-          this.$message.error('您还未导入员工数据哦！')
-          return
-        }
         const { id, name, startDate, endDate, imageUrl, formUrl, type, users } = this.modalData
         const groups = this.handleGroupsData()
         let response = null
         if (id == 'null') {
           // 新增
+          if (type == 3 && users.length === 0) {
+            this.$message.error('您还未导入员工数据哦！')
+            return
+          }
           response = await DialogService.createHomePage({ name, startDate, endDate, imageUrl, formUrl, groups, type, users })
         } else {
           // 修改
-          response = await DialogService.updateHomePage({ id, name, startDate, endDate, imageUrl, formUrl, groups, type, users })
+          let updateParams = { id, name, startDate, endDate, imageUrl, formUrl, groups, type, users }
+          if (type == 3 && users.length === 0) {
+            delete updateParams.type
+            delete updateParams.users
+          }
+          response = await DialogService.updateHomePage(updateParams)
         }
         if (response) {
           this.$router.push('/operationManage/dialogList')
