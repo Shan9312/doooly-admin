@@ -177,6 +177,7 @@
             class="avatar-uploader"
             v-loading="loading"
             :action="actionUrl"
+            :headers="headers"
             drag
             :show-file-list="false"
             :before-upload="beforeImgUpload"

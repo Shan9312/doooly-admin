@@ -1,6 +1,6 @@
 import ImgModule from '../components/ImgModule.vue'
 import { SubjectService } from '@/service'
-import { Validate } from '@/common'
+import { Validate, Auth } from '@/common'
 const ModuleImgUrl = require('@/assets/image/operation/bg.png')
 // changeStatus 默认状态是1，为新增。addStatus表示本地新增的模板，为后面保存图片信息时所用
 const ModuleList = [
@@ -99,7 +99,9 @@ export default {
         callback()
       }
     }
+    const token = Auth.getToken()
     return {
+      headers: { Authorization: token },
       componentName: 'img-module',
       actionUrl: process.env.VUE_APP_URL + 'fileUpload',
       loading: false,
