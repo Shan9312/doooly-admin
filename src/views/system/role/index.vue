@@ -382,7 +382,7 @@
         this.selectRole = val;
         this.checkAll = false;
         const { data } = await RoleService.getRoleMenus(val.id);
-        this.currentRoleMenus = data.filter(item => item.perms || (!item.children && item.url))
+        this.currentRoleMenus = data.filter(item => item.perms)
         this.$refs.menuTree.setCheckedNodes(this.currentRoleMenus);
       },
 
