@@ -101,6 +101,7 @@ export default {
     }
     const token = Auth.getToken()
     return {
+      headers: { Authorization: token },
       componentName: 'img-module',
       actionUrl: process.env.VUE_APP_URL + 'fileUpload',
       headers: { Authorization: token },

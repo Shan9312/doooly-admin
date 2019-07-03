@@ -2,7 +2,7 @@ import LoginService from './login/login'
 import HomeService from './home/home'
 import PermissionService from './permission/permission'
 import AccountEntryService from './accountManage/accountEntry'
-import MerchantsOrder from './accountManage/merchantsOrder'
+import MerchantsOrderService from './accountManage/merchantsOrder'
 import OrderDetailService from './accountManage/orderDetail'
 import ReconExcelService from './accountManage/reconExcel'
 import EnterExcelService from './accountManage/enterpriseExcel'
@@ -17,7 +17,7 @@ import SubjectService from './operationManage/activity-subject'
 export {
   LoginService,
   AccountEntryService,
-  MerchantsOrder,
+  MerchantsOrderService,
   OrderDetailService,
   HomeService,
   ReconExcelService,

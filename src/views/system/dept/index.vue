@@ -344,9 +344,10 @@
         const userInfo = Auth.getUserInfo()
         this.$refs["dataForm"].validate(async valid => {
           if (valid) {
+            const userInfo = JSON.parse(Auth.getUserInfo());
             let params = Object.assign({}, this.dataForm);
             this.editLoading = true;
-            params.createBy = JSON.parse(userInfo).name
+            params.createBy = userInfo.name;
             const data = await DeptService.editDept(params);
             this.editLoading = false;
             if (data) {
