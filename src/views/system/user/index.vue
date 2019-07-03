@@ -38,6 +38,7 @@
     </div>
     <el-table
       border
+      v-loading="loading"
       ref="multipleTable"
       :data="pageResult"
       tooltip-effect="dark"
@@ -247,6 +248,7 @@
         pageResult: [],
         operation: false, // true:新增, false:编辑
         dialogVisible: false, // 新增编辑界面是否显示
+        loading: false,
         editLoading: false,
         dataFormRules: {
           username: [
@@ -288,7 +290,9 @@
         this.search.columnFilters = {
           name: { name: "name", value: this.search.name }
         };
+        this.loading = true;
         const { data } = await UserService.getUserList(this.search);
+        this.loading = false;
         this.pageResult = data.content;
         this.total = data.totalSize;
         this.findUserRoles();

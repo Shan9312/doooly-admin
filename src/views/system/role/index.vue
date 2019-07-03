@@ -303,7 +303,9 @@
         this.search.columnFilters = {
           name: { name: "name", value: this.search.name }
         };
+        this.loading = true;
         const { data } = await RoleService.getRoleList(this.search);
+        this.loading = false;
         this.pageResult = data.content;
         this.total = data.totalSize;
         this.findTreeData();

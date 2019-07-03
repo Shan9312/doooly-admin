@@ -149,7 +149,7 @@
             <router-link
               style="color:#409EFF"
               :to="
-                `orderDetail/${scope.row.orderNumber}/${scope.row.userId}/${
+                `orderDetail/${encodeURIComponent(scope.row.orderNumber)}/${scope.row.userId}/${
                   scope.row.businessId
                 }?storeId=${scope.row.storeId}&receiptType=${
                   scope.row.receiptTypeValue
