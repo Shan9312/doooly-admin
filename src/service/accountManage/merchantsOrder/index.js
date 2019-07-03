@@ -7,7 +7,10 @@ export default {
   },
 
   // 导出订单
-  exportExcel(query) {
-    return Ajax.get('/reconciliInfo/exportExcel', query)
+  exportExcel(params) {
+    const a = document.createElement('a'); // 创建a标签
+    a.setAttribute('download', `${process.env.VUE_APP_URL}reconciliInfo/exportExcel?${params}`);// download属性
+    a.setAttribute('href', `${process.env.VUE_APP_URL}reconciliInfo/exportExcel?${params}`);// href链接
+    a.click();// 自执行点击事件
   }
 }

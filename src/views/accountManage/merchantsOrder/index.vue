@@ -191,8 +191,8 @@
   </div>
 </template>
 <script>
-  import { MerchantsOrder } from "@/service";
-  import { Utils } from "@/common";
+  import { MerchantsOrderService } from "@/service";
+  import { Utils, Auth } from "@/common";
   const title = [
     // 表格title
     { label: "同步日期", value: "orderCreateDate", width: "160px" },
@@ -317,7 +317,7 @@
       // 获取列表数据
       async getList() {
         this.listLoading = true;
-        const { data } = await MerchantsOrder.orderList(this.search);
+        const { data } = await MerchantsOrderService.orderList(this.search);
         this.listLoading = false;
         this.list = format(data.list);
         this.total = data.total;
@@ -401,11 +401,11 @@
             this.downloadLoading = false;
           });
         } else {
+          let token = Auth.getToken();
+          this.search.Authorization = token;
           let params = Utils.obj2Param(this.search);
           this.downloadLoading = false;
-          window.location.href = `${
-            process.env.VUE_APP_URL
-          }reconciliInfo/exportExcel?${params}`;
+          MerchantsOrderService.exportExcel(params);
         }
       },
 
