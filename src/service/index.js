@@ -1,13 +1,18 @@
-import LoginService from './login'
-import AccountEntryService from './account-entry/account-entry'
-import MerchantsOrder from './merchants-order/merchants-order'
-import OrderDetailService from './order-detail/order-detail'
+import LoginService from './login/login'
 import HomeService from './home/home'
-import ReconExcelService from './reconExcel'
-import EnterExcelService from './enterpriseExcel'
-import RecycleGoodsService from './recycle-goods/recycle-goods'
-import SubjectService from './operation-manage/activity-subject'
-import DialogService from './operation-manage/dialog-manage'
+import PermissionService from './permission/permission'
+import AccountEntryService from './accountManage/accountEntry'
+import MerchantsOrder from './accountManage/merchantsOrder'
+import OrderDetailService from './accountManage/orderDetail'
+import ReconExcelService from './accountManage/reconExcel'
+import EnterExcelService from './accountManage/enterpriseExcel'
+import RecycleGoodsService from './recycleGoods/recycle-goods'
+import DeptService from './system/dept/depy'
+import UserService from './system/user/user'
+import RoleService from './system/role/role'
+import MenuService from './system/menu/menu'
+import DialogService from './operationManage/dialog-manage'
+import SubjectService from './operationManage/activity-subject'
 
 export {
   LoginService,
@@ -19,5 +24,10 @@ export {
   EnterExcelService,
   RecycleGoodsService,
   SubjectService,
+  PermissionService,
+  DeptService,
+  UserService,
+  RoleService,
+  MenuService,
   DialogService
 }

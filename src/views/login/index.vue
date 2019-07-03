@@ -1,24 +1,52 @@
 <template>
   <div class="login-container">
-    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
-      <h3 class="title">DS系统登录</h3>
+    <el-form
+      ref="loginForm"
+      :model="loginForm"
+      :rules="loginRules"
+      class="login-form"
+      auto-complete="on"
+      label-position="left"
+    >
+      <h3 class="title">兜礼后台管理系统登录</h3>
       <el-form-item prop="username">
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
-        <el-input v-model="loginForm.username" name="username" type="text" auto-complete="on" maxlength="10" placeholder="请输入用户名" />
+        <el-input
+          v-model="loginForm.username"
+          name="username"
+          type="text"
+          auto-complete="on"
+          maxlength="40"
+          placeholder="请输入用户邮箱"
+        >
+        </el-input>
       </el-form-item>
       <el-form-item prop="password">
         <span class="svg-container">
           <svg-icon icon-class="password" />
         </span>
-        <el-input :type="pwdType" v-model="loginForm.password" name="password" auto-complete="on" placeholder="请输入密码" maxlength="16" @keyup.enter.native="handleLogin" />
+        <el-input
+          :type="pwdType"
+          v-model="loginForm.password"
+          name="password"
+          auto-complete="on"
+          placeholder="请输入密码"
+          maxlength="20"
+          @keyup.enter.native="handleLogin"
+        />
         <span class="show-pwd" @click="showPwd">
           <svg-icon :icon-class="pwdType === 'password' ? 'eye' : 'eye-open'" />
         </span>
       </el-form-item>
       <el-form-item>
-        <el-button :loading="loading" type="primary" style="width:100%;" @click.native.prevent="handleLogin">
+        <el-button
+          :loading="loading"
+          type="primary"
+          style="width:100%;"
+          @click.native.prevent="handleLogin"
+        >
           登录
         </el-button>
       </el-form-item>
@@ -28,17 +56,11 @@
 
 <script>
   import { Validate } from "@/common";
+  import { encryption } from "@/common/jsencrypt.js";
 
   export default {
     name: "Login",
     data() {
-      const validateUsername = (rule, value, callback) => {
-        if (!Validate.isvalidUsername(value)) {
-          callback(new Error("请输入正确的用户名"));
-        } else {
-          callback();
-        }
-      };
       const validatePass = (rule, value, callback) => {
         if (value.length < 6) {
           callback(new Error("密码不能小于6位"));
@@ -53,17 +75,19 @@
         },
         loginRules: {
           username: [
-          {
-            required: true,
-            trigger: "blur",
-            validator: validateUsername
-          }],
+            {
+              required: true,
+              trigger: "blur",
+              validator: Validate.validateEmail
+            }
+          ],
           password: [
-          {
-            required: true,
-            trigger: "blur",
-            validator: validatePass
-          }]
+            {
+              required: true,
+              trigger: "blur",
+              validator: validatePass
+            }
+          ]
         },
         loading: false,
         pwdType: "password",
@@ -81,10 +105,14 @@
       handleLogin() {
         this.$refs.loginForm.validate(valid => {
           if (valid) {
+            const { username, password } = this.loginForm;
             this.loading = true;
             this.$store
-              .dispatch("LoginByUsername", this.loginForm)
-              .then(() => {
+              .dispatch("Login", {
+                username: username,
+                password: encryption(password)
+              })
+              .then(res => {
                 this.loading = false;
                 this.$router.push({
                   path: this.redirect || "/"
@@ -102,7 +130,7 @@
     },
     watch: {
       $route: {
-        handler: function (route) {
+        handler: function(route) {
           this.redirect = route.query && route.query.redirect;
         },
         immediate: true
@@ -162,6 +190,11 @@
       max-width: 100%;
       padding: 35px 35px 15px 35px;
       margin: 120px auto;
+      .select{
+        position: absolute;
+        top: 0;
+        right: 0;
+      }
     }
 
     .tips {

@@ -1,11 +1,40 @@
 export default {
   /**
-   * 验证用户名
-   * @param {*} str str登录用户名
+   * 验证用户登录邮箱是否正确
+   * @param {*} rule 定义正则
+   * @param {*} value 传入的值
+   * @param {*} callback 返回函数
    */
-  isvalidUsername(str) {
-    const valid_map = ['admin', 'financial', 'operation', 'recycle']
-    return valid_map.indexOf(str.trim()) >= 0
+  validateEmail (rule, value, callback) {
+    const reg = /^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$/;
+    if (value) {
+      if (!reg.test(value)) {
+        callback(new Error("请输入正确的用户邮箱"));
+      } else {
+        callback();
+      }
+    } else {
+      callback(new Error("请输入用户邮箱"));
+    }
+  },
+
+  /**
+   * 验证特殊字符
+   * @param {*} rule 定义正则
+   * @param {*} value 传入的值
+   * @param {*} callback 返回函数
+   */
+  specialCharacters(rule, value, callback) {
+    const reg = /[`~!@#$%^&*()_\-+=<>?:"{}|,.\/;'\\[\]·~！@#￥%……&*（）——\-+={}|《》？：“”【】、；‘’，。、]/im
+    if (value) {
+      if (reg.test(value)) {
+        callback(new Error("请输入正确的内容"));
+      } else {
+        callback();
+      }
+    } else {
+      callback(new Error("请输入内容"));
+    }
   },
 
   /**
@@ -28,12 +57,12 @@ export default {
       if (!value) {
         callback(new Error('请输入手机号码'));
       } else if (!reg.test(value)) {
-        callback(new Error('请输入正确手机号码'));
+        callback(new Error('请输入正确的手机号码'));
       } else {
         callback();
       }
     } else if (value && !reg.test(value)) {
-      callback(new Error('请输入正确手机号码'));
+      callback(new Error('请输入正确的手机号码'));
     } else {
       callback();
     }
@@ -63,7 +92,7 @@ export default {
   },
 
   /**
-   * 支付宝姓名验证
+   * 姓名验证
    * @param {*} rule 定义正则
    * @param {*} value 传入的值
    * @param {*} callback 返回函数
@@ -72,14 +101,14 @@ export default {
     const reg = /^[\u4E00-\u9FA5A-Za-z\s]+(·[\u4E00-\u9FA5A-Za-z]+)*$/;
     if (rule.required) {
       if (!value) {
-        callback(new Error('请输入支付宝姓名'));
+        callback(new Error('请输入姓名'));
       } else if (!reg.test(value)) {
-        callback(new Error('请输入正确支付宝姓名'));
+        callback(new Error('请输入正确的姓名'));
       } else {
         callback();
       }
     } else if (value && !reg.test(value)) {
-      callback(new Error('请输入正确支付宝姓名'));
+      callback(new Error('请输入正确的姓名'));
     } else {
       callback();
     }

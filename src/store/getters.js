@@ -7,4 +7,5 @@ export default {
   roles: state => state.user.roles,
   permission_routers: state => state.permission.routers,
   addRouters: state => state.permission.addRouters,
+  buttons: state => state.permission.buttons,
 }

@@ -3,11 +3,15 @@ import { Auth } from '@/common'
 
 const user = {
   state: {
+    token: Auth.getToken(),
     userInfo: {},
     roles: []
   },
 
   mutations: {
+    SET_TOKEN: (state, token) => {
+      state.token = token
+    },
     SET_USER_INFO: (state, userInfo) => {
       state.userInfo = userInfo
     },
@@ -17,16 +21,14 @@ const user = {
   },
 
   actions: {
-    LoginByUsername({ commit }, userInfo) {
+    Login({ commit }, userInfo) {
       return new Promise((resolve, reject) => {
-        LoginService.loginByUsername(userInfo.username, userInfo.password).then(res => {
-          const data = res.data
-          if (data.roles && data.roles.length > 0) {
-            commit('SET_ROLES', data.roles)
-            commit('SET_USER_INFO', data)
-            Auth.setToken(data.token)
-          } else {
-            reject('请输入正确的用户名和密码')
+        LoginService.login(userInfo.username, userInfo.password).then(res => {
+          if (res.jwtToken) {
+            commit('SET_USER_INFO', res)
+            commit('SET_TOKEN', `Bearer ${res.jwtToken}`)
+            Auth.setToken(`Bearer ${res.jwtToken}`)
+            sessionStorage.setItem('userInfo', JSON.stringify({ name: res.userName, userId: res.userId, email: userInfo.username}))
           }
           resolve(res)
         }).catch(err => {
@@ -34,35 +36,37 @@ const user = {
         })
       })
     },
-    GetUserInfo({ commit }) {
-      return new Promise((resolve, reject) => {
-        LoginService.getUserInfo(Auth.getToken()).then(res => {
-          const data = res.data
-          if (data.roles && data.roles.length > 0) {
-            commit('SET_ROLES', data.roles)
-            commit('SET_USER_INFO', data)
-            Auth.setToken(data.token)
-          } else {
-            reject('loginByUsername: 角色列表不能为空')
-          }
-          resolve(res)
-        }).catch(err => {
-          reject(err)
-        })
+
+    // 获取登录用户角色
+    GetUserInfo({ commit }, userinfo) {
+      return new Promise(resolve => {
+        commit('SET_ROLES', [userinfo])
+        resolve()
       })
     },
+
+    // 刷新页面
+    SetRoles({ commit }) {
+      commit('SET_ROLES', [])
+    },
+
+    // 退出
     Logout({ commit }) {
-      return new Promise((resolve, reject) => {
-        LoginService.logout().then(() => {
-          commit('SET_USER_INFO', {})
-          commit('SET_ROLES', [])
-          Auth.removeToken()
-          resolve()
-        }).catch(err => {
-          reject(err)
-        })
+      commit('SET_USER_INFO', {})
+      commit('SET_ROLES', [])
+      Auth.removeToken()
+    },
+
+    // remove token
+    ResetToken({ commit }) {
+      return new Promise(resolve => {
+        commit('SET_TOKEN', '')
+        commit('SET_ROLES', [])
+        Auth.removeToken()
+        resolve()
       })
-    }
+    },
+
   }
 }
 

@@ -2,13 +2,13 @@ import axios from 'axios'
 import {
   Message
 } from 'element-ui'
-import { Auth, Utils } from '@/common'
+import { Auth, Utils, Config } from '@/common'
+import router from '@/router'
 
 const settings = {
   baseURL: process.env.VUE_APP_URL,
-  headers: { 'Content-Type': 'application/json' }
+  headers: { 'Content-Type': 'application/json', "Accept": "application/json, text/plain", }
 }
-
 const ajax = (method, url, data, options = {}) => {
   options = Object.assign(options, {
     method,
@@ -16,30 +16,41 @@ const ajax = (method, url, data, options = {}) => {
     data,
     baseURL: options.baseURL || settings.baseURL,
     headers: options.headers || settings.headers,
-    timeout: 5000
+    timeout: 60000
   })
 
   const token = Auth.getToken()
   if (token) {
-    options.headers['x-token'] = token
+    options.headers['Authorization'] = token
   }
 
   return axios.request(options).then(res => {
-      const data = res.data;
-      if (data.code == 200) {
-        return Promise.resolve(data)
-      } else {
-        Message({
-          message: data.info || '服务器出错了',
-          type: 'error',
-          duration: 2 * 1000
-        })
-      }
-    })
+    const data = res.data;
+    if (data.code == 200) {
+      return Promise.resolve(data)
+    } else if (data.code == 401) {
+      Message({
+        message: '账号信息过期，请重新登录！',
+        type: 'error',
+        duration: 2 * 1000
+      })
+      Auth.removeToken()
+      router.replace({
+        path: 'login',
+        query: {redirect: router.currentRoute.fullPath}
+      })
+    } else {
+      Message({
+        message: data.info || data.msg || '服务器出错了',
+        type: 'error',
+        duration: 2 * 1000
+      })
+    }
+  })
     .catch(err => {
       console.log('err' + err)
       Message({
-        message: '网络连接出错了，请刷新重试~',
+        message: '网络连接出错了，请刷新页面重试~',
         type: 'error',
         duration: 2 * 1000
       })

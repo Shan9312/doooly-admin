@@ -1,13 +1,16 @@
-const TOKEN_KEY = 'doooly-admin-key'
+const TOKEN_KEY = 'Authorization'
 
 export default {
   getToken() {
-    return localStorage.getItem(TOKEN_KEY)
+    return sessionStorage.getItem(TOKEN_KEY)
   },
   setToken(token) {
-    return localStorage.setItem(TOKEN_KEY, token)
+    return sessionStorage.setItem(TOKEN_KEY, token)
   },
   removeToken() {
-    return localStorage.setItem(TOKEN_KEY,'')
+    return sessionStorage.clear()
+  },
+  getUserInfo() {
+    return sessionStorage.getItem('userInfo')
   }
 }
