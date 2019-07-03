@@ -382,8 +382,7 @@
         this.selectRole = val;
         this.checkAll = false;
         const { data } = await RoleService.getRoleMenus(val.id);
-        this.currentRoleMenus = data.filter(item => item.perms)
-        this.$refs.menuTree.setCheckedNodes(this.currentRoleMenus);
+        this.$refs.menuTree.setCheckedNodes(data);
       },
 
       // 重置选择
@@ -417,7 +416,7 @@
       async submitAuthForm() {
         let roleId = this.selectRole.id;
         this.authLoading = true;
-        let checkedNodes = this.$refs.menuTree.getCheckedNodes(false, true);
+        let checkedNodes = this.$refs.menuTree.getCheckedNodes(false, false);
         let roleMenus = [];
         for (let i = 0, len = checkedNodes.length; i < len; i++) {
           let roleMenu = { roleId: roleId, menuId: checkedNodes[i].id };
