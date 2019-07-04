@@ -126,7 +126,7 @@ export default {
     // },
     async changeUploadExcel(file) {
       let fileSize = file.size;
-      if (fileSize > 500 * 1024) return this.$message.error('文件不能超过500kb');
+      if (fileSize > 50 * 1024) return this.$message.error('文件不能超过50kb');
       let formData = new FormData()
       formData.append('file', file.raw)
       const res = await DialogService.readExcel(formData)
