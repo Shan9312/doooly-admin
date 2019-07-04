@@ -70,7 +70,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item>
-              <kt-button
+              <pe-button
                 label="查询"
                 perms="account:enterprise:search"
                 type="primary"
@@ -78,7 +78,7 @@
               />
             </el-form-item>
             <el-form-item>
-              <kt-button
+              <pe-button
                 label="导出明细"
                 icon="el-icon-download"
                 perms="account:enterprise:export"
@@ -131,7 +131,7 @@
   </div>
 </template>
 <script>
-  import { Utils } from "@/common";
+  import { Utils, Auth } from "@/common";
   import { EnterExcelService } from "@/service";
   const title = [
     // 表格title
@@ -289,6 +289,8 @@
       // 导出
       handleDownload() {
         let query = {};
+        let token = Auth.getToken();
+        query.Authorization = token;
         const { groupId, startDate, endDate } = this.search;
         if (!groupId || !startDate || !endDate) return;
         Object.assign(query, {

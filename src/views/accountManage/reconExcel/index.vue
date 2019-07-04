@@ -43,7 +43,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item>
-              <kt-button
+              <pe-button
                 class="filter-item"
                 label="导出订单明细"
                 icon="el-icon-download"
@@ -59,7 +59,7 @@
   </div>
 </template>
 <script>
-  import { Utils } from "@/common";
+  import { Utils, Auth } from "@/common";
   import { ReconExcelService } from "@/service";
   export default {
     name: "ReconExcel",
@@ -102,6 +102,8 @@
       // 导出
       handleDownload() {
         let query = {};
+        let token = Auth.getToken();
+        query.Authorization = token;
         if (!this.clearingDate) return;
         Object.assign(query, {
           checkTimeStartDate: this.clearingDate[0],

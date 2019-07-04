@@ -17,7 +17,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item>
-              <kt-button
+              <pe-button
                 label="查询"
                 perms="sys:user:search"
                 type="primary"
@@ -25,7 +25,7 @@
               />
             </el-form-item>
             <el-form-item>
-              <kt-button
+              <pe-button
                 label="新增"
                 perms="sys:user:add"
                 type="primary"
@@ -38,6 +38,7 @@
     </div>
     <el-table
       border
+      v-loading="loading"
       ref="multipleTable"
       :data="pageResult"
       tooltip-effect="dark"
@@ -101,7 +102,7 @@
         label="操作"
       >
         <template slot-scope="scope">
-          <kt-button
+          <pe-button
             size="small"
             icon="fa fa-trash"
             label="重置密码"
@@ -109,14 +110,14 @@
             type="danger"
             @click="handleReset(scope.row)"
           />
-          <kt-button
+          <pe-button
             size="small"
             icon="fa fa-edit"
             label="编辑"
             perms="sys:user:edit"
             @click="handleEdit(scope.row)"
           />
-          <kt-button
+          <pe-button
             size="small"
             icon="fa fa-trash"
             label="删除"
@@ -129,7 +130,7 @@
     </el-table>
     <div class="table-footer" v-if="pageResult.length > 0">
       <div class="user-delete">
-        <kt-button
+        <pe-button
           size="small"
           label="批量删除"
           perms="sys:user:delete"
@@ -247,6 +248,7 @@
         pageResult: [],
         operation: false, // true:新增, false:编辑
         dialogVisible: false, // 新增编辑界面是否显示
+        loading: false,
         editLoading: false,
         dataFormRules: {
           username: [
@@ -288,7 +290,9 @@
         this.search.columnFilters = {
           name: { name: "name", value: this.search.name }
         };
+        this.loading = true;
         const { data } = await UserService.getUserList(this.search);
+        this.loading = false;
         this.pageResult = data.content;
         this.total = data.totalSize;
         this.findUserRoles();

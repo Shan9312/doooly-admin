@@ -107,7 +107,7 @@
           <el-col :span="5">
             <span class="search-btn">
               <el-form-item>
-                <kt-button
+                <pe-button
                   label="查询"
                   perms="account:merchants:search"
                   type="primary"
@@ -115,7 +115,7 @@
                 />
               </el-form-item>
               <el-form-item>
-                <kt-button
+                <pe-button
                   label="重置"
                   perms="account:merchants:reset"
                   type="primary"
@@ -126,7 +126,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item>
-              <kt-button
+              <pe-button
                 :loading="downloadLoading"
                 label="导出订单明细"
                 icon="el-icon-download"
@@ -166,7 +166,7 @@
             <router-link
               style="color:#409EFF"
               :to="
-                `orderDetail/${scope.row.orderNumber}/${scope.row.userId}/${
+                `orderDetail/${encodeURIComponent(scope.row.orderNumber)}/${scope.row.userId}/${
                   scope.row.businessId
                 }?storeId=${scope.row.storeId}&receiptType=${
                   scope.row.receiptType
@@ -191,8 +191,8 @@
   </div>
 </template>
 <script>
-  import { MerchantsOrder } from "@/service";
-  import { Utils } from "@/common";
+  import { MerchantsOrderService } from "@/service";
+  import { Utils, Auth } from "@/common";
   const title = [
     // 表格title
     { label: "同步日期", value: "orderCreateDate", width: "160px" },
@@ -317,7 +317,7 @@
       // 获取列表数据
       async getList() {
         this.listLoading = true;
-        const { data } = await MerchantsOrder.orderList(this.search);
+        const { data } = await MerchantsOrderService.orderList(this.search);
         this.listLoading = false;
         this.list = format(data.list);
         this.total = data.total;
@@ -401,11 +401,11 @@
             this.downloadLoading = false;
           });
         } else {
+          let token = Auth.getToken();
+          this.search.Authorization = token;
           let params = Utils.obj2Param(this.search);
           this.downloadLoading = false;
-          window.location.href = `${
-            process.env.VUE_APP_URL
-          }reconciliInfo/exportExcel?${params}`;
+          MerchantsOrderService.exportExcel(params);
         }
       },
 

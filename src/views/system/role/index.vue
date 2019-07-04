@@ -17,7 +17,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item>
-              <kt-button
+              <pe-button
                 label="查询"
                 perms="sys:role:search"
                 type="primary"
@@ -25,7 +25,7 @@
               />
             </el-form-item>
             <el-form-item>
-              <kt-button
+              <pe-button
                 label="新增"
                 perms="sys:role:add"
                 type="primary"
@@ -107,14 +107,14 @@
         label="操作"
       >
         <template slot-scope="scope">
-          <kt-button
+          <pe-button
             size="small"
             icon="fa fa-edit"
             label="编辑"
             perms="sys:role:edit"
             @click="handleEdit(scope.row)"
           />
-          <kt-button
+          <pe-button
             size="small"
             icon="fa fa-trash"
             label="删除"
@@ -211,14 +211,14 @@
       <div
         style="float:right;padding-right:15px;padding-top:4px;padding-bottom:4px;"
       >
-        <kt-button
+        <pe-button
           label="重置"
           type="primary"
           perms="sys:role:submit"
           @click="resetSelection"
           :disabled="this.radio == null"
         />
-        <kt-button
+        <pe-button
           label="提交"
           perms="sys:role:submit"
           type="primary"
@@ -303,7 +303,9 @@
         this.search.columnFilters = {
           name: { name: "name", value: this.search.name }
         };
+        this.loading = true;
         const { data } = await RoleService.getRoleList(this.search);
+        this.loading = false;
         this.pageResult = data.content;
         this.total = data.totalSize;
         this.findTreeData();
@@ -380,8 +382,7 @@
         this.selectRole = val;
         this.checkAll = false;
         const { data } = await RoleService.getRoleMenus(val.id);
-        this.currentRoleMenus = data.filter(item => item.perms)
-        this.$refs.menuTree.setCheckedNodes(this.currentRoleMenus);
+        this.$refs.menuTree.setCheckedNodes(data);
       },
 
       // 重置选择
@@ -415,7 +416,7 @@
       async submitAuthForm() {
         let roleId = this.selectRole.id;
         this.authLoading = true;
-        let checkedNodes = this.$refs.menuTree.getCheckedNodes(false, true);
+        let checkedNodes = this.$refs.menuTree.getCheckedNodes(false, false);
         let roleMenus = [];
         for (let i = 0, len = checkedNodes.length; i < len; i++) {
           let roleMenu = { roleId: roleId, menuId: checkedNodes[i].id };

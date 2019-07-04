@@ -7,7 +7,7 @@ export default {
   },
 
   // 导出订单
-  exportExcel(query) {
-    return Ajax.get('/reconciliInfo/exportExcel', query)
+  exportExcel(params) {
+    window.location.href = `${process.env.VUE_APP_URL}reconciliInfo/exportExcel?${params}`
   }
 }

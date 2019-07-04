@@ -48,7 +48,7 @@
           </el-col>
           <el-col :span="2">
             <el-form-item>
-              <kt-button
+              <pe-button
                 label="查询"
                 perms="account:accountEntry:search"
                 type="primary"
@@ -105,7 +105,7 @@
           </el-col>
           <el-col :span="2">
             <el-form-item>
-              <kt-button
+              <pe-button
                 label="重置"
                 perms="account:accountEntry:reset"
                 type="primary"
@@ -149,7 +149,7 @@
             <router-link
               style="color:#409EFF"
               :to="
-                `orderDetail/${scope.row.orderNumber}/${scope.row.userId}/${
+                `orderDetail/${encodeURIComponent(scope.row.orderNumber)}/${scope.row.userId}/${
                   scope.row.businessId
                 }?storeId=${scope.row.storeId}&receiptType=${
                   scope.row.receiptTypeValue
@@ -169,14 +169,14 @@
           class-name="small-padding fixed-width"
         >
           <template slot-scope="scope">
-            <kt-button
+            <pe-button
               v-if="scope.row.status >= 3"
               label="异常处理"
               perms="account:accountEntry:edit"
               type="danger"
               @click="handleUpdate(scope.row)"
             />
-            <kt-button
+            <pe-button
               v-if="scope.row.status == 2"
               label="查看"
               perms="account:accountEntry:view"

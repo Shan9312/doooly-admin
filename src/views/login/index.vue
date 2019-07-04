@@ -8,7 +8,7 @@
       auto-complete="on"
       label-position="left"
     >
-      <h3 class="title">DS系统登录</h3>
+      <h3 class="title">兜礼后台管理系统登录</h3>
       <el-form-item prop="username">
         <span class="svg-container">
           <svg-icon icon-class="user" />
@@ -20,7 +20,8 @@
           auto-complete="on"
           maxlength="40"
           placeholder="请输入用户邮箱"
-        />
+        >
+        </el-input>
       </el-form-item>
       <el-form-item prop="password">
         <span class="svg-container">
@@ -189,6 +190,11 @@
       max-width: 100%;
       padding: 35px 35px 15px 35px;
       margin: 120px auto;
+      .select{
+        position: absolute;
+        top: 0;
+        right: 0;
+      }
     }
 
     .tips {

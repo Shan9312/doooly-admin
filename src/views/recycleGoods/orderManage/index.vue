@@ -111,7 +111,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="3">
-            <kt-button
+            <pe-button
               label="查询"
               perms="recycle:order:search"
               type="primary"
@@ -158,14 +158,14 @@
           class-name="small-padding fixed-width"
         >
           <template slot-scope="scope">
-            <kt-button
+            <pe-button
               label="查看"
               size="small"
               perms="recycle:order:view"
               type="primary"
               @click="handleRouter(scope.row.orderNumber)"
             />
-            <kt-button
+            <pe-button
               label="修改付款信息"
               class="mindle-btn"
               size="small"
@@ -176,7 +176,7 @@
               "
               @click="handleEdit(scope.row.orderNumber)"
             />
-            <kt-button
+            <pe-button
               label="确认回款"
               size="small"
               perms="recycle:order:confirm"

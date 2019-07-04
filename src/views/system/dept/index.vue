@@ -17,7 +17,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item>
-              <kt-button
+              <pe-button
                 label="查询"
                 perms="sys:dept:search"
                 type="primary"
@@ -25,7 +25,7 @@
               />
             </el-form-item>
             <el-form-item>
-              <kt-button
+              <pe-button
                 label="新增"
                 perms="sys:dept:add"
                 type="primary"
@@ -98,14 +98,14 @@
         label="操作"
       >
         <template slot-scope="scope">
-          <kt-button
+          <pe-button
             size="small"
             icon="fa fa-edit"
             label="编辑"
             perms="sys:dept:edit"
             @click="handleEdit(scope.row)"
           />
-          <kt-button
+          <pe-button
             size="small"
             icon="fa fa-trash"
             label="删除"
@@ -287,7 +287,6 @@
 
       // 显示新增界面
       handleAdd() {
-        const userInfo = JSON.parse(Auth.getUserInfo());
         this.dialogVisible = true;
         this.dataForm = {
           id: 0,
@@ -295,7 +294,6 @@
           parentId: 0,
           parentName: "顶级菜单",
           orderNum: 0,
-          createBy: userInfo.name
         };
       },
 
@@ -343,10 +341,13 @@
       },
       // 表单提交
       submitForm() {
+        const userInfo = Auth.getUserInfo()
         this.$refs["dataForm"].validate(async valid => {
           if (valid) {
+            const userInfo = JSON.parse(Auth.getUserInfo());
             let params = Object.assign({}, this.dataForm);
             this.editLoading = true;
+            params.createBy = userInfo.name;
             const data = await DeptService.editDept(params);
             this.editLoading = false;
             if (data) {

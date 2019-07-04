@@ -18,8 +18,8 @@ export default {
    * @param {*} parentName: 上级机构名称
    * @param {*} orderNum: 排序
    */
-  editDept({id, name, parentId, parentName, orderNum}) {
-    return Ajax.post('/dept/save', {id, name, parentId, parentName, orderNum})
+  editDept({id, name, parentId, parentName, orderNum, createBy}) {
+    return Ajax.post('/dept/save', {id, name, parentId, parentName, orderNum, createBy})
   },
 
   // 删除机构

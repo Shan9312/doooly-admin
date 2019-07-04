@@ -22,9 +22,9 @@ export default {
 
   // 角色菜单授权提交
   saveRoleMenus(body) {
-    return Ajax.post('/role/saveRoleMenus', body)
+    return Ajax.post(`/role/saveRoleMenus`, body)
   },
-
+  
   // 新增编辑角色
   /**
    *
