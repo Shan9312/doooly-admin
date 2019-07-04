@@ -154,6 +154,7 @@
         </el-table-column>
         <el-table-column
           v-for="(item, index) in title"
+          :key="index"
           :min-width="item.width"
           align="center"
           :prop="item.value"
