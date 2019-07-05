@@ -126,6 +126,9 @@ export default {
     // },
     async changeUploadExcel(file) {
       let fileSize = file.size;
+      let fileType = file.raw && file.raw.type;
+      let mimeType = ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+      if (!mimeType.includes(fileType)) return this.$message.error('上传文件只能是xls、xlsx格式');
       if (fileSize > 50 * 1024) return this.$message.error('文件不能超过50kb');
       let formData = new FormData()
       formData.append('file', file.raw)
