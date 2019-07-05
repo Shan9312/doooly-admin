@@ -101,6 +101,7 @@
             <div
               v-if="item.payType == 0"
               v-for="(item, index) in orderDetail.orderFlow"
+              :key="index"
             >
               {{ item.id }}{{index}}
             </div>
@@ -121,6 +122,7 @@
               class="notIntegral-flow-list"
               v-if="item.payType == 1"
               v-for="(item, index) in orderDetail.orderFlow"
+              :key="index"
             >
               {{ item.id }}
             </div>

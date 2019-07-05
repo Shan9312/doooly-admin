@@ -2,11 +2,11 @@ import axios from 'axios'
 import {
   Message
 } from 'element-ui'
-import { Auth, Utils, Config } from '@/common'
+import { Auth, Utils } from '@/common'
 import router from '@/router'
 
 const settings = {
-  baseURL: process.env.VUE_APP_URL,
+  baseURL: process.env.NODE_ENV == 'production' ? process.env.VUE_APP_URL : '/',
   headers: { 'Content-Type': 'application/json', "Accept": "application/json, text/plain", }
 }
 const ajax = (method, url, data, options = {}) => {
@@ -37,7 +37,7 @@ const ajax = (method, url, data, options = {}) => {
       Auth.removeToken()
       router.replace({
         path: 'login',
-        query: {redirect: router.currentRoute.fullPath}
+        query: { redirect: router.currentRoute.fullPath }
       })
     } else {
       Message({
