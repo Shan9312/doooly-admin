@@ -124,13 +124,24 @@ export default {
     //     this.modalData.users = res.data
     //   }
     // },
-    async changeUploadExcel(file){
-      let formData = new FormData() 
+    async changeUploadExcel(file) {
+      let fileSize = file.size;
+      let fileType = file.raw && file.raw.type;
+      let mimeType = ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+      if (!mimeType.includes(fileType)) return this.$message.error('上传文件只能是xls、xlsx格式');
+      if (fileSize > 50 * 1024) return this.$message.error('文件不能超过50kb');
+      let formData = new FormData()
       formData.append('file', file.raw)
       const res = await DialogService.readExcel(formData)
       if (res && res.data) {
-        this.$message.success('导入数据成功!')
-        this.modalData.users = res.data
+        let failCount = res.data.failUsers && res.data.failUsers.length;
+        if (failCount) {
+          return this.$message.error(`${failCount}条数据导入失败`);
+        }
+        this.$message.success('导入数据成功');
+        this.modalData.users = res.data.users;
+      } else {
+        this.$message.error('导入数据失败')
       }
     },
     beforeImgUpload(file) {
@@ -151,8 +162,10 @@ export default {
     handleImgSuccess(res, file) {
       if (res.data) {
         this.$set(this.modalData, 'imageUrl', res.data[0])
-        this.loading = false
+      } else {
+        this.$message.error(res.info)
       }
+      this.loading = false
     },
     handleImgError(err, file) {
       this.loading = false
@@ -176,19 +189,24 @@ export default {
           this.$message.error('您还未勾选企业哦！')
           return
         }
-        if (this.modalData.type == 3 && this.modalData.users.length === 0) {
-          this.$message.error('您还未导入员工数据哦！')
-          return
-        }
         const { id, name, startDate, endDate, imageUrl, formUrl, type, users } = this.modalData
         const groups = this.handleGroupsData()
         let response = null
         if (id == 'null') {
           // 新增
+          if (type == 3 && users.length === 0) {
+            this.$message.error('您还未导入员工数据哦！')
+            return
+          }
           response = await DialogService.createHomePage({ name, startDate, endDate, imageUrl, formUrl, groups, type, users })
         } else {
           // 修改
-          response = await DialogService.updateHomePage({ id, name, startDate, endDate, imageUrl, formUrl, groups, type, users })
+          let updateParams = { id, name, startDate, endDate, imageUrl, formUrl, groups, type, users }
+          if (type == 3 && users.length === 0) {
+            delete updateParams.type
+            delete updateParams.users
+          }
+          response = await DialogService.updateHomePage(updateParams)
         }
         if (response) {
           this.$router.push('/operationManage/dialogList')

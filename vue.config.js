@@ -34,12 +34,6 @@ module.exports = {
         ws: false,
         changeOrigin: true,
         // pathRewrite: { "^/pro_reconcili": "" }
-      },
-      '/subject': {
-        target: 'https://admin.doooly.com/dev_doooly-admin/',
-        ws: false,
-        changeOrigin: true,
-        pathRewrite: { '^/subject': '' }
       }
     }
   },
