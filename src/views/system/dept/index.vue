@@ -341,6 +341,7 @@
       },
       // 表单提交
       submitForm() {
+        const userInfo = Auth.getUserInfo()
         this.$refs["dataForm"].validate(async valid => {
           if (valid) {
             const userInfo = JSON.parse(Auth.getUserInfo());

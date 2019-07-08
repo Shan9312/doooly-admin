@@ -121,6 +121,7 @@
         <el-col :span="11">
           <el-button
             v-for="(item, index) in tabs"
+            :key="index"
             class="filter-item"
             type="primary"
             @click="handleClick(item.value)"
@@ -137,6 +138,7 @@
       >
         <el-table-column
           v-for="(item, index) in title"
+          :key="index"
           align="center"
           :prop="item.value"
           :label="item.label"
@@ -149,7 +151,7 @@
             <router-link
               style="color:#409EFF"
               :to="
-                `orderDetail/${scope.row.orderNumber}/${scope.row.userId}/${
+                `orderDetail/${encodeURIComponent(scope.row.orderNumber)}/${scope.row.userId}/${
                   scope.row.businessId
                 }?storeId=${scope.row.storeId}&receiptType=${
                   scope.row.receiptTypeValue
