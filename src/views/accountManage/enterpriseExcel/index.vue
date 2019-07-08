@@ -131,7 +131,7 @@
   </div>
 </template>
 <script>
-  import { Utils } from "@/common";
+  import { Utils, Auth } from "@/common";
   import { EnterExcelService } from "@/service";
   const title = [
     // 表格title
@@ -289,6 +289,8 @@
       // 导出
       handleDownload() {
         let query = {};
+        let token = Auth.getToken();
+        query.Authorization = token;
         const { groupId, startDate, endDate } = this.search;
         if (!groupId || !startDate || !endDate) return;
         Object.assign(query, {

@@ -303,7 +303,9 @@
         this.search.columnFilters = {
           name: { name: "name", value: this.search.name }
         };
+        this.loading = true;
         const { data } = await RoleService.getRoleList(this.search);
+        this.loading = false;
         this.pageResult = data.content;
         this.total = data.totalSize;
         this.findTreeData();
@@ -380,7 +382,7 @@
         this.selectRole = val;
         this.checkAll = false;
         const { data } = await RoleService.getRoleMenus(val.id);
-        this.currentRoleMenus = data.filter(item => item.perms || (!item.children && item.url))
+        this.currentRoleMenus = data.filter(item => item.perms)
         this.$refs.menuTree.setCheckedNodes(this.currentRoleMenus);
       },
 
