@@ -1,43 +1,68 @@
 <template>
   <div class="app-container subject-list">
-    <el-row>
-      <el-col :span="6">
-        <pe-button
-          label="新建专题"
-          perms="operation:ActivitySubject:add"
-          type="primary"
-          @click="handleEdit(null)"
-        />
-      </el-col>
-      <el-col :span="16">
-        <el-form>
-          <el-form-item label="上架状态：">
-            <el-col :span="9">
-              <el-select
-                v-model="search.shelfStatus"
-                placeholder="请选择查询状态"
-              >
-                <el-option
-                  v-for="(item, index) in shelfOptions"
-                  :key="index"
-                  :label="item.label"
-                  :value="item.value"
-                >
-                </el-option>
-              </el-select>
-            </el-col>
-            <el-col :span="6">
-              <pe-button
-                label="查询"
-                perms="operation:ActivitySubject:search"
-                type="primary"
-                @click="handleSearch"
-              />
-            </el-col>
+    <el-form>
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="专题标题">
+            <el-input
+              style="width: 300px"
+              v-model="search.title"
+              placeholder="请输入专题标题"
+              maxlength="10"
+              @keyup.native="onKeyup"
+            ></el-input>
           </el-form-item>
-        </el-form>
-      </el-col>
-    </el-row>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="上架状态：">
+            <el-select
+              v-model="search.shelfStatus"
+              placeholder="请选择查询状态"
+            >
+              <el-option
+                v-for="(item, index) in shelfOptions"
+                :key="index"
+                :label="item.label"
+                :value="item.value"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="更新时间">
+            <el-date-picker
+              :editable="false"
+              v-model="syncDate"
+              type="daterange"
+              :default-time="['00:00:00', '23:59:59']"
+              :picker-options="pickerOptions"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+            >
+            </el-date-picker>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <pe-button
+            label="查询"
+            perms="operation:ActivitySubject:search"
+            type="primary"
+            @click="handleSearch"
+          />
+        </el-col>
+      </el-row>
+    </el-form>
+    <pe-button
+      label="新建专题"
+      perms="operation:ActivitySubject:add"
+      type="primary"
+      @click="handleEdit(null)"
+    />
     <el-table stripe :data="tableData" border style="width: 100%">
       <el-table-column prop="id" label="专题编号" width="180">
       </el-table-column>

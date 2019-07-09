@@ -151,13 +151,13 @@
             <router-link
               style="color:#409EFF"
               :to="
-                `orderDetail/${encodeURIComponent(scope.row.orderNumber)}/${scope.row.userId}/${
-                  scope.row.businessId
-                }?storeId=${scope.row.storeId}&receiptType=${
-                  scope.row.receiptTypeValue
-                }&orderIntegral=${scope.row.orderIntegral}&orderNotIntegral=${
-                  scope.row.orderNotIntegral
-                }`
+                `orderDetail/${encodeURIComponent(scope.row.orderNumber)}/${
+                  scope.row.userId
+                }/${scope.row.businessId}/${scope.row.serialNumber}?storeId=${
+                  scope.row.storeId
+                }&receiptType=${scope.row.receiptTypeValue}&orderIntegral=${
+                  scope.row.orderIntegral
+                }&orderNotIntegral=${scope.row.orderNotIntegral}`
               "
               v-if="item.value == 'orderNumber'"
               >{{ scope.row[item.value] }}</router-link

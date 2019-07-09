@@ -10,6 +10,12 @@ export default {
       }
     }
     return {
+      pickerOptions: {
+        // 设置日期范围
+        disabledDate(time) {
+          return time.getTime() > Date.now();
+        }
+      },
       tableData: [],
       total: 0,
       search: {
@@ -85,6 +91,10 @@ export default {
           this.getSubjectList()
         }
       }
+    },
+    // 筛选输入框禁止输入特殊字符
+    onKeyup(e) {
+      e.target.value = e.target.value.replace(/[!~@#$%*&()_+\s^]/g, "");
     },
     async handleShelf(objectData) {
       if (objectData.shelfStatus == 1) {

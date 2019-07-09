@@ -60,9 +60,9 @@
 </template>
 <script>
   import { Utils, Auth } from "@/common";
-  import { ReconExcelService } from "@/service";
+  import { MerchantsExcelService } from "@/service";
   export default {
-    name: "ReconExcel",
+    name: "merchantsExcel",
     data() {
       return {
         pickerOptions: {
@@ -91,7 +91,7 @@
         if (query !== "") {
           this.loading = true;
           setTimeout(async () => {
-            const { data } = await ReconExcelService.getbusinessName(query);
+            const { data } = await MerchantsExcelService.getbusinessName(query);
             this.loading = false;
             this.options = data;
           }, 200);
@@ -113,7 +113,7 @@
             : ""
         });
         let params = Utils.obj2Param(query);
-        ReconExcelService.export(params);
+        MerchantsExcelService.export(params);
       }
     }
   };
