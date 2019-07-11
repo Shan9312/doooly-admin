@@ -139,7 +139,8 @@
             <p class="text">请将右边的组件添加到这里</p>
             <p class="des">（单机添加按钮或者双击模板图片）</p>
           </div>
-          <div
+          <div          
+            v-if="specialTopicInfo.hasFloatLayer"
             class="float-img"
             :style="{
               'bottom': actSpecialFloatLayer.marginBottom + 'px',
