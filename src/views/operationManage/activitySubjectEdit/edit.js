@@ -351,6 +351,10 @@ export default {
         }
         let actSpecialFloatLayer = { ...this.actSpecialFloatLayer }
         actSpecialFloatLayer.specialTopicId = specialTopicInfo.id
+        if (!actSpecialFloatLayer.name) {
+          this.$message.error('请填写浮层内容！')
+          return false
+        }
         const res = await SubjectService.updateSpecialTopic([...this.componentList], { ...specialTopicInfo }, { ...actSpecialFloatLayer })
         if (res && res.data) {
           this.$message({

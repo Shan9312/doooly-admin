@@ -43,11 +43,11 @@
           <el-option label="大" :value="1"> </el-option>
           <el-option label="小" :value="2"> </el-option>
         </el-select>
+        <span> 大尺寸：150*180 小尺寸 80*80</span>
       </el-form-item>
 
       <el-form-item v-if="formData.type" label="向下留空" prop="marginBottom">
         <el-input
-          type="number"
           v-model="formData.marginBottom"
           placeholder="请输入内容"
           clearable
@@ -59,7 +59,6 @@
 
       <el-form-item v-if="formData.type" label="向右留空" prop="marginRight">
         <el-input
-          type="number"
           v-model="formData.marginRight"
           placeholder="请输入内容"
           clearable
