@@ -8,8 +8,8 @@ export default {
    * @param {每页数量} pageSize
    * @param {上下架状态 1.上架 2.下架} shelfStatus
    */
-  getSubjectList(pageNum, pageSize, shelfStatus) {
-    return Ajax.post('/activity/specialTopicList', { pageNum, pageSize, shelfStatus })
+  getSubjectList({pageNum, pageSize, shelfStatus, title, updateEndDate, updateStartDate}) {
+    return Ajax.post('/activity/specialTopicList', { pageNum, pageSize, shelfStatus, title, updateEndDate, updateStartDate})
   },
   /**
    * 复制专题
@@ -45,7 +45,7 @@ export default {
    *        title: "第一个活动"
    *        } specialTopicInfo
    */
-  updateSpecialTopic(list, specialTopicInfo) {
-    return Ajax.post('/activity/updateSpecialTopic', { list, specialTopicInfo })
+  updateSpecialTopic(list, specialTopicInfo, actSpecialFloatLayer) {
+    return Ajax.post('/activity/updateSpecialTopic', { list, specialTopicInfo, actSpecialFloatLayer })
   }
 }

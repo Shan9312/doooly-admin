@@ -35,7 +35,7 @@
           <el-form-item label="更新时间">
             <el-date-picker
               :editable="false"
-              v-model="syncDate"
+              v-model="updateDate"
               type="daterange"
               :default-time="['00:00:00', '23:59:59']"
               :picker-options="pickerOptions"

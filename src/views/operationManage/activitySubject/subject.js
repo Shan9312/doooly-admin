@@ -16,11 +16,15 @@ export default {
           return time.getTime() > Date.now();
         }
       },
+      updateDate: '',
       tableData: [],
       total: 0,
       search: {
         pageNum: 1,
         pageSize: 10,
+        title: '',
+        updateEndDate: '',
+        updateStartDate: '',
       },
       dialogModalVisible: false,
       specialTopicInfo: {
@@ -48,13 +52,24 @@ export default {
       ],
     }
   },
+  watch: {
+    // 更新时间
+    updateDate(time) {
+      if (time) {
+        this.search.updateStartDate = time[0];
+        this.search.updateEndDate = time[1];
+      } else {
+        this.search.updateStartDate = "";
+        this.search.updateEndDate = "";
+      }
+    },
+  },
   created() {
     this.getSubjectList()
   },
   methods: {
     async getSubjectList() {
-      let { pageNum, pageSize, shelfStatus } = this.search
-      let data = await SubjectService.getSubjectList(pageNum, pageSize, shelfStatus)
+      let data = await SubjectService.getSubjectList(this.search)
       if (data && data.data && data.data.specialTopicList) {
         this.tableData = data.data.specialTopicList
         this.total = data.data.total
