@@ -273,7 +273,7 @@
           z-index: 1;
           display: none;
           position: absolute;
-          right: 0;
+          left: 0;
           top: 50%;
           transform: translate(0, -50%);
 
