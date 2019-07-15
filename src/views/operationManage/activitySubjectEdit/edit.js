@@ -348,6 +348,8 @@ export default {
         specialTopicInfo.status = Number(specialTopicInfo.status)
         if (specialTopicInfo.hasFloatLayer) {
           specialTopicInfo.hasFloatLayer = 1;
+        } else {
+          specialTopicInfo.hasFloatLayer = 0;
         }
         let actSpecialFloatLayer = { ...this.actSpecialFloatLayer }
         actSpecialFloatLayer.specialTopicId = specialTopicInfo.id
