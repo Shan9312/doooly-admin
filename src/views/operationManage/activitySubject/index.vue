@@ -34,6 +34,7 @@
         <el-col :span="12">
           <el-form-item label="更新时间">
             <el-date-picker
+              style="width: 400px;"
               :editable="false"
               v-model="updateDate"
               type="daterange"
