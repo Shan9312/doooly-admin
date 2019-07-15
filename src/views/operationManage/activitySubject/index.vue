@@ -37,7 +37,6 @@
               :editable="false"
               v-model="updateDate"
               type="daterange"
-              :default-time="['00:00:00', '23:59:59']"
               :picker-options="pickerOptions"
               value-format="yyyy-MM-dd HH:mm:ss"
               range-separator="至"
