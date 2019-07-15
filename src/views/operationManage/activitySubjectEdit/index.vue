@@ -107,6 +107,7 @@
                   <el-col :span="8">
                     <el-button
                       type="primary"
+                      size="mini"
                       :disabled="index === 0"
                       @click="componentUp(item, index)"
                       >上移</el-button
@@ -117,6 +118,7 @@
                   <el-col :span="8">
                     <el-button
                       type="primary"
+                      size="mini"
                       :disabled="index === componentList.length - 1"
                       @click="componentDown(item, index)"
                       >下移</el-button
@@ -127,6 +129,7 @@
                   <el-col :span="8">
                     <el-button
                       type="primary"
+                      size="mini"
                       @click="componentDelete(item, index)"
                       >删除</el-button
                     >
@@ -281,7 +284,7 @@
             margin: 8px 0;
 
             .el-button {
-              width: 80px;
+              width: 50px;
               padding: 5px 10px;
             }
           }

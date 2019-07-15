@@ -346,16 +346,16 @@ export default {
         if (!this.validateComponent()) return false
         let specialTopicInfo = { ...this.specialTopicInfo }
         specialTopicInfo.status = Number(specialTopicInfo.status)
-        if (specialTopicInfo.hasFloatLayer) {
-          specialTopicInfo.hasFloatLayer = 1;
-        } else {
-          specialTopicInfo.hasFloatLayer = 0;
-        }
         let actSpecialFloatLayer = { ...this.actSpecialFloatLayer }
         actSpecialFloatLayer.specialTopicId = specialTopicInfo.id
-        if (!actSpecialFloatLayer.name) {
-          this.$message.error('请填写浮层内容！')
-          return false
+        if (specialTopicInfo.hasFloatLayer) {
+          specialTopicInfo.hasFloatLayer = 1;
+          if (!actSpecialFloatLayer.name) {
+            this.$message.error('请填写浮层内容！')
+            return false
+          }
+        } else {
+          specialTopicInfo.hasFloatLayer = 0;
         }
         const res = await SubjectService.updateSpecialTopic([...this.componentList], { ...specialTopicInfo }, { ...actSpecialFloatLayer })
         if (res && res.data) {

@@ -21,7 +21,7 @@
         ></el-input>
       </el-form-item>
 
-      <el-form-item prop="url">
+      <el-form-item prop="url" v-if="!formData.type">
         <el-upload
           class="avatar-uploader"
           v-loading="loading"
@@ -29,7 +29,24 @@
           :headers="headers"
           drag
           :show-file-list="false"
-          :before-upload="beforeImgUpload"
+          :before-upload="beforeImgUpload3M"
+          :on-success="handleImgSuccess"
+          :on-error="handleImgError"
+        >
+          <img v-if="formData.url" :src="formData.url" class="avatar" />
+          <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+        </el-upload>
+      </el-form-item>
+
+      <el-form-item prop="url" v-if="formData.type">
+        <el-upload
+          class="avatar-uploader"
+          v-loading="loading"
+          :action="actionUrl"
+          :headers="headers"
+          drag
+          :show-file-list="false"
+          :before-upload="beforeImgUpload100K"
           :on-success="handleImgSuccess"
           :on-error="handleImgError"
         >
@@ -39,7 +56,10 @@
       </el-form-item>
 
       <el-form-item v-if="formData.type" label="图片尺寸" prop="imageSizeType">
-        <el-select v-model="formData.imageSizeType" placeholder="请选择图片尺寸">
+        <el-select
+          v-model="formData.imageSizeType"
+          placeholder="请选择图片尺寸"
+        >
           <el-option label="大" :value="1"> </el-option>
           <el-option label="小" :value="2"> </el-option>
         </el-select>
@@ -98,10 +118,7 @@
       </el-form-item>
 
       <el-form-item>
-        <el-button
-          type="primary"
-          class="modal-save-btn"
-          @click="handleSave"
+        <el-button type="primary" class="modal-save-btn" @click="handleSave"
           >保存</el-button
         >
       </el-form-item>
@@ -127,13 +144,12 @@
       }
     },
     model: {
-      prop: "formData",
+      prop: "formData"
     },
     data() {
       const token = Auth.getToken();
       let validateTitle = (rule, value, callback) => {
-        let val = value.trim();
-        if (!val) {
+        if (!value) {
           callback(new Error("请输入专题标题"));
         } else {
           callback();
@@ -160,9 +176,15 @@
             }
           ],
           url: [{ required: true, message: "请选择图片", trigger: "change" }],
-          imageSizeType: [{ required: true, message: "请选择图片尺寸", trigger: "change" }],
-          marginBottom: [{ required: true, message: "请输入内容", trigger: "blur" }],
-          marginRight: [{ required: true, message: "请输入内容", trigger: "blur" }],
+          imageSizeType: [
+            { required: true, message: "请选择图片尺寸", trigger: "change" }
+          ],
+          marginBottom: [
+            { required: true, message: "请输入内容", trigger: "blur" }
+          ],
+          marginRight: [
+            { required: true, message: "请输入内容", trigger: "blur" }
+          ],
           urlType: [
             { required: true, message: "请选择链接类型", trigger: "change" }
           ],
@@ -171,15 +193,13 @@
       };
     },
 
-    created() {
-      
-    },
+    created() {},
     methods: {
       dialogCloseBack() {
         this.$emit("click", {});
-        this.$refs['editImgRef'].clearValidate()
+        this.$refs["editImgRef"].clearValidate();
       },
-      beforeImgUpload(file) {
+      beforeImgUpload3M(file) {
         const isJPG = file.type == "image/jpeg" || file.type == "image/png";
         const isLt3M = file.size / 1024 / 1024 <= 3;
         this.loading = true;
@@ -192,6 +212,20 @@
           this.$message.error("上传图片大小不能超过3MB!");
         }
         return isJPG && isLt3M;
+      },
+      beforeImgUpload100K(file) {
+        const isJPG = file.type == "image/jpeg" || file.type == "image/png";
+        const isLt100K = file.size / 1024 <= 100;
+        this.loading = true;
+        if (!isJPG) {
+          this.loading = false;
+          this.$message.error("上传图片只能是PNG、JPG格式!");
+        }
+        if (!isLt100K) {
+          this.loading = false;
+          this.$message.error("上传图片大小不能超过100k!");
+        }
+        return isJPG && isLt100K;
       },
       handleImgSuccess(res, file) {
         if (res.data) {
@@ -215,7 +249,7 @@
           if (!valid) return false;
           this.$emit("handleSave", {});
           if (!this.formData.type) {
-            this.$refs['editImgRef'].clearValidate(); // 保存成功后清除表单内容
+            this.$refs["editImgRef"].clearValidate(); // 保存成功后清除表单内容
           }
         });
       }
