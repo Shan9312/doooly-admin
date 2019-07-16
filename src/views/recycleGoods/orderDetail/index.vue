@@ -159,13 +159,6 @@
             <el-col :span="6">回收状态:</el-col>
             <el-col :span="18">
               <recycle-state :recoveryState="orderObj.recoveryState" @click="handleChildConfirm"></recycle-state>
-              <el-button
-                class="btn"
-                v-if="
-                  orderObj.orderState != '5' && orderObj.recoveryState == '3'
-                "
-                @click="handleChildConfirm"
-              >确认回款</el-button>
               <pe-button
                 label="确认回款"
                 class="btn"
