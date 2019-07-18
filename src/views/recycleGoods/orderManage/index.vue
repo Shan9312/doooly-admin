@@ -188,7 +188,7 @@
         v-show="formObj.total > 0"
         :total="formObj.total"
         :page.sync="formObj.pageNum"
-        :limit.sync="formObj.rowCount"
+        :limit.sync="formObj. pageSize"
         @pagination="getRecycleGoodsList"
       />
     </section>
@@ -261,7 +261,7 @@ export default {
         recoveryStartTime: "",
         recoveryEndTime: "",
         pageNum: 1,
-        rowCount: 10,
+        pageSize: 10,
         total: 0
       },
       orderStateList,
