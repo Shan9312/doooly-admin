@@ -57,13 +57,12 @@
           <el-row>
             <el-col :span="6">支付宝姓名:</el-col>
             <el-col :span="18">
-              <div
-                @click="handleClickWatch(orderObj.alipayName, '1')"
-                class="hidden-btn"
-              >
-                <span v-if="!isHiddenObj.isShowAlipayName">{{
+              <div @click="handleClickWatch(orderObj.alipayName, '1')" class="hidden-btn">
+                <span v-if="!isHiddenObj.isShowAlipayName">
+                  {{
                   orderObj.alipayName ? "******" : orderObj.alipayName
-                }}</span>
+                  }}
+                </span>
                 <span v-else>{{ orderObj.alipayName }}</span>
               </div>
               <pe-button
@@ -90,13 +89,12 @@
           <el-row>
             <el-col :span="6">支付宝账号:</el-col>
             <el-col :span="18">
-              <div
-                @click="handleClickWatch(orderObj.alipayAccount, '2')"
-                class="hidden-btn"
-              >
-                <span v-if="!isHiddenObj.isShowAlipayAccount">{{
+              <div @click="handleClickWatch(orderObj.alipayAccount, '2')" class="hidden-btn">
+                <span v-if="!isHiddenObj.isShowAlipayAccount">
+                  {{
                   orderObj.alipayAccount ? "******" : orderObj.alipayAccount
-                }}</span>
+                  }}
+                </span>
                 <span v-else>{{ orderObj.alipayAccount }}</span>
               </div>
             </el-col>
@@ -114,13 +112,12 @@
           <el-row>
             <el-col :span="6">购买人手机号:</el-col>
             <el-col :span="18">
-              <div
-                @click="handleClickWatch(orderObj.userPhone, '3')"
-                class="hidden-btn"
-              >
-                <span v-if="!isHiddenObj.isShowUserPhone">{{
+              <div @click="handleClickWatch(orderObj.userPhone, '3')" class="hidden-btn">
+                <span v-if="!isHiddenObj.isShowUserPhone">
+                  {{
                   orderObj.userPhone ? "******" : orderObj.userPhone
-                }}</span>
+                  }}
+                </span>
                 <span v-else>{{ orderObj.userPhone }}</span>
               </div>
             </el-col>
@@ -138,13 +135,12 @@
           <el-row>
             <el-col :span="6">购买人姓名:</el-col>
             <el-col :span="18">
-              <div
-                @click="handleClickWatch(orderObj.userName, '4')"
-                class="hidden-btn"
-              >
-                <span v-if="!isHiddenObj.isShowUserName">{{
+              <div @click="handleClickWatch(orderObj.userName, '4')" class="hidden-btn">
+                <span v-if="!isHiddenObj.isShowUserName">
+                  {{
                   orderObj.userName ? "******" : orderObj.userName
-                }}</span>
+                  }}
+                </span>
                 <span v-else>{{ orderObj.userName }}</span>
               </div>
             </el-col>
@@ -162,18 +158,7 @@
           <el-row>
             <el-col :span="6">回收状态:</el-col>
             <el-col :span="18">
-              <recycle-state
-                :recoveryState="orderObj.recoveryState"
-                @click="handleChildConfirm"
-              ></recycle-state>
-              <el-button
-                class="btn"
-                v-if="
-                  orderObj.orderState != '5' && orderObj.recoveryState == '3'
-                "
-                @click="handleChildConfirm"
-                >确认回款</el-button
-              >
+              <recycle-state :recoveryState="orderObj.recoveryState" @click="handleChildConfirm"></recycle-state>
               <pe-button
                 label="确认回款"
                 class="btn"
@@ -219,122 +204,119 @@
       @handleGetDeiatil="handleGetList"
     ></edit-dialog>
     <!-- 确认回款 -->
-    <confirm-dialog
-      @handleGetList="handleGetList"
-      :userInfo="userInfo"
-      ref="dialogConfirmChild"
-    ></confirm-dialog>
+    <confirm-dialog @handleGetList="handleGetList" :userInfo="userInfo" ref="dialogConfirmChild"></confirm-dialog>
   </div>
 </template>
 
 <script>
-  import { RecycleGoodsService } from "@/service";
-  import RecycleState from "../components/RecycleState.vue";
-  import OrderState from "../components/OrderState.vue";
-  import ConfirmDialog from "../components/ConfirmDialog";
-  import EditDialog from "../components/EditDialog";
-  import { Message } from "element-ui";
+import { RecycleGoodsService } from "@/service";
+import RecycleState from "../components/RecycleState.vue";
+import OrderState from "../components/OrderState.vue";
+import ConfirmDialog from "../components/ConfirmDialog";
+import EditDialog from "../components/EditDialog";
+import { Message } from "element-ui";
+import { Auth } from "@/common";
 
-  export default {
-    name: "OrderDetail",
-    components: {
-      RecycleState,
-      OrderState,
-      ConfirmDialog,
-      EditDialog
-    },
-    filters: {
-      fixedNum(num) {
-        if (!num) return 0;
-        return Number(num).toFixed(2);
+export default {
+  name: "OrderDetail",
+  components: {
+    RecycleState,
+    OrderState,
+    ConfirmDialog,
+    EditDialog
+  },
+  filters: {
+    fixedNum(num) {
+      if (!num) return 0;
+      return Number(num).toFixed(2);
+    }
+  },
+  data() {
+    return {
+      orderObj: {
+        recoveryTime: "",
+        orderNumber: ""
+      },
+      userInfo: {
+        userId: JSON.parse(Auth.getUserInfo()).email,
+        orderNumber: this.$route.params.id
+      },
+      isHiddenObj: {
+        isShowAlipayName: false,
+        isShowAlipayAccount: false,
+        isShowUserPhone: false,
+        isShowUserName: false
+      }
+    };
+  },
+  created() {
+    this.getOrderDetails();
+  },
+  methods: {
+    // 点击查看隐藏的数字
+    handleClickWatch(value, type) {
+      if (value) {
+        switch (type) {
+          case "1":
+            this.isHiddenObj.isShowAlipayName = !this.isHiddenObj
+              .isShowAlipayName;
+            break;
+          case "2":
+            this.isHiddenObj.isShowAlipayAccount = !this.isHiddenObj
+              .isShowAlipayAccount;
+            break;
+          case "3":
+            this.isHiddenObj.isShowUserPhone = !this.isHiddenObj
+              .isShowUserPhone;
+            break;
+          case "4":
+            this.isHiddenObj.isShowUserName = !this.isHiddenObj.isShowUserName;
+            break;
+        }
       }
     },
-    data() {
-      return {
-        orderObj: {
-          recoveryTime: "",
-          orderNumber: ""
-        },
-        userInfo: {
-          userId: this.$store.state.user.userInfo.name,
-          orderNumber: this.$route.params.id
-        },
-        isHiddenObj: {
-          isShowAlipayName: false,
-          isShowAlipayAccount: false,
-          isShowUserPhone: false,
-          isShowUserName: false
-        }
+
+    // 查询订单详情
+    async getOrderDetails() {
+      const { data } = await RecycleGoodsService.recycleGoodsDetail({
+        orderNumber: this.userInfo.orderNumber
+      });
+      this.orderObj = data;
+      this.isHiddenObj = {
+        isShowAlipayName: false,
+        isShowAlipayAccount: false,
+        isShowUserPhone: false,
+        isShowUserName: false
       };
     },
-    created() {
-      this.getOrderDetails();
+
+    // 弹出确认按钮
+    handleChildConfirm() {
+      this.$refs.dialogConfirmChild.dialogVisible = true;
     },
-    methods: {
-      // 点击查看隐藏的数字
-      handleClickWatch(value, type) {
-        if (value) {
-          switch (type) {
-            case "1":
-              this.isHiddenObj.isShowAlipayName = !this.isHiddenObj
-                .isShowAlipayName;
-              break;
-            case "2":
-              this.isHiddenObj.isShowAlipayAccount = !this.isHiddenObj
-                .isShowAlipayAccount;
-              break;
-            case "3":
-              this.isHiddenObj.isShowUserPhone = !this.isHiddenObj
-                .isShowUserPhone;
-              break;
-            case "4":
-              this.isHiddenObj.isShowUserName = !this.isHiddenObj.isShowUserName;
-              break;
-          }
-        }
-      },
-
-      // 查询订单详情
-      async getOrderDetails() {
-        const { data } = await RecycleGoodsService.recycleGoodsDetail({
-          orderNumber: this.userInfo.orderNumber
-        });
-        this.orderObj = data;
-        this.isHiddenObj = {
-          isShowAlipayName: false,
-          isShowAlipayAccount: false,
-          isShowUserPhone: false,
-          isShowUserName: false
-        };
-      },
-
-      // 弹出确认按钮
-      handleChildConfirm() {
-        this.$refs.dialogConfirmChild.dialogVisible = true;
-      },
-      handleChildEdit() {
-        this.$refs.dialogEditChild.dialogVisibleEdit = true;
-      },
-      handleGetList(v) {
-        if (v) this.getOrderDetails();
-      }
+    handleChildEdit() {
+      this.$refs.dialogEditChild.dialogVisibleEdit = true;
+    },
+    handleGetList(v) {
+      if (v) this.getOrderDetails();
     }
-  };
+  }
+};
 </script>
 
 <style lang="less" scoped>
-  .order-detail-wapper {
-    .detail-row {
-      margin-bottom: 2.5rem;
-    }
-    .btn {
-      vertical-align: top;
-      margin-left: 0.5rem;
-      margin-top: -0.7rem;
-    }
-    .hidden-btn {
-      cursor: pointer;
-      display: inline-block;
-    }
+.order-detail-wapper {
+  .detail-row {
+    margin-bottom: 2.5rem;
   }
+  .btn {
+    vertical-align: top;
+    margin-left: 0.5rem;
+    margin-top: -0.7rem;
+  }
+  .hidden-btn {
+    cursor: pointer;
+    display: inline-block;
+  }
+}
 </style>

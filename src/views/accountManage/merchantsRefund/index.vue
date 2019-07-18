@@ -20,10 +20,10 @@
             </el-form-item>
           </el-col>
           <el-col :span="11">
-            <el-form-item label="下单时间">
+            <el-form-item label="退款时间">
               <el-date-picker
                 :editable="false"
-                v-model="createDate"
+                v-model="refundDate"
                 type="datetimerange"
                 :picker-options="pickerOptions"
                 value-format="yyyy-MM-dd HH:mm:ss"
@@ -109,7 +109,7 @@
               <el-form-item>
                 <pe-button
                   label="查询"
-                  perms="account:merchants:search"
+                  perms="account:merchantsRefund:search"
                   type="primary"
                   @click="searchOrder"
                 />
@@ -117,7 +117,7 @@
               <el-form-item>
                 <pe-button
                   label="重置"
-                  perms="account:merchants:reset"
+                  perms="account:merchantsRefund:reset"
                   type="primary"
                   @click="reset"
                 />
@@ -130,7 +130,7 @@
                 :loading="downloadLoading"
                 label="导出订单明细"
                 icon="el-icon-download"
-                perms="account:merchants:export"
+                perms="account:merchantsRefund:export"
                 type="primary"
                 @click="handleDownload"
               />
@@ -161,21 +161,21 @@
           :label="item.label"
         >
           <template slot-scope="scope">
-            <span v-if="item.value !== 'orderNumber'">{{
+            <span v-if="item.value !== 'serialNumber'">{{
               scope.row[item.value]
             }}</span>
             <router-link
               style="color:#409EFF"
               :to="
-                `orderDetail/${encodeURIComponent(scope.row.orderNumber)}/${scope.row.userId}/${
-                  scope.row.businessId
-                }/${scope.row.serialNumber}?storeId=${scope.row.storeId}&receiptType=${
-                  scope.row.receiptType
-                }&orderIntegral=${scope.row.orderIntegral}&orderNotIntegral=${
-                  scope.row.orderNotIntegral
-                }`
+                `orderDetail/${encodeURIComponent(scope.row.orderNumber)}/${
+                  scope.row.userId
+                }/${scope.row.businessId}/${scope.row.serialNumber}?storeId=${
+                  scope.row.storeId
+                }&receiptType=${scope.row.receiptType}&orderIntegral=${
+                  scope.row.orderIntegral
+                }&orderNotIntegral=${scope.row.orderNotIntegral}`
               "
-              v-if="item.value == 'orderNumber'"
+              v-if="item.value == 'serialNumber'"
               >{{ scope.row[item.value] }}</router-link
             >
           </template>
@@ -200,13 +200,13 @@
     { label: "是否补单", value: "dateMark", width: "80px" },
     { label: "商户名称", value: "businessName", width: "80px" },
     { label: "订单编号", value: "orderNumber", width: "180px" },
-    { label: "下单时间", value: "orderDate", width: "160px" },
+    { label: "退款单号", value: "serialNumber", width: "180px" },
+    { label: "退款时间", value: "orderDate", width: "160px" },
     { label: "收款类型", value: "receiptType", width: "100px" },
-    { label: "订单应付总金额", value: "orderAmountPlan", width: "100px" },
-    { label: "订单实付总金额", value: "orderAmount", width: "100px" },
-    { label: "积分支付总额", value: "orderIntegral", width: "100px" },
-    { label: "其他支付总额", value: "orderNotIntegral", width: "100px" },
-    { label: "手续费", value: "serviceCharge", width: "80px" },
+    { label: "订单退款总金额", value: "orderAmountPlan", width: "100px" },
+    { label: "积分退款总额", value: "orderIntegral", width: "100px" },
+    { label: "非积分退款总额", value: "orderNotIntegral", width: "100px" },
+    { label: "手续费退款", value: "serviceCharge", width: "80px" },
     { label: "对账状态", value: "statusText", width: "100px" }
   ];
 
@@ -252,7 +252,7 @@
     return list;
   };
   export default {
-    name: "MerchantsOrder",
+    name: "MerchantsRefund",
     data() {
       return {
         pickerOptions: {
@@ -262,23 +262,23 @@
           }
         },
         syncDate: "", // 同步日期
-        createDate: "", // 下单时间
+        refundDate: "", // 退款时间
         search: {
           // 列表筛选
           startOrderCreateDate: "", // 同步开始日期
           endOrderCreateDate: "", // 同步结束日期
-          startOrderDate: "", // 下单开始日期
-          endOrderDate: "", // 下单结束日期
+          startReturnDate: "", // 退款开始日期
+          endReturnDate: "", // 退款结束日期
           businessName: "", // 商户名称
           orderNumber: "", // 订单编号
           status: "", // 对账状态
           dateMark: "", // 是否补单
           receiptType: "", // 收款类型
           pageNum: 1, // 分页
-          pageSize: 20 // 每页显示的条数
+          pageSize: 20, // 每页显示的条数
+          type: 2
         },
         downloadLoading: false, // 导出excel按钮loading
-        createDate: "", // 下单时间
         list: [], // 表格数据
         total: 0, // 返回的列表总数
         listLoading: false, // table列表加载的loading
@@ -300,14 +300,14 @@
           this.search.endOrderCreateDate = "";
         }
       },
-      // 下单日期
-      createDate(time) {
+      // 退款日期
+      refundDate(time) {
         if (time) {
-          this.search.startOrderDate = time[0];
-          this.search.endOrderDate = time[1];
+          this.search.startReturnDate = time[0];
+          this.search.endReturnDate = time[1];
         } else {
-          this.search.startOrderDate = "";
-          this.search.endOrderDate = "";
+          this.search.startReturnDate = "";
+          this.search.endReturnDate = "";
         }
       }
     },
@@ -333,14 +333,14 @@
 
       // 重置
       reset() {
-        this.createDate = "";
+        this.refundDate = "";
         this.syncDate = "";
         this.search = {
           // 列表筛选
           startOrderCreateDate: "", // 同步开始日期
           endOrderCreateDate: "", // 同步结束日期
-          startOrderDate: "", // 下单开始日期
-          endOrderDate: "", // 下单结束日期
+          startReturnDate: "", // 退款开始日期
+          endReturnDate: "", // 退款结束日期
           businessName: "", // 商户名称
           orderNumber: "", // 订单编号
           status: "", // 对账状态

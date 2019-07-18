@@ -50,7 +50,7 @@
             <el-form-item>
               <pe-button
                 label="查询"
-                perms="account:accountEntry:search"
+                perms="account:refundRecon:search"
                 type="primary"
                 @click="searchOrder"
               />
@@ -59,10 +59,10 @@
         </el-row>
         <el-row>
           <el-col :span="10">
-            <el-form-item label="下单时间">
+            <el-form-item label="退款时间">
               <el-date-picker
                 :editable="false"
-                v-model="createDate"
+                v-model="refundDate"
                 type="datetimerange"
                 :picker-options="pickerOptions"
                 value-format="yyyy-MM-dd HH:mm:ss"
@@ -107,7 +107,7 @@
             <el-form-item>
               <pe-button
                 label="重置"
-                perms="account:accountEntry:reset"
+                perms="account:refundRecon:reset"
                 type="primary"
                 @click="reset"
               />
@@ -145,7 +145,7 @@
           :min-width="item.width"
         >
           <template slot-scope="scope">
-            <span v-if="item.value !== 'orderNumber'">{{
+            <span v-if="item.value !== 'serialNumber'">{{
               scope.row[item.value]
             }}</span>
             <router-link
@@ -159,7 +159,7 @@
                   scope.row.orderIntegral
                 }&orderNotIntegral=${scope.row.orderNotIntegral}`
               "
-              v-if="item.value == 'orderNumber'"
+              v-if="item.value == 'serialNumber'"
               >{{ scope.row[item.value] }}</router-link
             >
           </template>
@@ -172,16 +172,18 @@
         >
           <template slot-scope="scope">
             <pe-button
+              size="small"
               v-if="scope.row.status >= 3"
               label="异常处理"
-              perms="account:accountEntry:edit"
+              perms="account:refundRecon:edit"
               type="danger"
               @click="handleUpdate(scope.row)"
             />
             <pe-button
+              size="small"
               v-if="scope.row.status == 2"
               label="查看"
-              perms="account:accountEntry:view"
+              perms="account:refundRecon:view"
               type="danger"
               @click="handlePreview(scope.row)"
             />
@@ -214,19 +216,19 @@
         <el-row class="dialog-order">
           <el-col :span="2" class="order-title">订单：</el-col>
           <el-col :span="10">
-            积分支付总额：{{ rowData.orderIntegral }}元
+            积分退款总额：{{ rowData.orderIntegral }}元
           </el-col>
           <el-col :span="10">
-            非积分支付总额：{{ rowData.orderNotIntegral }}元
+            非积分退款总额：{{ rowData.orderNotIntegral }}元
           </el-col>
         </el-row>
         <el-row class="dialog-flow">
           <el-col :span="2" class="flow-title">流水：</el-col>
           <el-col :span="10">
-            积分支付总额：{{ rowData.flowIntegral }}元
+            积分退款总额：{{ rowData.flowIntegral }}元
           </el-col>
           <el-col :span="10">
-            非积分支付总额：{{ rowData.flowNotIntegral }}元
+            非积分退款总额：{{ rowData.flowNotIntegral }}元
           </el-col>
         </el-row>
         <el-form-item prop="value" v-show="dialogStatus !== 'abnormal'">
@@ -268,13 +270,13 @@
       </el-form>
       <div v-show="dialogStatus === 'abnormal'">
         <h3>异常类型：{{ rowData.statusOld | formatStatus }}</h3>
-        <div class="apply-total">支付总金额：{{ rowData.orderAmountPlan }}</div>
+        <div class="apply-total">退款总金额：{{ rowData.orderAmountPlan }}</div>
         <el-row class="apply-table">
           <el-col :span="2">&nbsp</el-col>
-          <el-col :span="6">订单积分支付</el-col>
-          <el-col :span="6">流水积分支付</el-col>
-          <el-col :span="5">订单非积分支付</el-col>
-          <el-col :span="5">流水非积分支付</el-col>
+          <el-col :span="6">订单积分退款</el-col>
+          <el-col :span="6">流水积分退款</el-col>
+          <el-col :span="5">订单非积分退款</el-col>
+          <el-col :span="5">流水非积分退款</el-col>
         </el-row>
         <el-row class="apply-table">
           <el-col :span="2">原值</el-col>
@@ -314,23 +316,23 @@
 <script>
   import { AccountEntryService } from "@/service";
   import { Utils } from "@/common";
-  // import checkPermission from '@/common/permission';
+
   const title = [
     // 表格title
     { label: "业务类型", value: "businessType", width: "80px" },
     { label: "同步日期", value: "orderCreateDate", width: "160px" },
     { label: "是否补单", value: "dateMarkText", width: "80px" },
-    { label: "下单时间", value: "orderDate", width: "160px" },
+    { label: "退款时间", value: "returnDate", width: "160px" },
     { label: "订单编号", value: "orderNumber", width: "180px" },
+    { label: "退货单号", value: "serialNumber", width: "180px" },
     { label: "商户名称", value: "businessName", width: "100px" },
     { label: "收款类型", value: "receiptTypeValue", width: "100px" },
-    { label: "订单应付金额", value: "orderAmountPlan", width: "80px" },
-    { label: "订单实付金额", value: "orderAmount", width: "80px" },
-    { label: "积分支付总额", value: "orderIntegral", width: "80px" },
-    { label: "非积分支付总额", value: "orderNotIntegral", width: "80px" },
-    { label: "流水总金额", value: "flowAmount", width: "80px" },
-    { label: "积分流水总额", value: "flowIntegral", width: "80px" },
-    { label: "非积分流水总额", value: "flowNotIntegral", width: "80px" },
+    { label: "订单退款总额", value: "orderAmountPlan", width: "80px" },
+    { label: "积分退款总额", value: "orderIntegral", width: "80px" },
+    { label: "非积分退款总额", value: "orderNotIntegral", width: "80px" },
+    { label: "流水退款总额", value: "flowAmount", width: "80px" },
+    { label: "积分流水退款总额", value: "flowIntegral", width: "80px" },
+    { label: "非积分流水退款总额", value: "flowNotIntegral", width: "80px" },
     { label: "手续费", value: "serviceCharge", width: "80px" },
     { label: "对账状态", value: "statusText", width: "120px" },
     { label: "差异金额", value: "differences", width: "80px" }
@@ -354,10 +356,10 @@
 
   // 修改的金额类型
   const priceList = [
-    { label: "订单积分支付金额", value: "orderIntegral" },
-    { label: "订单非积分支付金额", value: "orderNotIntegral" },
-    { label: "积分流水支付金额", value: "flowIntegral" },
-    { label: "非积分流水支付金额", value: "flowNotIntegral" }
+    { label: "订单积分退款金额", value: "orderIntegral" },
+    { label: "订单非积分退款金额", value: "orderNotIntegral" },
+    { label: "积分流水退款金额", value: "flowIntegral" },
+    { label: "非积分流水退款金额", value: "flowNotIntegral" }
   ];
 
   const format = data => {
@@ -400,30 +402,31 @@
       } else {
         item.dateMarkText = "否";
       }
-      item["businessType"] = "入款";
+      item["businessType"] = "退款";
       list = [...list, item];
     });
     return list;
   };
 
   export default {
-    name: "AccountEntry",
+    name: "RefundRecon",
     data() {
       return {
-        createDate: "", // 筛选条件v-model绑定的下单时间
+        refundDate: "", // 筛选条件v-model绑定的退款时间
         syncDate: "", // 筛选条件v-model绑定的同步日期
         search: {
           // 列表筛选
           startOrderCreateDate: "", // 同步开始日期
           endOrderCreateDate: "", // 同步结束日期
-          startOrderDate: "", // 下单开始日期
-          endOrderDate: "", // 下单结束日期
+          startReturnDate: "", // 退款开始日期
+          endReturnDate: "", // 退款结束日期
           businessName: "", // 商户名称
           orderNumber: "", // 订单编号
           statusList: ["3", "4", "5"], // 对账状态
           dateMark: "", // 是否补单，true为是，false为否
           pageNum: 1, // 分页
-          pageSize: 20 // 每页显示的条数
+          pageSize: 20, // 每页显示的条数
+          type: 2
         },
         pickerOptions: {
           // 设置日期范围
@@ -482,14 +485,14 @@
           this.search.endOrderCreateDate = "";
         }
       },
-      // 下单日期
-      createDate(time) {
+      // 退款日期
+      refundDate(time) {
         if (time) {
-          this.search.startOrderDate = time[0];
-          this.search.endOrderDate = time[1];
+          this.search.startReturnDate = time[0];
+          this.search.endReturnDate = time[1];
         } else {
-          this.search.startOrderDate = "";
-          this.search.endOrderDate = "";
+          this.search.startReturnDate = "";
+          this.search.endReturnDate = "";
         }
       }
     },
@@ -527,16 +530,17 @@
         this.search.pageNum = 1;
         // 切换按钮筛选数据，除了同步日期其他条件置空
         if (value === "syncDate") {
-          this.createDate = "";
+          this.refundDate = "";
           this.search = {
-            startOrderDate: "", // 下单开始日期
-            endOrderDate: "", // 下单结束日期
+            startReturnDate: "", // 退款开始日期
+            endReturnDate: "", // 退款结束日期
             businessName: "",
             orderNumber: "",
             dateMark: "",
             statusList: ["3", "4", "5"],
             pageNum: 1,
-            pageSize: 20
+            pageSize: 20,
+            type: 2
           };
         }
         this.getList();
@@ -544,18 +548,19 @@
 
       // 重置搜索
       reset() {
-        this.createDate = "";
+        this.refundDate = "";
         this.syncDate = "";
         this.search = {
           startOrderCreateDate: "",
           endOrderCreateDate: "",
           businessName: "",
           statusList: ["3", "4", "5"],
-          startOrderDate: "",
-          endOrderDate: "",
+          startReturnDate: "",
+          endReturnDate: "",
           orderNumber: "",
           pageNum: 1,
-          pageSize: 20
+          pageSize: 20,
+          type: 2
         };
         this.getList();
       },
@@ -581,7 +586,7 @@
               ),
               end
             ];
-            this.searchOrder("syncDate"); // 切换按钮之后清空支付时间以外的搜索条件并请求数据
+            this.searchOrder("syncDate"); // 切换按钮之后清空退款时间以外的搜索条件并请求数据
             break;
           case 2:
             // 前7天的00:00:00到昨天的23:59:59
@@ -592,7 +597,7 @@
               ),
               end
             ];
-            this.searchOrder("syncDate"); // 切换按钮之后清空支付时间以外的搜索条件并请求数据
+            this.searchOrder("syncDate"); // 切换按钮之后清空退款时间以外的搜索条件并请求数据
             break;
           case 3:
             // 前30天的00:00:00到昨天的23:59:59
@@ -603,7 +608,7 @@
               ),
               end
             ];
-            this.searchOrder("syncDate"); // 切换按钮之后清空支付时间以外的搜索条件并请求数据
+            this.searchOrder("syncDate"); // 切换按钮之后清空退款时间以外的搜索条件并请求数据
             break;
           default:
             break;
@@ -661,6 +666,7 @@
             const { price, value, remark } = this.temp;
             this.rowData[value] = price;
             this.rowData["remark"] = remark;
+            this.rowData.type = 2;
             const { data } = await AccountEntryService.orderUpdate(this.rowData);
             this.getList();
             this.dialogFormVisible = false;
