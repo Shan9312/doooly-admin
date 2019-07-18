@@ -79,9 +79,10 @@
           <el-col :span="4">
             <pe-button
               label="导出明细"
+              icon="el-icon-download"
               perms="recycle:order:search"
               type="primary"
-              @click="handleGetListByMsg"
+              @click="handleDownload"
             />
           </el-col>
         </el-row>
@@ -129,6 +130,8 @@
 import { TransctChannelManage } from "@/service";
 import { Message } from "element-ui";
 import OrderType from "../components/OrderType.vue";
+import { Utils, Auth } from "@/common";
+import { constants } from "crypto";
 
 // 表格
 const titleList = [
@@ -204,7 +207,6 @@ export default {
     // 查询条件
     handleGetListByMsg() {
       this.formObj.pageNum = 1;
-      console.log(this.formObj);
       this.$refs["formObj"].validate(valid => {
         if (valid) {
           this.getChannelList();
@@ -225,6 +227,13 @@ export default {
       this.listLoading = false;
       this.tableData = data.list;
       this.formObj.total = data.total;
+    },
+    // 导出
+    async excelDownload() {
+      const obj = await TransctChannelManage.exportExcel(this.formObj);
+    },
+    handleDownload() {
+      this.excelDownload();
     }
   },
   watch: {
