@@ -37,19 +37,3 @@ export default {
 };
 </script>
 
-<style lang="less" scoped>
-.state-tag-wrapper {
-  display: inline-block;
-  .default {
-    color: #909399;
-  }
-  .success {
-    color: #409eff;
-  }
-  .gray {
-    color: #ff9900;
-  }
-}
-</style>
-
-
