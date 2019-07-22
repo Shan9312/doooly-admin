@@ -149,7 +149,7 @@ const titleList = [
 const orderStateList = [
   { label: "全部", value: "" },
   { label: "定向积分", value: "3" },
-  { label: "兜里积分", value: "0" },
+  { label: "兜礼积分", value: "0" },
   { label: "微信", value: "1" },
   { label: "支付宝", value: "6" },
   { label: "云支付", value: "14" },
