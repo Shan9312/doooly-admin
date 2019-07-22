@@ -4,7 +4,7 @@ export default {
   /**
    * 获取交易流水的列表
    * {
-   *  @param {*} merchantOrderNo: 订单号
+   *  @param {*} orderNo: 订单号
    *  @param {*} payType: 所属企业
    *  @param {*} merchantName: 商家名称
    *  @param {*} startCreateTime: 订单下单开始日期
@@ -15,10 +15,10 @@ export default {
    *  @param {*} pageSize: 列表页数量
    * }
    * */
-  channelList({ merchantOrderNo, payType, merchantName, startCreateTime, endCreateTime, startPayEndTime, endPayEndTime, pageNum, pageSize }) {
+  channelList({ orderNo, payType, merchantName, startCreateTime, endCreateTime, startPayEndTime, endPayEndTime, pageNum, pageSize }) {
     return Ajax.post('payment/payrecord/page',
     {
-      merchantOrderNo,
+      orderNo,
       payType,
       merchantName,
       startCreateTime,
@@ -32,7 +32,7 @@ export default {
   /**
    * 导出订单
    * {
-   *  @param {*} merchantOrderNo: 订单号
+   *  @param {*} orderNo: 订单号
    *  @param {*} payType: 所属企业
    *  @param {*} merchantName: 商家名称
    *  @param {*} startCreateTime: 订单下单开始日期

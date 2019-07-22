@@ -36,7 +36,7 @@
             <el-form-item label="订单编号">
               <el-input
                 style="width: 100%"
-                v-model="formObj.merchantOrderNo"
+                v-model="formObj.orderNo"
                 placeholder="请输入订单编号"
                 maxlength="40"
                 clearable
@@ -138,7 +138,7 @@ import { Ajax } from "@/common";
 const titleList = [
   { label: "交易时间", value: "payEndTime", width: "80px" },
   { label: "下单时间", value: "createTime", width: "100px" },
-  { label: "订单编号", value: "merchantOrderNo", width: "100px" },
+  { label: "订单编号", value: "orderNo", width: "100px" },
   { label: "商户名称", value: "merchantName", width: "80px" },
   { label: "支付方式", value: "payType", width: "80px" },
   { label: "第三方交易单号", value: "outTradeNo", width: "60px" },
@@ -174,7 +174,7 @@ export default {
       createDate: "", // 下单时间
       listLoading: false, // 表格数据加载的loading
       formObj: {
-        merchantOrderNo: "", // 订单号 merchantOrderNo
+        orderNo: "", // 订单号 orderNo
         payType: "", // 支付类型
         merchantName: "", // 商户名称
         startCreateTime: "",
