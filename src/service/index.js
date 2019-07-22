@@ -13,6 +13,7 @@ import RoleService from './system/role/role'
 import MenuService from './system/menu/menu'
 import DialogService from './operationManage/dialog-manage'
 import SubjectService from './operationManage/activity-subject'
+import TransctChannelManage from './transctChannelManage/transct-channel-manage'
 
 export {
   LoginService,
@@ -29,5 +30,6 @@ export {
   UserService,
   RoleService,
   MenuService,
-  DialogService
+  DialogService,
+  TransctChannelManage
 }
