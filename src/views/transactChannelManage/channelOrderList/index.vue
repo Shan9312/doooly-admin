@@ -229,16 +229,13 @@ export default {
       this.tableData = data.list;
       this.formObj.total = data.total;
     },
-    // 导出
-    async excelDownload() {
+    // 导出功能
+    handleDownload() {
       let token = Auth.getToken();
       this.formObj.Authorization = token;
       let params = Utils.obj2Param(this.formObj);
       this.downloadLoading = false;
       TransctChannelManage.exportExcel(params);
-    },
-    handleDownload() {
-      this.excelDownload();
     }
   },
   watch: {
