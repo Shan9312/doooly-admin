@@ -15,7 +15,7 @@ export default {
    *  @param {*} pageSize: 列表页数量
    * }
    * */
-  channelList({ merchantOrderNo, payType, merchantName, startCreateTime, endCreateTime, startPayTime, endPayTime, pageNum, pageSize }) {
+  channelList({ merchantOrderNo, payType, merchantName, startCreateTime, endCreateTime, startPayEndTime, endPayEndTime, pageNum, pageSize }) {
     return Ajax.post('payment/payrecord/page',
     {
       merchantOrderNo,
@@ -23,8 +23,8 @@ export default {
       merchantName,
       startCreateTime,
       endCreateTime,
-      startPayTime,
-      endPayTime,
+      startPayEndTime,
+      endPayEndTime,
       pageNum,
       pageSize,
     })
