@@ -62,10 +62,10 @@ export default {
   get(url, data, options) {
     let params = Utils.obj2Param(data)
     params = params.length > 0 ? `?${params}` : ''
-    return ajax('get', encodeURI(`${url}${params}`), options)
+    return ajax('get', `${url}${params}`, options)
   },
   post(url, data, options) {
-    return ajax('post', encodeURI(url), data, options)
+    return ajax('post', url, data, options)
   },
   put(url, data, options) {
     return ajax('put', url, data, options)

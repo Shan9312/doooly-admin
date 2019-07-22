@@ -6,6 +6,7 @@ import MerchantsOrderService from './accountManage/merchantsOrder'
 import OrderDetailService from './accountManage/orderDetail'
 import MerchantsExcelService from './accountManage/merchantsExcel'
 import EnterExcelService from './accountManage/enterpriseExcel'
+import IntegralExchangeService from './accountManage/integralExchange'
 import RecycleGoodsService from './recycleGoods/recycle-goods'
 import DeptService from './system/dept/depy'
 import UserService from './system/user/user'
@@ -23,6 +24,7 @@ export {
   HomeService,
   MerchantsExcelService,
   EnterExcelService,
+  IntegralExchangeService,
   RecycleGoodsService,
   SubjectService,
   PermissionService,
