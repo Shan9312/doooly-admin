@@ -132,6 +132,7 @@ import { Message } from "element-ui";
 import OrderType from "../components/OrderType.vue";
 import { Utils, Auth } from "@/common";
 import { constants } from "crypto";
+import { Ajax } from "@/common";
 
 // 表格
 const titleList = [
@@ -178,8 +179,8 @@ export default {
         merchantName: "", // 商户名称
         startCreateTime: "",
         endCreateTime: "",
-        startPayTime: "",
-        endPayTime: "",
+        startPayEndTime: "",
+        endPayEndTime: "",
         pageNum: 1,
         pageSize: 10,
         total: 0
@@ -230,7 +231,11 @@ export default {
     },
     // 导出
     async excelDownload() {
-      const obj = await TransctChannelManage.exportExcel(this.formObj);
+      let token = Auth.getToken();
+      this.formObj.Authorization = token;
+      let params = Utils.obj2Param(this.formObj);
+      this.downloadLoading = false;
+      TransctChannelManage.exportExcel(params);
     },
     handleDownload() {
       this.excelDownload();
@@ -240,11 +245,11 @@ export default {
     // 交易日期
     payDate(time) {
       if (time) {
-        this.formObj.startPayTime = time[0];
-        this.formObj.endPayTime = time[1];
+        this.formObj.startPayEndTime = time[0];
+        this.formObj.endPayEndTime = time[1];
       } else {
-        this.formObj.startPayTime = "";
-        this.formObj.endPayTime = "";
+        this.formObj.startPayEndTime = "";
+        this.formObj.endPayEndTime = "";
       }
     },
     // 下单日期

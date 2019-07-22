@@ -41,15 +41,7 @@ export default {
    *  @param {*} endPayTime: 发起回收结束日期
    * }
    * */
-  exportExcel({ merchantOrderNo, payTyp, merchantName, startCreateTime, endCreateTime, startPayTime, endPayTime }) {
-    return Ajax.post("reconciliInfo/accountCheckExcel", {
-      merchantOrderNo,
-      payTyp,
-      merchantName,
-      startCreateTime,
-      endCreateTime,
-      startPayTime,
-      endPayTime,
-    })
+  exportExcel(params) {
+    window.location.href = `${process.env.VUE_APP_URL}payment/payrecord/excel?${params}`
   }
 }
