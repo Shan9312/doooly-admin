@@ -188,7 +188,7 @@
         v-show="formObj.total > 0"
         :total="formObj.total"
         :page.sync="formObj.pageNum"
-        :limit.sync="formObj. pageSize"
+        :limit.sync="formObj.rowCount"
         @pagination="getRecycleGoodsList"
       />
     </section>
@@ -261,7 +261,7 @@ export default {
         recoveryStartTime: "",
         recoveryEndTime: "",
         pageNum: 1,
-        pageSize: 10,
+        rowCount: 10,
         total: 0
       },
       orderStateList,
@@ -348,7 +348,7 @@ export default {
     // 查看订单详情
     handleRouter(orderNumber) {
       this.$router.push({
-        path: `/recycleGoods/orderDetail/${orderNumber}`
+        path: `/recycleGoods/orderDetails/${orderNumber}`
       });
     },
 
