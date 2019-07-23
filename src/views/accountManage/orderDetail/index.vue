@@ -154,13 +154,13 @@
         <el-col :span="10" :offset="2"
           >订单退款总金额：{{
             orderDetail.returnInfo
-              ? orderDetail.returnInfo.returnTotalAmount
+              ? orderDetail.returnInfo.returnTotalAmount + '元'
               : "无"
           }}</el-col
         >
         <el-col :span="10" :offset="2"
           >手续费退款总金额：{{
-            orderDetail.returnInfo ? orderDetail.returnInfo.serviceCharge : "无"
+            orderDetail.returnInfo ? orderDetail.returnInfo.serviceCharge + '积分' : "无"
           }}</el-col
         >
       </el-row>
@@ -186,7 +186,7 @@
         <el-col :span="10" :offset="2"
           >积分退款总额：{{
             orderDetail.returnInfo
-              ? orderDetail.returnInfo.integralReturnAmount
+              ? `${orderDetail.returnInfo.integralReturnAmount}元（另手续费退款：${orderDetail.returnInfo.serviceCharge}积分）`
               : "无"
           }}</el-col
         >
@@ -213,7 +213,7 @@
         <el-col :span="10" :offset="2"
           >非积分退款总额：{{
             orderDetail.returnInfo
-              ? orderDetail.returnInfo.notIntegralReturnAmount
+              ? orderDetail.returnInfo.notIntegralReturnAmount + '元'
               : "无"
           }}</el-col
         >
