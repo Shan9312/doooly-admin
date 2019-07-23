@@ -128,7 +128,7 @@
         </el-row>
       </el-form>
     </div>
-    <div v-if="isTable">
+    <div>
       <el-table
         border
         :data="list"
@@ -231,7 +231,6 @@
         loading: false, // 搜索框loading
         listLoading: false, // 表格数据加载的loading
         downloadLoading: false, // 导出excel按钮loading
-        isTable: false, // 是否显示table表格
         list: [], // 表格数据列表
         businessList: [], // 商户列表
         enterpriseList: [], // 企业列表
@@ -253,7 +252,6 @@
     },
     created() {
       this.getList();
-      console.log(startDate());
     },
     methods: {
       // 初始化列表,获取数据展示表格
@@ -277,7 +275,6 @@
 
       // 查询订单
       handleSearch() {
-        this.isTable = true;
         const { startDate, endDate } = this.search;
         if (!startDate || !endDate) return;
         this.getList();
