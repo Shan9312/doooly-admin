@@ -138,7 +138,7 @@ import { Ajax } from "@/common";
 const titleList = [
   { label: "交易时间", value: "payEndTime", width: "80px" },
   { label: "下单时间", value: "createTime", width: "100px" },
-  { label: "订单编号", value: "orderNo", width: "100px" },
+  { label: "订单编号", value: "merchantOrderNo", width: "100px" },
   { label: "商户名称", value: "merchantName", width: "80px" },
   { label: "支付方式", value: "payType", width: "80px" },
   { label: "第三方交易单号", value: "outTradeNo", width: "60px" },
