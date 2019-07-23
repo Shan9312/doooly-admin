@@ -179,9 +179,25 @@
     data() {
       return {
         pickerOptions: {
-          // 设置日期范围
+          // 设置日期只能选择前三个月
           disabledDate(time) {
-            return time.getTime() > Date.now();
+            let year = new Date().getFullYear(),
+              month = new Date().getMonth(),
+              strDate = new Date().getDate();
+              if (month == 0 ) {
+                year -= 1;
+                month = 12
+              }
+              if (month == 1 ) {
+                year -= 1;
+                month = 13
+              }
+              if (month == 2 ) {
+                year -= 1;
+                month = 14
+              }
+            const recentYear = new Date(`${year}-${month - 2}-${strDate}`).getTime();
+            return time.getTime() < recentYear || time.getTime() > Date.now();
           }
         },
         getRowKey(row) {

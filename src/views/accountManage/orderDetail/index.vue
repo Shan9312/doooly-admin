@@ -235,12 +235,20 @@
             <el-table-column prop="price" label="应付金额"> </el-table-column>
             <el-table-column prop="amount" label="实付金额"> </el-table-column>
           </el-table>
-          <div class="coll-total">
+          <div class="coll-total" v-if="!params.returnOrderNumber">
             <div class="">
               应收款合计：<span>{{ shouldReceipt }}元</span>
             </div>
             <div>
               实收款合计：<span>{{ realityReceipt }}元</span>
+            </div>
+          </div>
+          <div class="coll-total" v-else>
+            <div class="">
+              应退款合计：<span>{{ shouldReceipt }}元</span>
+            </div>
+            <div>
+              实退款合计：<span>{{ realityReceipt }}元</span>
             </div>
           </div>
         </el-col>
