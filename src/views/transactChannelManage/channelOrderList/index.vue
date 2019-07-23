@@ -36,7 +36,7 @@
             <el-form-item label="订单编号">
               <el-input
                 style="width: 100%"
-                v-model="formObj.merchantOrderNo"
+                v-model="formObj.orderNo"
                 placeholder="请输入订单编号"
                 maxlength="40"
                 clearable
@@ -149,7 +149,7 @@ const titleList = [
 const orderStateList = [
   { label: "全部", value: "" },
   { label: "定向积分", value: "3" },
-  { label: "兜里积分", value: "0" },
+  { label: "兜礼积分", value: "0" },
   { label: "微信", value: "1" },
   { label: "支付宝", value: "6" },
   { label: "云支付", value: "14" },
@@ -174,7 +174,7 @@ export default {
       createDate: "", // 下单时间
       listLoading: false, // 表格数据加载的loading
       formObj: {
-        merchantOrderNo: "", // 订单号 merchantOrderNo
+        orderNo: "", // 订单号 orderNo
         payType: "", // 支付类型
         merchantName: "", // 商户名称
         startCreateTime: "",
@@ -229,16 +229,13 @@ export default {
       this.tableData = data.list;
       this.formObj.total = data.total;
     },
-    // 导出
-    async excelDownload() {
+    // 导出功能
+    handleDownload() {
       let token = Auth.getToken();
       this.formObj.Authorization = token;
       let params = Utils.obj2Param(this.formObj);
       this.downloadLoading = false;
       TransctChannelManage.exportExcel(params);
-    },
-    handleDownload() {
-      this.excelDownload();
     }
   },
   watch: {
