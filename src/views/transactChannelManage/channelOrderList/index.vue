@@ -103,13 +103,13 @@
           <template slot-scope="scope">
             <div>
               <span
-                v-if="item.value != 'payType' && item.value !='orderAmount'"
+                v-if="item.value != 'payType' && item.value !='payAmount'"
               >{{ scope.row[item.value] }}</span>
-              <span v-if="item.value == 'payType' && item.value != 'orderAmount'">
+              <span v-if="item.value == 'payType' && item.value != 'payAmount'">
                 <order-type :payType="scope.row[item.value]"></order-type>
               </span>
               <span
-                v-if="item.value != 'payType' && item.value == 'orderAmount'"
+                v-if="item.value != 'payType' && item.value == 'payAmount'"
               >{{ scope.row[item.value]| fixedNum}}</span>
             </div>
           </template>
@@ -142,22 +142,17 @@ const titleList = [
   { label: "商户名称", value: "merchantName", width: "80px" },
   { label: "支付方式", value: "payType", width: "80px" },
   { label: "第三方交易单号", value: "outTradeNo", width: "60px" },
-  { label: "实付总金额", value: "orderAmount", width: "60px" }
+  { label: "实付总金额", value: "payAmount", width: "60px" }
 ];
 
 // 回收订单
 const orderStateList = [
   { label: "全部", value: "" },
-  { label: "定向积分", value: "3" },
-  { label: "兜礼积分", value: "0" },
   { label: "微信", value: "1" },
   { label: "支付宝", value: "6" },
+  { label: "工银支付", value: "12" },
   { label: "云支付", value: "14" },
-  { label: "建行龙支付", value: "15" },
-  { label: "微信积分混合", value: "2" },
-  { label: "支付宝积分混合", value: "11" },
-  { label: "云支付积分混合", value: "17" },
-  { label: "建行龙积分混合", value: "16" }
+  { label: "建行龙支付", value: "15" }
 ];
 
 export default {
