@@ -174,6 +174,34 @@
     { label: "应付总额", value: "totalAmount" },
     { label: "积分实付总额", value: "paiedAmount" }
   ];
+  const startDate = () => {
+    let year = new Date().getFullYear(),
+      month = new Date().getMonth(),
+      strDate = new Date().getDate();
+    if (month == 0) {
+      year -= 1;
+      month = 12;
+    }
+    if (month == 1) {
+      year -= 1;
+      month = 13;
+    }
+    if (month == 2) {
+      year -= 1;
+      month = 14;
+    }
+    return `${year}-${month - 2 < 10 ? "0" + String(month - 2) : month - 2}-${
+      strDate < 10 ? "0" + String(strDate) : strDate
+    }`;
+  };
+  const endDate = () => {
+    let year = new Date().getFullYear(),
+      month = new Date().getMonth(),
+      strDate = new Date().getDate();
+    return `${year}-${month + 1 < 10 ? 0 + String(month + 1) : month + 1}-${
+      strDate < 10 ? "0" + String(strDate) : strDate
+    }`;
+  };
   export default {
     name: "IntegralExchange",
     data() {
@@ -181,33 +209,17 @@
         pickerOptions: {
           // 设置日期只能选择前三个月
           disabledDate(time) {
-            let year = new Date().getFullYear(),
-              month = new Date().getMonth(),
-              strDate = new Date().getDate();
-              if (month == 0 ) {
-                year -= 1;
-                month = 12
-              }
-              if (month == 1 ) {
-                year -= 1;
-                month = 13
-              }
-              if (month == 2 ) {
-                year -= 1;
-                month = 14
-              }
-            const recentYear = new Date(`${year}-${month - 2}-${strDate}`).getTime();
-            return time.getTime() < recentYear || time.getTime() > Date.now();
+            return time.getTime() > Date.now();
           }
         },
         getRowKey(row) {
           return row.id;
         },
         title,
-        orderDate: "", // 订单时间
+        orderDate: [startDate(), endDate()], // 订单时间
         search: {
-          startDate: "", // 订单开始时间
-          endDate: "", // 订单结束时间
+          startDate: startDate(), // 订单开始时间
+          endDate: endDate(), // 订单结束时间
           groupName: "", // 企业名称
           orderId: "", // 订单编号
           tel: "", // 手机号码
@@ -239,7 +251,10 @@
         }
       }
     },
-    created() {},
+    created() {
+      this.getList();
+      console.log(startDate());
+    },
     methods: {
       // 初始化列表,获取数据展示表格
       async getList() {

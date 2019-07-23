@@ -110,7 +110,7 @@
               v-for="(item, index) in orderDetail.orderFlow"
               :key="index"
             >
-              {{ item.id }}{{ index }}
+              {{ item.serialNumber }}
             </div>
           </div>
           <div v-else>无</div>
@@ -119,7 +119,7 @@
           >积分流水支付总额：{{
             orderDetail.orderFlow | integralTotal
           }}元
-            <span v-if="params.returnOrderNumber">（另手续费：{{orderDetail.returnInfo.serviceCharge}}积分）</span>
+            <span v-if="params.returnOrderNumber">（另手续费：{{orderDetail.orderReport.serviceCharge}}积分）</span>
           </el-col
         >
       </el-row>
@@ -129,11 +129,11 @@
           <div v-if="orderDetail.orderFlow.length > 0">
             <div
               class="notIntegral-flow-list"
-              v-if="item.payType == 1"
+              v-if="item.payType != 0"
               v-for="(item, index) in orderDetail.orderFlow"
               :key="index"
             >
-              {{ item.id }}
+              {{ item.serialNumber }}
             </div>
           </div>
           <div v-else>无</div>
@@ -245,10 +245,10 @@
           </div>
           <div class="coll-total" v-else>
             <div class="">
-              应退款合计：<span>{{ shouldReceipt }}元</span>
+              应退款合计：<span>{{ shouldReceipt }}元（另手续费退款：{{orderDetail.returnInfo.serviceCharge}}积分）</span>
             </div>
             <div>
-              实退款合计：<span>{{ realityReceipt }}元</span>
+              实退款合计：<span>{{ realityReceipt }}元（另手续费退款：{{orderDetail.returnInfo.serviceCharge}}积分）</span>
             </div>
           </div>
         </el-col>
