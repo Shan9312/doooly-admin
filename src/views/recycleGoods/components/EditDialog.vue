@@ -93,7 +93,7 @@ export default {
           return;
         }
         this.$router.push({
-          path: `/recycleGoods/orderDetail/${this.userInfo.orderNumber}`
+          path: `/recycleGoods/orderDetails/${this.userInfo.orderNumber}`
         });
       } else {
         Message({
