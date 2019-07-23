@@ -1,33 +1,18 @@
 <template>
   <div class="state-tag-wrapper">
-    <span v-for="item in orderStateList" :key="item.value">
-      <span v-if="item.value == payType">{{item.label}}</span>
-    </span>
+    <span v-if="payType == '1' || payType== '2'" class="success">微信</span>
+    <span v-if="payType == '6' || payType== '11'" class="success">支付宝</span>
+    <span v-if="payType == '12'" class="success">工银支付</span>
+    <span v-if="payType == '14' || payType== '17'" class="success">云闪付</span>
+    <span v-if="payType == '15' || payType== '16'" class="success">建行龙支付</span>
   </div>
 </template>
 
 <script>
-// 回收订单
-const orderStateList = [
-  { label: "定向积分", value: "3" },
-  { label: "兜礼积分", value: "0" },
-  { label: "微信", value: "1" },
-  { label: "支付宝", value: "6" },
-  { label: "云支付", value: "14" },
-  { label: "建行龙支付", value: "15" },
-  { label: "微信积分混合", value: "2" },
-  { label: "支付宝积分混合", value: "11" },
-  { label: "云支付积分混合", value: "17" },
-  { label: "建行龙积分混合", value: "16" },
-  { label: "支付失败", value: "-1" }
-];
-
 export default {
   name: "order-state",
   data() {
-    return {
-      orderStateList
-    };
+    return {};
   },
   props: {
     payType: {
@@ -36,4 +21,17 @@ export default {
   }
 };
 </script>
+
+<style lang="less" scoped>
+.state-tag-wrapper {
+  display: inline-block;
+  .success {
+    color: #409eff;
+  }
+  .default {
+    color: #909399;
+  }
+}
+</style>
+
 
