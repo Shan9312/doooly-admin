@@ -261,8 +261,10 @@
           this.search
         );
         this.listLoading = false;
-        this.list = data.list;
-        this.total = data.total;
+        if (data) {
+          this.list = data.list;
+          this.total = data.total;
+        }
       },
 
       // 筛选输入框禁止输入特殊字符
@@ -276,7 +278,6 @@
       // 查询订单
       handleSearch() {
         const { startDate, endDate } = this.search;
-        if (!startDate || !endDate) return;
         this.getList();
       },
 
