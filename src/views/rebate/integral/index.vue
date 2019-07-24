@@ -27,7 +27,7 @@
               type="primary"
               @click="handlSave"
             />
-            <el-button type="default">取消</el-button>
+            <el-button type="default">取消111111111111111111111</el-button>
           </el-form-item>
         </el-col>
       </el-row>
