@@ -348,7 +348,7 @@ export default {
     // 查看订单详情
     handleRouter(orderNumber) {
       this.$router.push({
-        path: `/recycleGoods/orderDetail/${orderNumber}`
+        path: `/recycleGoods/orderDetails/${orderNumber}`
       });
     },
 
