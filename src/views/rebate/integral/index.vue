@@ -54,7 +54,7 @@
       async initData() {
         const { data } = await RebateIntegralService.getRebateIntegralType();
         if (data) {
-          this.type = data.type;
+          this.search.type = data.type;
           this.id = data.id;
         }
       },
