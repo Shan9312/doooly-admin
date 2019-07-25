@@ -224,8 +224,8 @@
       <div><h4>订单商品明细</h4></div>
       <el-row>
         <el-col :span="20" :offset="2">
-          <el-table :data="params.returnOrderNumber ? orderDetail.returnInfo.returnDetails : orderDetail.orderDetail" border style="width: 100%">
-            <el-table-column prop="categoryId" label="品类编号" width="180">
+          <el-table :data="orderDetail.orderDetail" border style="width: 100%">
+            <el-table-column prop="category" label="品类编号" width="180">
             </el-table-column>
             <el-table-column prop="code" label="商品编号" width="180">
             </el-table-column>
@@ -237,10 +237,10 @@
           </el-table>
           <div class="coll-total">
             <div>
-              应收款合计：<span>{{ shouldReceipt }}元</span> <span v-if="params.returnOrderNumber">（另手续费退款：{{orderDetail.returnInfo.serviceCharge}}积分）</span>
+              应收款合计：<span>{{ shouldReceipt }}元</span> <span v-if="params.returnOrderNumber">（另手续费退款：{{orderDetail.orderServiceCharge}}积分）</span>
             </div>
             <div>
-              实收款合计：<span>{{ realityReceipt }}元</span> <span v-if="params.returnOrderNumber">（另手续费退款：{{orderDetail.returnInfo.serviceCharge}}积分）</span>
+              实收款合计：<span>{{ realityReceipt }}元</span> <span v-if="params.returnOrderNumber">（另手续费退款：{{orderDetail.orderServiceCharge}}积分）</span>
             </div>
           </div>
         </el-col>
