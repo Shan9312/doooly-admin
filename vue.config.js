@@ -30,11 +30,14 @@ module.exports = {
     open: true,
     proxy: {
       '/': {
-        target: 'http://admin.doooly.com/dev_doooly-admin/',
+        target: 'http://admin.doooly.com/test_doooly-admin/',
         ws: false,
         changeOrigin: true,
         // pathRewrite: { "^/pro_reconcili": "" }
       }
+    },
+    overlay: { // 当出现编译错误或警告时，就在页面上显示一层黑色的背景层和错误信息 errors: true, },著作权归作者所有。
+      errors: true,
     }
   },
   publicPath: '/'

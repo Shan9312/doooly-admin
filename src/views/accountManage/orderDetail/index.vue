@@ -224,8 +224,8 @@
       <div><h4>订单商品明细</h4></div>
       <el-row>
         <el-col :span="20" :offset="2">
-          <el-table :data="orderDetail.orderDetail" border style="width: 100%">
-            <el-table-column prop="firstCategory" label="品类编号" width="180">
+          <el-table :data="params.returnOrderNumber ? orderDetail.returnInfo.returnDetails : orderDetail.orderDetail" border style="width: 100%">
+            <el-table-column prop="categoryId" label="品类编号" width="180">
             </el-table-column>
             <el-table-column prop="code" label="商品编号" width="180">
             </el-table-column>
@@ -235,20 +235,12 @@
             <el-table-column prop="price" label="应付金额"> </el-table-column>
             <el-table-column prop="amount" label="实付金额"> </el-table-column>
           </el-table>
-          <div class="coll-total" v-if="!params.returnOrderNumber">
-            <div class="">
-              应收款合计：<span>{{ shouldReceipt }}元</span>
+          <div class="coll-total">
+            <div>
+              应收款合计：<span>{{ shouldReceipt }}元</span> <span v-if="params.returnOrderNumber">（另手续费退款：{{orderDetail.returnInfo.serviceCharge}}积分）</span>
             </div>
             <div>
-              实收款合计：<span>{{ realityReceipt }}元</span>
-            </div>
-          </div>
-          <div class="coll-total" v-else>
-            <div class="">
-              应退款合计：<span>{{ shouldReceipt }}元（另手续费退款：{{orderDetail.returnInfo.serviceCharge}}积分）</span>
-            </div>
-            <div>
-              实退款合计：<span>{{ realityReceipt }}元（另手续费退款：{{orderDetail.returnInfo.serviceCharge}}积分）</span>
+              实收款合计：<span>{{ realityReceipt }}元</span> <span v-if="params.returnOrderNumber">（另手续费退款：{{orderDetail.returnInfo.serviceCharge}}积分）</span>
             </div>
           </div>
         </el-col>
@@ -283,7 +275,7 @@
     },
     created() {
       let { storeId } = this.$route.query;
-      let { returnOrderNumber } = this.$route.params;
+      let { returnOrderNumber } = this.$route.params; // 退款订单
       if (returnOrderNumber == "null") {
         delete this.$route.params.returnOrderNumber;
       }

@@ -222,7 +222,6 @@ export default {
     ImgEdit
   },
   created() {
-    console.log(new Date().getHours())
     if (this.specialTopicInfo.id == 'null') return
     this.getSubjectDetail()
   },
