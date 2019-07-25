@@ -73,7 +73,7 @@
             orderDetail.orderReport ? orderDetail.orderReport.totalMount : "0"
           }}元
           <span v-if="params.returnOrderNumber"
-            >（另手续费：{{ orderDetail.orderReport.serviceCharge }}积分）</span
+            >（另手续费：{{ orderDetail.orderServiceCharge }}积分）</span
           >
         </el-col>
         <el-col :span="10" :offset="2"
@@ -91,7 +91,7 @@
       <el-row>
         <el-col :span="10" :offset="2">
           积分支付总额：{{ query.orderIntegral || 0 }}元
-          <span v-if="params.returnOrderNumber">（另手续费：{{ orderDetail.orderReport.serviceCharge }}积分）</span>
+          <span v-if="params.returnOrderNumber">（另手续费：{{ orderDetail.orderServiceCharge }}积分）</span>
         </el-col>
         <el-col :span="10" :offset="2"
           >非积分支付总额：{{ query.orderNotIntegral || 0 }}元</el-col
@@ -119,7 +119,7 @@
           >积分流水支付总额：{{
             orderDetail.orderFlow | integralTotal
           }}元
-            <span v-if="params.returnOrderNumber">（另手续费：{{orderDetail.orderReport.serviceCharge}}积分）</span>
+            <span v-if="params.returnOrderNumber">（另手续费：{{orderDetail.orderServiceCharge}}积分）</span>
           </el-col
         >
       </el-row>
@@ -268,6 +268,7 @@
           orderDetail: [],
           orderFlow: {},
           orderReport: {},
+          orderServiceCharge: '',
           returnInfo: {},
           user: {}
         }
@@ -279,7 +280,6 @@
       if (returnOrderNumber == "null") {
         delete this.$route.params.returnOrderNumber;
       }
-      console.log(this.$route.params);
       this.params = Object.assign({ storesId: storeId }, this.$route.params);
       this.query = Object.assign({}, this.$route.query);
       this.getOrderDetail();
