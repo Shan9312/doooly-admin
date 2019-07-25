@@ -90,11 +90,11 @@
       </el-row>
       <el-row>
         <el-col :span="10" :offset="2">
-          积分支付总额：{{ query.orderIntegral || 0 }}元
+          积分支付总额：{{ orderDetail.orderIntegral}}元
           <span v-if="params.returnOrderNumber">（另手续费：{{ orderDetail.orderServiceCharge }}积分）</span>
         </el-col>
         <el-col :span="10" :offset="2"
-          >非积分支付总额：{{ query.orderNotIntegral || 0 }}元</el-col
+          >非积分支付总额：{{ orderDetail.orderNotIntegral}}元</el-col
         >
       </el-row>
     </div>
@@ -262,6 +262,8 @@
         orderDetail: {
           // 订单详情
           business: {},
+          orderIntegral: '',
+          orderNotIntegral: '',
           businessStore: {},
           group: {},
           order: {},
