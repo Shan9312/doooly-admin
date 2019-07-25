@@ -203,7 +203,7 @@
     { label: "退款单号", value: "serialNumber", width: "180px" },
     { label: "退款时间", value: "orderDate", width: "160px" },
     { label: "收款类型", value: "receiptType", width: "100px" },
-    { label: "订单退款总金额", value: "orderAmountPlan", width: "100px" },
+    { label: "订单退款总金额", value: "orderAmount", width: "100px" },
     { label: "积分退款总额", value: "orderIntegral", width: "100px" },
     { label: "非积分退款总额", value: "orderNotIntegral", width: "100px" },
     { label: "手续费退款", value: "serviceCharge", width: "80px" },

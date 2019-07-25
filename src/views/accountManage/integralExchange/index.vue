@@ -128,7 +128,7 @@
         </el-row>
       </el-form>
     </div>
-    <div v-if="isTable">
+    <div>
       <el-table
         border
         :data="list"
@@ -174,12 +174,40 @@
     { label: "应付总额", value: "totalAmount" },
     { label: "积分实付总额", value: "paiedAmount" }
   ];
+  const startDate = () => {
+    let year = new Date().getFullYear(),
+      month = new Date().getMonth(),
+      strDate = new Date().getDate();
+    if (month == 0) {
+      year -= 1;
+      month = 12;
+    }
+    if (month == 1) {
+      year -= 1;
+      month = 13;
+    }
+    if (month == 2) {
+      year -= 1;
+      month = 14;
+    }
+    return `${year}-${month - 2 < 10 ? "0" + String(month - 2) : month - 2}-${
+      strDate < 10 ? "0" + String(strDate) : strDate
+    }`;
+  };
+  const endDate = () => {
+    let year = new Date().getFullYear(),
+      month = new Date().getMonth(),
+      strDate = new Date().getDate();
+    return `${year}-${month + 1 < 10 ? 0 + String(month + 1) : month + 1}-${
+      strDate < 10 ? "0" + String(strDate) : strDate
+    }`;
+  };
   export default {
     name: "IntegralExchange",
     data() {
       return {
         pickerOptions: {
-          // 设置日期范围
+          // 设置日期只能选择前三个月
           disabledDate(time) {
             return time.getTime() > Date.now();
           }
@@ -188,10 +216,10 @@
           return row.id;
         },
         title,
-        orderDate: "", // 订单时间
+        orderDate: [startDate(), endDate()], // 订单时间
         search: {
-          startDate: "", // 订单开始时间
-          endDate: "", // 订单结束时间
+          startDate: startDate(), // 订单开始时间
+          endDate: endDate(), // 订单结束时间
           groupName: "", // 企业名称
           orderId: "", // 订单编号
           tel: "", // 手机号码
@@ -203,7 +231,6 @@
         loading: false, // 搜索框loading
         listLoading: false, // 表格数据加载的loading
         downloadLoading: false, // 导出excel按钮loading
-        isTable: false, // 是否显示table表格
         list: [], // 表格数据列表
         businessList: [], // 商户列表
         enterpriseList: [], // 企业列表
@@ -223,7 +250,9 @@
         }
       }
     },
-    created() {},
+    created() {
+      this.getList();
+    },
     methods: {
       // 初始化列表,获取数据展示表格
       async getList() {
@@ -232,8 +261,10 @@
           this.search
         );
         this.listLoading = false;
-        this.list = data.list;
-        this.total = data.total;
+        if (data) {
+          this.list = data.list;
+          this.total = data.total;
+        }
       },
 
       // 筛选输入框禁止输入特殊字符
@@ -246,9 +277,7 @@
 
       // 查询订单
       handleSearch() {
-        this.isTable = true;
         const { startDate, endDate } = this.search;
-        if (!startDate || !endDate) return;
         this.getList();
       },
 

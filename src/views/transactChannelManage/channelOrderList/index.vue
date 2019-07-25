@@ -36,7 +36,7 @@
             <el-form-item label="订单编号">
               <el-input
                 style="width: 100%"
-                v-model="formObj.merchantOrderNo"
+                v-model="formObj.orderNo"
                 placeholder="请输入订单编号"
                 maxlength="40"
                 clearable
@@ -103,13 +103,13 @@
           <template slot-scope="scope">
             <div>
               <span
-                v-if="item.value != 'payType' && item.value !='orderAmount'"
+                v-if="item.value != 'payType' && item.value !='payAmount'"
               >{{ scope.row[item.value] }}</span>
-              <span v-if="item.value == 'payType' && item.value != 'orderAmount'">
+              <span v-if="item.value == 'payType' && item.value != 'payAmount'">
                 <order-type :payType="scope.row[item.value]"></order-type>
               </span>
               <span
-                v-if="item.value != 'payType' && item.value == 'orderAmount'"
+                v-if="item.value != 'payType' && item.value == 'payAmount'"
               >{{ scope.row[item.value]| fixedNum}}</span>
             </div>
           </template>
@@ -141,23 +141,18 @@ const titleList = [
   { label: "订单编号", value: "merchantOrderNo", width: "100px" },
   { label: "商户名称", value: "merchantName", width: "80px" },
   { label: "支付方式", value: "payType", width: "80px" },
-  { label: "第三方交易单号", value: "outTradeNo", width: "60px" },
-  { label: "实付总金额", value: "orderAmount", width: "60px" }
+  { label: "第三方交易单号", value: "transactionId", width: "60px" },
+  { label: "实付总金额", value: "payAmount", width: "60px" }
 ];
 
 // 回收订单
 const orderStateList = [
   { label: "全部", value: "" },
-  { label: "定向积分", value: "3" },
-  { label: "兜里积分", value: "0" },
   { label: "微信", value: "1" },
   { label: "支付宝", value: "6" },
+  { label: "工银支付", value: "12" },
   { label: "云支付", value: "14" },
-  { label: "建行龙支付", value: "15" },
-  { label: "微信积分混合", value: "2" },
-  { label: "支付宝积分混合", value: "11" },
-  { label: "云支付积分混合", value: "17" },
-  { label: "建行龙积分混合", value: "16" }
+  { label: "建行龙支付", value: "15" }
 ];
 
 export default {
@@ -174,7 +169,7 @@ export default {
       createDate: "", // 下单时间
       listLoading: false, // 表格数据加载的loading
       formObj: {
-        merchantOrderNo: "", // 订单号 merchantOrderNo
+        orderNo: "", // 订单号 orderNo
         payType: "", // 支付类型
         merchantName: "", // 商户名称
         startCreateTime: "",
@@ -229,16 +224,13 @@ export default {
       this.tableData = data.list;
       this.formObj.total = data.total;
     },
-    // 导出
-    async excelDownload() {
+    // 导出功能
+    handleDownload() {
       let token = Auth.getToken();
       this.formObj.Authorization = token;
       let params = Utils.obj2Param(this.formObj);
       this.downloadLoading = false;
       TransctChannelManage.exportExcel(params);
-    },
-    handleDownload() {
-      this.excelDownload();
     }
   },
   watch: {
