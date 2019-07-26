@@ -237,10 +237,10 @@
           </el-table>
           <div class="coll-total">
             <div>
-              应收款合计：<span>{{ shouldReceipt }}元</span> <span v-if="params.returnOrderNumber">（另手续费退款：{{orderDetail.orderServiceCharge}}积分）</span>
+              应收款合计：<span>{{ shouldReceipt }}元</span> <span v-if="params.returnOrderNumber">（另手续费：{{orderDetail.orderServiceCharge}}积分）</span>
             </div>
             <div>
-              实收款合计：<span>{{ realityReceipt }}元</span> <span v-if="params.returnOrderNumber">（另手续费退款：{{orderDetail.orderServiceCharge}}积分）</span>
+              实收款合计：<span>{{ realityReceipt }}元</span> <span v-if="params.returnOrderNumber">（另手续费：{{orderDetail.orderServiceCharge}}积分）</span>
             </div>
           </div>
         </el-col>

@@ -13,9 +13,9 @@
               <el-date-picker
                 :editable="false"
                 v-model="orderDate"
-                type="daterange"
+                type="datetimerange"
                 :picker-options="pickerOptions"
-                value-format="yyyy-MM-dd"
+                value-format="yyyy-MM-dd HH:mm:ss"
                 range-separator="至"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
@@ -164,7 +164,7 @@
   import { IntegralExchangeService } from "@/service";
   const title = [
     // 表格title
-    { label: "订单时间", value: "orderDate" },
+    { label: "订单时间", value: "orderDate", width: '120' },
     { label: "订单编号", value: "orderId" },
     { label: "会员编号", value: "memberId" },
     { label: "会员姓名", value: "memberName" },
@@ -192,7 +192,7 @@
     }
     return `${year}-${month - 2 < 10 ? "0" + String(month - 2) : month - 2}-${
       strDate < 10 ? "0" + String(strDate) : strDate
-    }`;
+    } 00:00:00`;
   };
   const endDate = () => {
     let year = new Date().getFullYear(),
@@ -200,7 +200,7 @@
       strDate = new Date().getDate();
     return `${year}-${month + 1 < 10 ? 0 + String(month + 1) : month + 1}-${
       strDate < 10 ? "0" + String(strDate) : strDate
-    }`;
+    } 00:00:00`;
   };
   export default {
     name: "IntegralExchange",
@@ -210,7 +210,16 @@
           // 设置日期只能选择前三个月
           disabledDate(time) {
             return time.getTime() > Date.now();
-          }
+          },
+          // onPick(date) {
+          //   // 如果只选择一个则保存至selectedDate 否则selectedDate 为空
+          //   // if (date.minDate && !date.maxDate) {
+          //   //   this.selectedDate = date.minDate;
+          //   // } else {
+          //   //   this.selectedDate = null;
+          //   // }
+          //   console.log(date)
+          // }
         },
         getRowKey(row) {
           return row.id;
