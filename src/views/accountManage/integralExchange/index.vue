@@ -14,6 +14,7 @@
                 :editable="false"
                 v-model="orderDate"
                 type="datetimerange"
+                :default-time="['00:00:00', '23:59:59']"
                 :picker-options="pickerOptions"
                 value-format="yyyy-MM-dd HH:mm:ss"
                 range-separator="至"
@@ -200,7 +201,7 @@
       strDate = new Date().getDate();
     return `${year}-${month + 1 < 10 ? 0 + String(month + 1) : month + 1}-${
       strDate < 10 ? "0" + String(strDate) : strDate
-    } 00:00:00`;
+    } 23:59:59`;
   };
   export default {
     name: "IntegralExchange",
