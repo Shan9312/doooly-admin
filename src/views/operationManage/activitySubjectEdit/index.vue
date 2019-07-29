@@ -92,7 +92,7 @@
         >
           <div v-if="componentList.length > 0">
             <div
-              v-for="(item, index) in componentList"
+              v-for="(item, index) of componentList"
               :key="index"
               class="item"
             >

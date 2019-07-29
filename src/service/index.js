@@ -6,6 +6,7 @@ import MerchantsOrderService from './accountManage/merchantsOrder'
 import OrderDetailService from './accountManage/orderDetail'
 import MerchantsExcelService from './accountManage/merchantsExcel'
 import EnterExcelService from './accountManage/enterpriseExcel'
+import IntegralExchangeService from './accountManage/integralExchange'
 import RecycleGoodsService from './recycleGoods/recycle-goods'
 import DeptService from './system/dept/depy'
 import UserService from './system/user/user'
@@ -14,6 +15,7 @@ import MenuService from './system/menu/menu'
 import DialogService from './operationManage/dialog-manage'
 import SubjectService from './operationManage/activity-subject'
 import TransctChannelManage from './transctChannelManage/transct-channel-manage'
+import RebateIntegralService from './rebate/integral'
 
 export {
   LoginService,
@@ -23,6 +25,7 @@ export {
   HomeService,
   MerchantsExcelService,
   EnterExcelService,
+  IntegralExchangeService,
   RecycleGoodsService,
   SubjectService,
   PermissionService,
@@ -31,5 +34,6 @@ export {
   RoleService,
   MenuService,
   DialogService,
-  TransctChannelManage
+  TransctChannelManage,
+  RebateIntegralService,
 }

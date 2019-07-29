@@ -73,7 +73,7 @@
             orderDetail.orderReport ? orderDetail.orderReport.totalMount : "0"
           }}元
           <span v-if="params.returnOrderNumber"
-            >（另手续费：{{ orderDetail.orderReport.serviceCharge }}积分）</span
+            >（另手续费：{{ orderDetail.orderServiceCharge }}积分）</span
           >
         </el-col>
         <el-col :span="10" :offset="2"
@@ -90,11 +90,11 @@
       </el-row>
       <el-row>
         <el-col :span="10" :offset="2">
-          积分支付总额：{{ query.orderIntegral || 0 }}元
-          <span v-if="params.returnOrderNumber">（另手续费：{{ orderDetail.orderReport.serviceCharge }}积分）</span>
+          积分支付总额：{{ orderDetail.orderIntegral}}元
+          <span v-if="params.returnOrderNumber">（另手续费：{{ orderDetail.orderServiceCharge }}积分）</span>
         </el-col>
         <el-col :span="10" :offset="2"
-          >非积分支付总额：{{ query.orderNotIntegral || 0 }}元</el-col
+          >非积分支付总额：{{ orderDetail.orderNotIntegral}}元</el-col
         >
       </el-row>
     </div>
@@ -110,7 +110,7 @@
               v-for="(item, index) in orderDetail.orderFlow"
               :key="index"
             >
-              {{ item.id }}{{ index }}
+              {{ item.serialNumber }}
             </div>
           </div>
           <div v-else>无</div>
@@ -119,7 +119,7 @@
           >积分流水支付总额：{{
             orderDetail.orderFlow | integralTotal
           }}元
-            <span v-if="params.returnOrderNumber">（另手续费：{{orderDetail.returnInfo.serviceCharge}}积分）</span>
+            <span v-if="params.returnOrderNumber">（另手续费：{{orderDetail.orderServiceCharge}}积分）</span>
           </el-col
         >
       </el-row>
@@ -129,11 +129,11 @@
           <div v-if="orderDetail.orderFlow.length > 0">
             <div
               class="notIntegral-flow-list"
-              v-if="item.payType == 1"
+              v-if="item.payType != 0"
               v-for="(item, index) in orderDetail.orderFlow"
               :key="index"
             >
-              {{ item.id }}
+              {{ item.serialNumber }}
             </div>
           </div>
           <div v-else>无</div>
@@ -154,13 +154,13 @@
         <el-col :span="10" :offset="2"
           >订单退款总金额：{{
             orderDetail.returnInfo
-              ? orderDetail.returnInfo.returnTotalAmount
+              ? orderDetail.returnInfo.returnTotalAmount + '元'
               : "无"
           }}</el-col
         >
         <el-col :span="10" :offset="2"
           >手续费退款总金额：{{
-            orderDetail.returnInfo ? orderDetail.returnInfo.serviceCharge : "无"
+            orderDetail.returnInfo ? orderDetail.returnInfo.serviceCharge + '积分' : "无"
           }}</el-col
         >
       </el-row>
@@ -186,7 +186,7 @@
         <el-col :span="10" :offset="2"
           >积分退款总额：{{
             orderDetail.returnInfo
-              ? orderDetail.returnInfo.integralReturnAmount
+              ? `${orderDetail.returnInfo.integralReturnAmount}元（另手续费退款：${orderDetail.returnInfo.serviceCharge}积分）`
               : "无"
           }}</el-col
         >
@@ -213,7 +213,7 @@
         <el-col :span="10" :offset="2"
           >非积分退款总额：{{
             orderDetail.returnInfo
-              ? orderDetail.returnInfo.notIntegralReturnAmount
+              ? orderDetail.returnInfo.notIntegralReturnAmount + '元'
               : "无"
           }}</el-col
         >
@@ -225,7 +225,7 @@
       <el-row>
         <el-col :span="20" :offset="2">
           <el-table :data="orderDetail.orderDetail" border style="width: 100%">
-            <el-table-column prop="firstCategory" label="品类编号" width="180">
+            <el-table-column prop="category" label="品类编号" width="180">
             </el-table-column>
             <el-table-column prop="code" label="商品编号" width="180">
             </el-table-column>
@@ -236,11 +236,11 @@
             <el-table-column prop="amount" label="实付金额"> </el-table-column>
           </el-table>
           <div class="coll-total">
-            <div class="">
-              应收款合计：<span>{{ shouldReceipt }}元</span>
+            <div>
+              应收款合计：<span>{{ shouldReceipt }}元</span> <span v-if="params.returnOrderNumber">（另手续费：{{orderDetail.orderServiceCharge}}积分）</span>
             </div>
             <div>
-              实收款合计：<span>{{ realityReceipt }}元</span>
+              实收款合计：<span>{{ realityReceipt }}元</span> <span v-if="params.returnOrderNumber">（另手续费：{{orderDetail.orderServiceCharge}}积分）</span>
             </div>
           </div>
         </el-col>
@@ -262,12 +262,15 @@
         orderDetail: {
           // 订单详情
           business: {},
+          orderIntegral: '',
+          orderNotIntegral: '',
           businessStore: {},
           group: {},
           order: {},
           orderDetail: [],
           orderFlow: {},
           orderReport: {},
+          orderServiceCharge: '',
           returnInfo: {},
           user: {}
         }
@@ -275,11 +278,10 @@
     },
     created() {
       let { storeId } = this.$route.query;
-      let { returnOrderNumber } = this.$route.params;
+      let { returnOrderNumber } = this.$route.params; // 退款订单
       if (returnOrderNumber == "null") {
         delete this.$route.params.returnOrderNumber;
       }
-      console.log(this.$route.params);
       this.params = Object.assign({ storesId: storeId }, this.$route.params);
       this.query = Object.assign({}, this.$route.query);
       this.getOrderDetail();
