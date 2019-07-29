@@ -169,7 +169,7 @@
               :to="
                 `orderDetail/${encodeURIComponent(scope.row.orderNumber)}/${scope.row.userId}/${
                   scope.row.businessId
-                }?storeId=${scope.row.storeId}&receiptType=${
+                }/${scope.row.serialNumber}?storeId=${scope.row.storeId}&receiptType=${
                   scope.row.receiptType
                 }&orderIntegral=${scope.row.orderIntegral}&orderNotIntegral=${
                   scope.row.orderNotIntegral

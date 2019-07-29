@@ -4,8 +4,9 @@ import PermissionService from './permission/permission'
 import AccountEntryService from './accountManage/accountEntry'
 import MerchantsOrderService from './accountManage/merchantsOrder'
 import OrderDetailService from './accountManage/orderDetail'
-import ReconExcelService from './accountManage/reconExcel'
+import MerchantsExcelService from './accountManage/merchantsExcel'
 import EnterExcelService from './accountManage/enterpriseExcel'
+import IntegralExchangeService from './accountManage/integralExchange'
 import RecycleGoodsService from './recycleGoods/recycle-goods'
 import DeptService from './system/dept/depy'
 import UserService from './system/user/user'
@@ -13,6 +14,8 @@ import RoleService from './system/role/role'
 import MenuService from './system/menu/menu'
 import DialogService from './operationManage/dialog-manage'
 import SubjectService from './operationManage/activity-subject'
+import TransctChannelManage from './transctChannelManage/transct-channel-manage'
+import RebateIntegralService from './rebate/integral'
 
 export {
   LoginService,
@@ -20,8 +23,9 @@ export {
   MerchantsOrderService,
   OrderDetailService,
   HomeService,
-  ReconExcelService,
+  MerchantsExcelService,
   EnterExcelService,
+  IntegralExchangeService,
   RecycleGoodsService,
   SubjectService,
   PermissionService,
@@ -29,5 +33,7 @@ export {
   UserService,
   RoleService,
   MenuService,
-  DialogService
+  DialogService,
+  TransctChannelManage,
+  RebateIntegralService,
 }
