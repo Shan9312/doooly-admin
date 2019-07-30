@@ -10,32 +10,21 @@ export default {
       }
     }
     return {
+      tableData: [],
       pickerOptions: {
         // 设置日期范围
         disabledDate(time) {
           return time.getTime() > Date.now();
         }
       },
-      updateDate: '',
-      tableData: [],
       total: 0,
-      search: {
+      searchParams: {
         pageNum: 1,
         pageSize: 10,
         title: '',
-        updateEndDate: '',
-        updateStartDate: '',
+        codeType: 1
       },
-      dialogModalVisible: false,
-      specialTopicInfo: {
-        status: '1', // 下架状态 1.限时 2.永久
-        endDate: '', // 下架时间
-        shelfStatus: '', // 上架状态 1.上架 2.下架 不传是全部
-      },
-      currentRowData: {},
-      putOnRules: {
-        endDate: [{ required: true, validator: validateEndDate, trigger: 'blur' }],
-      },
+      // dialogModalVisible: false,
       shelfOptions: [
         {
           value: '',
@@ -54,15 +43,15 @@ export default {
   },
   watch: {
     // 更新时间
-    updateDate(time) {
-      if (time) {
-        this.search.updateStartDate = time[0];
-        this.search.updateEndDate = time[1];
-      } else {
-        this.search.updateStartDate = "";
-        this.search.updateEndDate = "";
-      }
-    },
+    // updateDate(time) {
+    //   if (time) {
+    //     this.searchParams.updateStartDate = time[0];
+    //     this.searchParams.updateEndDate = time[1];
+    //   } else {
+    //     this.searchParams.updateStartDate = "";
+    //     this.searchParams.updateEndDate = "";
+    //   }
+    // },
   },
   created() {
     // this.getSubjectList()
@@ -70,114 +59,25 @@ export default {
   },
   methods: {
     async queryList(){
-      let params = {
-        pageNum: 1,
-        pageSize: 10
-      };
-      await WechatQrcode.queryList(params);
-    },
-    async getSubjectList() {
-      let data = await SubjectService.getSubjectList(this.search)
-      if (data && data.data && data.data.specialTopicList) {
-        this.tableData = data.data.specialTopicList
-        this.total = data.data.total
+      let data = await WechatQrcode.queryList(this.searchParams);
+      if (data && data.data && data.data.list) {
+        this.tableData = data.data.list
+        this.total = data.data.total || this.tableData.length
       }
     },
-    async handleCopy(id) {
-      let validateTitle = value => {
-        if (!value) return '请输入新的专题标题'
-        let val = value.trim()
-        if (!val) {
-          return '请输入新的专题标题'
-        } else if (value.length == 0 || value.length > 10) {
-          return '输入的标题长度需在 1 到 10 个字符之间'
-        }
-      }
-      const res = await this.$prompt('专题标题', '复制专题', {
-        inputPlaceholder: '请输入新的专题标题',
-        inputValidator: validateTitle,
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '取消输入',
-        })
-      })
-      if (res && res.action === 'confirm') {
-        const data = await SubjectService.copySubject(id, res.value)
-        if (data && data.data) {
-          this.$message({
-            type: 'success',
-            message: '你的专题标题是: ' + res.value,
-          })
-          this.getSubjectList()
-        }
-      }
+    async createQrcode(){
+
     },
     // 筛选输入框禁止输入特殊字符
     onKeyup(e) {
       e.target.value = e.target.value.replace(/[!~@#$%*&()_+\s^]/g, "");
     },
-    async handleShelf(objectData) {
-      if (objectData.shelfStatus == 1) {
-        console.log('需要下架')
-        this.pullOffShelf(objectData)
-      } else if (objectData.shelfStatus == 2) {
-        this.resetFields('putOnRef')
-        this.dialogModalVisible = true
-        this.currentRowData = objectData
-      }
-    },
-    async pullOffShelf(objectData) {
-      const { endDate, id, status } = objectData
-      let res = await this.$confirm('确认下架专题, 是否继续?', '下架专题页', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消本次操作！',
-        })
-      })
-
-      if (res === 'confirm') {
-        let data = await SubjectService.deleteSubject(endDate, id, status, 2)
-        if (data && data.data) {
-          this.$message({
-            type: 'success',
-            message: '下架架成功!',
-          })
-          this.getSubjectList()
-        } else {
-          this.$message({
-            type: 'error',
-            message: '操作失败!',
-          })
-        }
-      }
-    },
-    async putOnShelf() {
-      this.$refs['putOnRef'].validate(async valid => {
-        if (!valid) return
-        let data = await SubjectService.deleteSubject(this.specialTopicInfo.endDate, this.currentRowData.id, Number(this.specialTopicInfo.status), 1)
-        if (data && data.data) {
-          this.$message({
-            type: 'success',
-            message: '上架成功!',
-          })
-          this.dialogModalVisible = false
-          this.getSubjectList()
-        }
-      })
-    },
-    handleEdit(id) {
+    edit(id) {
       this.$router.push(`/operationManage/wechatQrcodeEdit/${id}`)
     },
     handleSearch() {
-      this.search.pageNum = 1 // 如果是点击查询，则页码需要重置，否则可能没数据
-      this.getSubjectList()
+      this.searchParams.pageNum = 1 // 如果是点击查询，则页码需要重置，否则可能没数据
+      this.queryList()
     },
     resetFields(formName) {
       if (!this.$refs[formName]) return

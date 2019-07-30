@@ -6,7 +6,7 @@
           <el-form-item label="主标题">
             <el-input
               style="width: 300px"
-              v-model="search.title"
+              v-model="searchParams.title"
               placeholder="请输入主标题"
               maxlength="10"
               @keyup.native="onKeyup"
@@ -16,7 +16,7 @@
         <el-col :span="6">
           <el-form-item label="状态：">
             <el-select
-              v-model="search.shelfStatus"
+              v-model="searchParams.shelfStatus"
               placeholder="请选择查询状态"
             >
               <el-option
@@ -43,21 +43,20 @@
       label="新建二维码"
       perms="operation:ActivitySubject:add"
       type="primary"
-      @click="handleEdit(null)"
+      @click="edit(null)"
     />
     <el-table stripe :data="tableData" border style="width: 100%">
       <el-table-column prop="id" label="编号" width="180">
       </el-table-column>
       <el-table-column prop="title" label="主标题" width="180">
       </el-table-column>
-      <!-- <el-table-column prop="shelfStatus" label="上架状态" width="80">
-        <template slot-scope="scope">
-          <span v-if="scope.row.shelfStatus === 1">上架</span>
-          <span v-if="scope.row.shelfStatus === 2">下架</span>
-        </template>
-      </el-table-column> -->
       <el-table-column prop="url" label="访问地址"> </el-table-column>
-      <el-table-column prop="updateDate" label="失效时间" width="200">
+      <el-table-column prop="expireTime" label="失效时间" width="200">
+      </el-table-column>
+      <el-table-column prop="image" label="二维码" width="200">
+        <template slot-scope="scope">
+          <img :src="scope.row.image" alt="">
+        </template>
       </el-table-column>
       <el-table-column label="操作" width="300px">
         <template slot-scope="scope">
@@ -65,30 +64,14 @@
             label="编辑"
             size="mini"
             perms="operation:ActivitySubject:edit"
-            @click="handleEdit(scope.row.id)"
+            @click="edit(scope.row.id)"
           />
           <pe-button
             label="生成二维码"
             size="mini"
             perms="operation:ActivitySubject:copy"
-            @click="handleCopy(scope.row.id)"
+            @click="createQrcode(scope.row.id)"
           />
-          <!-- <pe-button
-            label="上架"
-            size="mini"
-            type="success"
-            v-if="scope.row.shelfStatus === 2"
-            perms="operation:ActivitySubject:shelves"
-            @click="handleShelf(scope.row)"
-          />
-          <pe-button
-            label="下架"
-            size="mini"
-            type="danger"
-            v-if="scope.row.shelfStatus === 1"
-            perms="operation:ActivitySubject:soldOut"
-            @click="handleShelf(scope.row)"
-          /> -->
         </template>
       </el-table-column>
     </el-table>
@@ -126,11 +109,11 @@
       </span>
     </el-dialog> -->
     <pagination
-      v-show="total > search.pageSize"
+      v-show="total > searchParams.pageSize"
       :total="total"
-      :page.sync="search.pageNum"
-      :limit.sync="search.pageSize"
-      @pagination="getSubjectList"
+      :page.sync="searchParams.pageNum"
+      :limit.sync="searchParams.pageSize"
+      @pagination="queryList"
     />
   </div>
 </template>

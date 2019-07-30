@@ -8,8 +8,8 @@ export default {
    * @param {string} pageNum 第几页
    * @param {string} pageSize 一页几条
    */
-  queryList(title, codeType, pageNum, pageSize) {
-    return Ajax.post('/wechatCode/selectWechatCodeList', { title, codeType, pageNum, pageSize })
+  queryList(params) {
+    return Ajax.post('/wechatCode/selectWechatCodeList', params)
   },
 
   /**
@@ -21,15 +21,15 @@ export default {
    * @param {string} url 	图文消息跳转地址
    * @param {string} dictKey 活动编码（可以纯英文或英文+数字组成，不包含其他特殊字符，不超过15位，大写）
    */
-  addQrcode(title, subTitle, codeType, image, url, dictKey) {
-    return Ajax.post('/wechatCode/addOrUpdateWechatCode', { title, subTitle, codeType, image, url, dictKey })
+  addQrcode(params) {
+    return Ajax.post('/wechatCode/addOrUpdateWechatCode', params)
   },
 
   /**
    * 生成二维码接口
    * @param {int} id 	列表序号id
    */
-  createQrcode(id) {
-    return Ajax.post('/wechatCode/buildQRCode', { id })
+  createQrcode(params) {
+    return Ajax.post('/wechatCode/buildQRCode', params)
   }
 }
