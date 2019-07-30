@@ -1,4 +1,4 @@
-import { SubjectService } from '@/service'
+import { WechatQrcode } from '@/service'
 export default {
   name: 'ActivitySubject',
   data() {
@@ -65,9 +65,17 @@ export default {
     },
   },
   created() {
-    this.getSubjectList()
+    // this.getSubjectList()
+    this.queryList();
   },
   methods: {
+    async queryList(){
+      let params = {
+        pageNum: 1,
+        pageSize: 10
+      };
+      await WechatQrcode.queryList(params);
+    },
     async getSubjectList() {
       let data = await SubjectService.getSubjectList(this.search)
       if (data && data.data && data.data.specialTopicList) {
