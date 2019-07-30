@@ -16,7 +16,7 @@
         <el-col :span="6">
           <el-form-item label="状态：">
             <el-select
-              v-model="searchParams.shelfStatus"
+              v-model="searchParams.codeType"
               placeholder="请选择查询状态"
             >
               <el-option

@@ -22,7 +22,7 @@ export default {
         pageNum: 1,
         pageSize: 10,
         title: '',
-        codeType: 1
+        codeType: ''
       },
       // dialogModalVisible: false,
       shelfOptions: [
@@ -32,11 +32,11 @@ export default {
         },
         {
           value: '1',
-          label: '上架',
+          label: '下架',
         },
         {
           value: '2',
-          label: '下架',
+          label: '上架',
         },
       ],
     }
