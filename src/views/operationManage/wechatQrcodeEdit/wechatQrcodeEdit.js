@@ -1,7 +1,7 @@
-import { DialogService } from '@/service'
+import { WechatQrcode } from '@/service'
 import { Validate, Auth } from '@/common'
 export default {
-  name: 'DialogEdit',
+  name: 'WechatQrcodeEdit',
   data() {
     let validateLinkUrl = (rule, value, callback) => {
       if (value && !Validate.isUrl(value)) {
@@ -10,13 +10,13 @@ export default {
         callback()
       }
     }
-    let validateDate = (rule, value, callback) => {
-      if (!value) {
-        callback(new Error('请选择时间'))
-      } else {
-        callback()
-      }
-    }
+    // let validateDate = (rule, value, callback) => {
+    //   if (!value) {
+    //     callback(new Error('请选择时间'))
+    //   } else {
+    //     callback()
+    //   }
+    // }
     let validateTitle = (rule, value, callback) => {
       let val = value.trim()
       if (!val) {
@@ -27,6 +27,25 @@ export default {
     }
     const token = Auth.getToken()
     return {
+      params: {
+        dictKey: '',
+        title: '',
+        subTitle: '',
+        codeType: 0,
+        image: '',
+        url: '',
+      },
+      editRules: {
+        dictKey: [{ required: true, validator: validateTitle, trigger: 'blur' }],
+        title: [{ required: true, validator: validateTitle, trigger: 'blur' }],
+        codeType: [{ required: true, validator: validateTitle, trigger: 'change' }],
+        url: [{ required: true, validator: validateLinkUrl, trigger: 'blur' }],
+        // startDate: [{ required: true, validator: validateDate, trigger: 'blur' }],
+        // endDate: [{ required: true, validator: validateDate, trigger: 'blur' }],
+        // imageUrl: [{ required: true, message: '请选择图片', trigger: 'change' }],
+        // formUrl: [{ validator: validateLinkUrl, trigger: 'blur' }]
+      },
+
       actionUrl: process.env.VUE_APP_URL + 'fileUpload',
       headers: { Authorization: token },
       loading: false,
@@ -42,19 +61,68 @@ export default {
         imageUrl: '',
         formUrl: '' // 点击图片的跳转地址
       },
-      editRules: {
-        name: [{ required: true, validator: validateTitle, trigger: 'blur' }],
-        startDate: [{ required: true, validator: validateDate, trigger: 'blur' }],
-        endDate: [{ required: true, validator: validateDate, trigger: 'blur' }],
-        imageUrl: [{ required: true, message: '请选择图片', trigger: 'change' }],
-        formUrl: [{ validator: validateLinkUrl, trigger: 'blur' }]
-      }
+      // editRules: {
+      //   name: [{ required: true, validator: validateTitle, trigger: 'blur' }],
+      //   startDate: [{ required: true, validator: validateDate, trigger: 'blur' }],
+      //   endDate: [{ required: true, validator: validateDate, trigger: 'blur' }],
+      //   imageUrl: [{ required: true, message: '请选择图片', trigger: 'change' }],
+      //   formUrl: [{ validator: validateLinkUrl, trigger: 'blur' }]
+      // }
     }
   },
   created() {
-    this.getPageDetail()
+    // this.getPageDetail()
   },
   methods: {
+    async save(){
+      let data = await WechatQrcode.addQrcode(this.params);
+      let msg = '';
+      if (data && data.data) {
+        if (data.data === 'SUCCESS') {
+          msg = '操作成功';
+        } else {
+          msg = '操作失败'
+        }
+        this.$message({
+          message: msg,
+          type: "success"
+        });
+        this.$router.push('/operationManage/wechatQrcode');
+      }
+    },
+    // async handleSaveSubject() {
+    //   const dialogRef = this.$refs['dialogRef']
+    //   Promise.all([dialogRef].map(this.getFormPromise)).then(async res => {
+    //     const validateResult = res.every(item => !!item)
+    //     if (!validateResult) return
+    //     if (this.modalData.type == 2 && this.modalData.groups.length === 0) {
+    //       this.$message.error('您还未勾选企业哦！')
+    //       return
+    //     }
+    //     const { id, name, startDate, endDate, imageUrl, formUrl, type, users } = this.modalData
+    //     const groups = this.handleGroupsData()
+    //     let response = null
+    //     if (id == 'null') {
+    //       // 新增
+    //       if (type == 3 && users.length === 0) {
+    //         this.$message.error('您还未导入员工数据哦！')
+    //         return
+    //       }
+    //       response = await DialogService.createHomePage({ name, startDate, endDate, imageUrl, formUrl, groups, type, users })
+    //     } else {
+    //       // 修改
+    //       let updateParams = { id, name, startDate, endDate, imageUrl, formUrl, groups, type, users }
+    //       if (type == 3 && users.length === 0) {
+    //         delete updateParams.type
+    //         delete updateParams.users
+    //       }
+    //       response = await DialogService.updateHomePage(updateParams)
+    //     }
+    //     if (response) {
+    //       this.$router.push('/operationManage/dialogList')
+    //     }
+    //   })
+    // },
     async getPageDetail() {
       /* 目前后端返回弹窗列表没做过滤，暂时隐藏掉企业勾选功能 to do list、 */
       // 获取所有的企业列表
@@ -180,39 +248,39 @@ export default {
       })
       return selectedList
     },
-    async handleSaveSubject() {
-      const dialogRef = this.$refs['dialogRef']
-      Promise.all([dialogRef].map(this.getFormPromise)).then(async res => {
-        const validateResult = res.every(item => !!item)
-        if (!validateResult) return
-        if (this.modalData.type == 2 && this.modalData.groups.length === 0) {
-          this.$message.error('您还未勾选企业哦！')
-          return
-        }
-        const { id, name, startDate, endDate, imageUrl, formUrl, type, users } = this.modalData
-        const groups = this.handleGroupsData()
-        let response = null
-        if (id == 'null') {
-          // 新增
-          if (type == 3 && users.length === 0) {
-            this.$message.error('您还未导入员工数据哦！')
-            return
-          }
-          response = await DialogService.createHomePage({ name, startDate, endDate, imageUrl, formUrl, groups, type, users })
-        } else {
-          // 修改
-          let updateParams = { id, name, startDate, endDate, imageUrl, formUrl, groups, type, users }
-          if (type == 3 && users.length === 0) {
-            delete updateParams.type
-            delete updateParams.users
-          }
-          response = await DialogService.updateHomePage(updateParams)
-        }
-        if (response) {
-          this.$router.push('/operationManage/dialogList')
-        }
-      })
-    },
+    // async handleSaveSubject() {
+    //   const dialogRef = this.$refs['dialogRef']
+    //   Promise.all([dialogRef].map(this.getFormPromise)).then(async res => {
+    //     const validateResult = res.every(item => !!item)
+    //     if (!validateResult) return
+    //     if (this.modalData.type == 2 && this.modalData.groups.length === 0) {
+    //       this.$message.error('您还未勾选企业哦！')
+    //       return
+    //     }
+    //     const { id, name, startDate, endDate, imageUrl, formUrl, type, users } = this.modalData
+    //     const groups = this.handleGroupsData()
+    //     let response = null
+    //     if (id == 'null') {
+    //       // 新增
+    //       if (type == 3 && users.length === 0) {
+    //         this.$message.error('您还未导入员工数据哦！')
+    //         return
+    //       }
+    //       response = await DialogService.createHomePage({ name, startDate, endDate, imageUrl, formUrl, groups, type, users })
+    //     } else {
+    //       // 修改
+    //       let updateParams = { id, name, startDate, endDate, imageUrl, formUrl, groups, type, users }
+    //       if (type == 3 && users.length === 0) {
+    //         delete updateParams.type
+    //         delete updateParams.users
+    //       }
+    //       response = await DialogService.updateHomePage(updateParams)
+    //     }
+    //     if (response) {
+    //       this.$router.push('/operationManage/dialogList')
+    //     }
+    //   })
+    // },
     getFormPromise(form) {
       // 多个form表单校验
       return new Promise(resolve => {

@@ -1,14 +1,10 @@
 import { WechatQrcode } from '@/service'
+import {
+  Message
+} from 'element-ui'
 export default {
-  name: 'ActivitySubject',
+  name: 'WechatQrcodeList',
   data() {
-    let validateEndDate = (rule, value, callback) => {
-      if (this.specialTopicInfo.status == 1 && !value) {
-        callback(new Error('请选择时间'))
-      } else {
-        callback()
-      }
-    }
     return {
       tableData: [],
       pickerOptions: {
@@ -65,8 +61,16 @@ export default {
         this.total = data.data.total || this.tableData.length
       }
     },
-    async createQrcode(){
-
+    async createQrcode(id){
+      let data = await WechatQrcode.createQrcode({id});
+      if (data) {
+        let msg = data.info || '';
+        msg && Message({
+          message: msg,
+          type: 'success',
+          duration: 2 * 1000
+        })
+      }
     },
     // 筛选输入框禁止输入特殊字符
     onKeyup(e) {

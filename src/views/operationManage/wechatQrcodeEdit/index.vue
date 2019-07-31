@@ -1,11 +1,11 @@
 <template>
   <div class="app-container page-edit">
-    <el-form label-width="85px" :model="modalData" :rules="editRules" ref="dialogRef">
+    <el-form label-width="85px" :model="params" :rules="editRules" ref="dialogRef">
       <el-row>
         <el-col :span="10">
-          <el-form-item label="活动编码" prop="name">
+          <el-form-item label="活动编码" prop="dictKey">
             <el-input
-              v-model="modalData.name"
+              v-model="params.dictKey"
               minlength="1"
               maxlength="10"
               placeholder="请输入活动编码"
@@ -19,23 +19,23 @@
             type="primary"
             class="save-btn"
             perms="operation:dialogEdit:save"
-            @click="handleSaveSubject"
+            @click="save"
           />
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="12" min-width="50%">
-          <el-form-item label="二维码类型" prop="status">
-            <el-radio v-model="modalData.type" label="2">限时</el-radio>
-            <el-radio v-model="modalData.type" label="3">永久</el-radio>
+          <el-form-item label="二维码类型" prop="codeType">
+            <el-radio v-model="params.codeType" label="2">限时</el-radio>
+            <el-radio v-model="params.codeType" label="3">永久</el-radio>
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="10">
-          <el-form-item label="主标题" prop="name">
+          <el-form-item label="主标题" prop="title">
             <el-input
-              v-model="modalData.name"
+              v-model="params.title"
               minlength="1"
               maxlength="10"
               placeholder="请输入主标题"
@@ -46,9 +46,9 @@
       </el-row>
       <el-row>
         <el-col :span="10">
-          <el-form-item label="副标题" prop="name">
+          <el-form-item label="副标题" prop="subTitle">
             <el-input
-              v-model="modalData.name"
+              v-model="params.subTitle"
               minlength="1"
               maxlength="10"
               placeholder="请输入副标题"
@@ -57,24 +57,10 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <!-- <el-row>
-        <el-col :span="10">
-          <el-form-item prop="startDate" label="生效时间">
-            <el-date-picker v-model="modalData.startDate" type="datetime" :editable='false' value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间">
-            </el-date-picker>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item prop="endDate" label="失效时间">
-            <el-date-picker v-model="modalData.endDate" type="datetime" :editable='false' value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间">
-            </el-date-picker>
-          </el-form-item>
-        </el-col>
-      </el-row>-->
       <el-row class="dialog-con">
         <el-col :span="10" min-width="50%">
           <p class="text">图片设置（图片600*600 支持PNG JPG）</p>
-          <el-form-item class="dialog-img" prop="imageUrl">
+          <el-form-item class="dialog-img" prop="image">
             <el-upload
               class="avatar-uploader"
               v-loading="loading"
@@ -86,14 +72,14 @@
               :on-success="handleImgSuccess"
               :on-error="handleImgError"
             >
-              <img v-if="modalData.imageUrl" :src="modalData.imageUrl" class="avatar" />
+              <img v-if="params.image" :src="params.image" class="avatar" />
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
           </el-form-item>
           <el-form-item label="跳转地址">
             <el-col :span="12">
-              <el-form-item prop="formUrl" style="width: 300px;">
-                <el-input v-model="modalData.formUrl" placeholder="请输入正确的链接地址" clearable></el-input>
+              <el-form-item prop="url" style="width: 300px;">
+                <el-input v-model="params.url" placeholder="请输入正确的链接地址" clearable></el-input>
               </el-form-item>
             </el-col>
           </el-form-item>
