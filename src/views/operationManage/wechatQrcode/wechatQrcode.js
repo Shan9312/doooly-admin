@@ -72,6 +72,9 @@ export default {
         })
       }
     },
+    downloadQrcode(codeUrl){
+      
+    },
     // 筛选输入框禁止输入特殊字符
     onKeyup(e) {
       e.target.value = e.target.value.replace(/[!~@#$%*&()_+\s^]/g, "");

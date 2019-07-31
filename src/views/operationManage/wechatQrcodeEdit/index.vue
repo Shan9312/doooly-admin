@@ -8,7 +8,7 @@
               v-model="params.dictKey"
               minlength="1"
               maxlength="10"
-              placeholder="请输入活动编码"
+              placeholder="纯英文或英文+数字"
               style="width: 220px;"
             ></el-input>
           </el-form-item>
@@ -76,12 +76,12 @@
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
           </el-form-item>
-          <el-form-item label="跳转地址">
-            <el-col :span="12">
-              <el-form-item prop="url" style="width: 300px;">
-                <el-input v-model="params.url" placeholder="请输入正确的链接地址" clearable></el-input>
-              </el-form-item>
-            </el-col>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="跳转地址" prop="url" style="width: 300px;">
+            <el-input v-model="params.url" placeholder="请输入正确的链接地址" clearable></el-input>
           </el-form-item>
         </el-col>
       </el-row>

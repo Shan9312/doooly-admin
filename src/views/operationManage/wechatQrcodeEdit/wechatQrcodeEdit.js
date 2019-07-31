@@ -17,10 +17,18 @@ export default {
     //     callback()
     //   }
     // }
+    let validateDictKey = (rule, value, callback) => {
+      let val = value.trim()
+      if (!val) {
+        callback(new Error('请输入活动编码'))
+      } else {
+        callback()
+      }
+    }
     let validateTitle = (rule, value, callback) => {
       let val = value.trim()
       if (!val) {
-        callback(new Error('请输入弹窗名称'))
+        callback(new Error('请输入主标题'))
       } else {
         callback()
       }
@@ -36,9 +44,9 @@ export default {
         url: '',
       },
       editRules: {
-        dictKey: [{ required: true, validator: validateTitle, trigger: 'blur' }],
+        dictKey: [{ required: true, validator: validateDictKey, trigger: 'blur' }],
         title: [{ required: true, validator: validateTitle, trigger: 'blur' }],
-        codeType: [{ required: true, validator: validateTitle, trigger: 'change' }],
+        codeType: [{ required: true }],
         url: [{ required: true, validator: validateLinkUrl, trigger: 'blur' }],
         // startDate: [{ required: true, validator: validateDate, trigger: 'blur' }],
         // endDate: [{ required: true, validator: validateDate, trigger: 'blur' }],
@@ -160,50 +168,50 @@ export default {
     //     }
     //   })
     // },
-    async getPageDetail() {
-      /* 目前后端返回弹窗列表没做过滤，暂时隐藏掉企业勾选功能 to do list、 */
-      // 获取所有的企业列表
-      await this.getGroupAll()
-      if (this.modalData.id == 'null') return
-      // 获取弹窗详情页
-      const res = await DialogService.getPageDetail(this.modalData.id)
-      if (res && res.data) {
-        let data = res.data
-        let selectedList = data.groups || []
-        this.modalData = {
-          id: this.$route.params.id,
-          name: data.name,
-          startDate: data.startDate, // 生效时间
-          endDate: data.endDate, // 失效时间
-          type: data.type.toString(), // 弹窗类型 1全部用户 2企业 3指定用户
-          groups: [],
-          users: [],
-          imageUrl: data.imageUrl,
-          formUrl: data.formUrl // 点击图片的跳转地址
-        }
-        // 过滤已选中的企业
-        selectedList.map(item => {
-          this.companyAllData.map((group, index) => {
-            if (item.id == group.id) {
-              this.modalData.groups.push(index)
-            }
-          })
-        })
-      }
-    },
-    async getGroupAll() {
-      const groupAllData = await DialogService.getGroupAll()
-      if (groupAllData && groupAllData.data) {
-        let companies = groupAllData.data
-        companies.forEach((item, index) => {
-          this.companyAllData.push({
-            label: item.groupName,
-            key: index,
-            id: item.id
-          })
-        })
-      }
-    },
+    // async getPageDetail() {
+    //   /* 目前后端返回弹窗列表没做过滤，暂时隐藏掉企业勾选功能 to do list、 */
+    //   // 获取所有的企业列表
+    //   await this.getGroupAll()
+    //   if (this.modalData.id == 'null') return
+    //   // 获取弹窗详情页
+    //   const res = await DialogService.getPageDetail(this.modalData.id)
+    //   if (res && res.data) {
+    //     let data = res.data
+    //     let selectedList = data.groups || []
+    //     this.modalData = {
+    //       id: this.$route.params.id,
+    //       name: data.name,
+    //       startDate: data.startDate, // 生效时间
+    //       endDate: data.endDate, // 失效时间
+    //       type: data.type.toString(), // 弹窗类型 1全部用户 2企业 3指定用户
+    //       groups: [],
+    //       users: [],
+    //       imageUrl: data.imageUrl,
+    //       formUrl: data.formUrl // 点击图片的跳转地址
+    //     }
+    //     // 过滤已选中的企业
+    //     selectedList.map(item => {
+    //       this.companyAllData.map((group, index) => {
+    //         if (item.id == group.id) {
+    //           this.modalData.groups.push(index)
+    //         }
+    //       })
+    //     })
+    //   }
+    // },
+    // async getGroupAll() {
+    //   const groupAllData = await DialogService.getGroupAll()
+    //   if (groupAllData && groupAllData.data) {
+    //     let companies = groupAllData.data
+    //     companies.forEach((item, index) => {
+    //       this.companyAllData.push({
+    //         label: item.groupName,
+    //         key: index,
+    //         id: item.id
+    //       })
+    //     })
+    //   }
+    // },
     handleDownload() {
       import('@/vendor/Export2Excel').then(excel => {
         const tHeader = ['企业ID', '员工工号', '兜礼卡号']
@@ -229,26 +237,26 @@ export default {
     //     this.modalData.users = res.data
     //   }
     // },
-    async changeUploadExcel(file) {
-      let fileSize = file.size;
-      let fileType = file.raw && file.raw.type;
-      let mimeType = ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
-      if (!mimeType.includes(fileType)) return this.$message.error('上传文件只能是xls、xlsx格式');
-      if (fileSize > 50 * 1024) return this.$message.error('文件不能超过50kb');
-      let formData = new FormData()
-      formData.append('file', file.raw)
-      const res = await DialogService.readExcel(formData)
-      if (res && res.data) {
-        let failCount = res.data.failUsers && res.data.failUsers.length;
-        if (failCount) {
-          return this.$message.error(`${failCount}条数据导入失败`);
-        }
-        this.$message.success('导入数据成功');
-        this.modalData.users = res.data.users;
-      } else {
-        this.$message.error('导入数据失败')
-      }
-    },
+    // async changeUploadExcel(file) {
+    //   let fileSize = file.size;
+    //   let fileType = file.raw && file.raw.type;
+    //   let mimeType = ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+    //   if (!mimeType.includes(fileType)) return this.$message.error('上传文件只能是xls、xlsx格式');
+    //   if (fileSize > 50 * 1024) return this.$message.error('文件不能超过50kb');
+    //   let formData = new FormData()
+    //   formData.append('file', file.raw)
+    //   const res = await DialogService.readExcel(formData)
+    //   if (res && res.data) {
+    //     let failCount = res.data.failUsers && res.data.failUsers.length;
+    //     if (failCount) {
+    //       return this.$message.error(`${failCount}条数据导入失败`);
+    //     }
+    //     this.$message.success('导入数据成功');
+    //     this.modalData.users = res.data.users;
+    //   } else {
+    //     this.$message.error('导入数据失败')
+    //   }
+    // },
     beforeImgUpload(file) {
       const isJPG = file.type == 'image/jpeg' || file.type == 'image/png'
       const isLt500k = file.size / 1024 <= 500
@@ -266,7 +274,7 @@ export default {
     beforeExcelUpload(file) {},
     handleImgSuccess(res, file) {
       if (res.data) {
-        this.$set(this.modalData, 'imageUrl', res.data[0])
+        this.$set(this.params, 'image', res.data[0])
       } else {
         this.$message.error(res.info)
       }
@@ -276,15 +284,15 @@ export default {
       this.loading = false
       this.$message.error('上传图片失败，请重新上传！')
     },
-    handleGroupsData() {
-      // 根据后端获取的企业列表数据，过滤选中的企业
-      let companyVal = JSON.parse(JSON.stringify(this.modalData.groups))
-      let selectedList = []
-      companyVal.forEach(item => {
-        selectedList.push(this.companyAllData[item])
-      })
-      return selectedList
-    },
+    // handleGroupsData() {
+    //   // 根据后端获取的企业列表数据，过滤选中的企业
+    //   let companyVal = JSON.parse(JSON.stringify(this.modalData.groups))
+    //   let selectedList = []
+    //   companyVal.forEach(item => {
+    //     selectedList.push(this.companyAllData[item])
+    //   })
+    //   return selectedList
+    // },
     // async handleSaveSubject() {
     //   const dialogRef = this.$refs['dialogRef']
     //   Promise.all([dialogRef].map(this.getFormPromise)).then(async res => {
@@ -318,33 +326,33 @@ export default {
     //     }
     //   })
     // },
-    getFormPromise(form) {
-      // 多个form表单校验
-      return new Promise(resolve => {
-        form.validate(res => {
-          resolve(res)
-        })
-      })
-    },
+    // getFormPromise(form) {
+    //   // 多个form表单校验
+    //   return new Promise(resolve => {
+    //     form.validate(res => {
+    //       resolve(res)
+    //     })
+    //   })
+    // },
     resetFields(formName) {
       if (!this.$refs[formName]) return
       this.$refs[formName].resetFields()
     },
-    refreshSelectedTag(view) {
-      this.$store.dispatch('delCachedView', view)
-    },
+    // refreshSelectedTag(view) {
+    //   this.$store.dispatch('delCachedView', view)
+    // },
     // 格式化需要导出的数据
-    formatJson(filterVal, jsonData) {
-      return jsonData.map(v =>
-        filterVal.map(j => {
-          return v[j]
-        })
-      )
-    }
+    // formatJson(filterVal, jsonData) {
+    //   return jsonData.map(v =>
+    //     filterVal.map(j => {
+    //       return v[j]
+    //     })
+    //   )
+    // }
   },
-  beforeRouteEnter(to, from, next) {
-    next(vm => {
-      vm.refreshSelectedTag(vm.$route)
-    })
-  }
+  // beforeRouteEnter(to, from, next) {
+  //   next(vm => {
+  //     vm.refreshSelectedTag(vm.$route)
+  //   })
+  // }
 }

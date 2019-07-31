@@ -55,7 +55,13 @@
       </el-table-column>
       <el-table-column prop="image" label="二维码" width="200">
         <template slot-scope="scope">
-          <img :src="scope.row.image" alt="">
+          <!-- <img :src="scope.row.image" alt=""> -->
+          <pe-button
+            label="查看"
+            size="mini"
+            perms="operation:ActivitySubject:edit"
+            @click="downloadQrcode(scope.row.codeUrl)"
+          />
         </template>
       </el-table-column>
       <el-table-column label="操作" width="300px">
