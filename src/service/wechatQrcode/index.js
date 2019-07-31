@@ -31,5 +31,13 @@ export default {
    */
   createQrcode(params) {
     return Ajax.post('/wechatCode/buildQRCode', params)
+  },
+
+  /**
+   * 微信带参二维码详情页
+   * @param {int} id 	列表序号id
+   */
+  queryDetail(params) {
+    return Ajax.post('/wechatCode/wechatCodeDetail', params)
   }
 }
