@@ -53,15 +53,16 @@
       <el-table-column prop="url" label="访问地址"> </el-table-column>
       <el-table-column prop="expireTime" label="失效时间" width="200">
       </el-table-column>
-      <el-table-column prop="image" label="二维码" width="200">
+      <el-table-column prop="image" label="二维码" width="300">
         <template slot-scope="scope">
           <!-- <img :src="scope.row.image" alt=""> -->
           <pe-button
             label="查看"
             size="mini"
             perms="operation:ActivitySubject:edit"
-            @click="downloadQrcode(scope.row.codeUrl)"
+            @click="downloadQrcode(String(scope.row.id))"
           />
+          <vue-qr v-if="scope.row.codeUrl" v-show="false" :logoSrc="logoSrc" :text="scope.row.codeUrl" :callback="handleQrcodeData" :qid="String(scope.row.id)" :size="200" :dotScale="1"></vue-qr>
         </template>
       </el-table-column>
       <el-table-column label="操作" width="300px">
