@@ -27,8 +27,8 @@
       <el-row>
         <el-col :span="12" min-width="50%">
           <el-form-item label="二维码类型" prop="codeType">
-            <el-radio v-model="params.codeType" label="1">限时</el-radio>
-            <el-radio v-model="params.codeType" label="2">永久</el-radio>
+            <el-radio :disabled="this.id !== 'null'" v-model="params.codeType" label="1">限时</el-radio>
+            <el-radio :disabled="this.id !== 'null'" v-model="params.codeType" label="2">永久</el-radio>
           </el-form-item>
         </el-col>
       </el-row>

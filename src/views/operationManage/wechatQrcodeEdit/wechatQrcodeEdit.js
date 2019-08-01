@@ -108,6 +108,8 @@ export default {
         msg = '请输入活动编码';
       } else if(!this.params.url){
         msg = '请输入跳转地址';
+      } else if(!Validate.isUrl(this.params.url)) {
+        msg = '请输入正确的链接地址';
       }
       msg && this.$message({
         message: msg,
