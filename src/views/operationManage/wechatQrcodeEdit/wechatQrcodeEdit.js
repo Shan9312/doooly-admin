@@ -39,10 +39,11 @@ export default {
         dictKey: '',
         title: '',
         subTitle: '',
-        codeType: 0,
+        codeType: '1',
         image: '',
         url: '',
       },
+      id: this.$route.params.id,
       editRules: {
         dictKey: [{ required: true, validator: validateDictKey, trigger: 'blur' }],
         title: [{ required: true, validator: validateTitle, trigger: 'blur' }],
@@ -83,6 +84,7 @@ export default {
   },
   methods: {
     async save(){
+      if (!this.checkParams()) return;
       let data = await WechatQrcode.addQrcode(this.params);
       let msg = '';
       if (data && data.data) {
@@ -98,42 +100,28 @@ export default {
         this.$router.push('/operationManage/wechatQrcode');
       }
     },
+    checkParams(){
+      let msg = '';
+      if (!this.params.title) {
+        msg = '请输入主标题';
+      } else if(!this.params.dictKey) {
+        msg = '请输入活动编码';
+      } else if(!this.params.url){
+        msg = '请输入跳转地址';
+      }
+      msg && this.$message({
+        message: msg,
+        type: 'error'
+      });
+      return !msg
+    },
     async queryDetail() {
-      let id = this.$route.params.id;
+      let id = this.id;
       if (!id || id === 'null') return;
       let data = await WechatQrcode.queryDetail({id});
       if (data && data.data) {
         this.params = data.data || {};
       }
-      /* 目前后端返回弹窗列表没做过滤，暂时隐藏掉企业勾选功能 to do list、 */
-      // 获取所有的企业列表
-      // await this.getGroupAll()
-      // if (this.modalData.id == 'null') return
-      // // 获取弹窗详情页
-      // const res = await DialogService.getPageDetail(this.modalData.id)
-      // if (res && res.data) {
-      //   let data = res.data
-      //   let selectedList = data.groups || []
-      //   this.modalData = {
-      //     id: this.$route.params.id,
-      //     name: data.name,
-      //     startDate: data.startDate, // 生效时间
-      //     endDate: data.endDate, // 失效时间
-      //     type: data.type.toString(), // 弹窗类型 1全部用户 2企业 3指定用户
-      //     groups: [],
-      //     users: [],
-      //     imageUrl: data.imageUrl,
-      //     formUrl: data.formUrl // 点击图片的跳转地址
-      //   }
-      //   // 过滤已选中的企业
-      //   selectedList.map(item => {
-      //     this.companyAllData.map((group, index) => {
-      //       if (item.id == group.id) {
-      //         this.modalData.groups.push(index)
-      //       }
-      //     })
-      //   })
-      // }
     },
     // async handleSaveSubject() {
     //   const dialogRef = this.$refs['dialogRef']

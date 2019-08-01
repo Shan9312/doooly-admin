@@ -5,6 +5,7 @@
         <el-col :span="10">
           <el-form-item label="活动编码" prop="dictKey">
             <el-input
+              :disabled="this.id !== 'null'"
               v-model="params.dictKey"
               minlength="1"
               maxlength="10"
