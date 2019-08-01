@@ -48,7 +48,7 @@
     <el-table stripe :data="tableData" border style="width: 100%">
       <el-table-column prop="id" label="编号" width="180">
       </el-table-column>
-      <el-table-column prop="title" label="主标题" width="180">
+      <el-table-column prop="title" label="主标题" width="180" :show-overflow-tooltip="true">
       </el-table-column>
       <el-table-column prop="url" label="访问地址"> </el-table-column>
       <el-table-column prop="expireTime" label="失效时间" width="200">
