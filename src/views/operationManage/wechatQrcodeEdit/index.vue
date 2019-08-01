@@ -37,7 +37,7 @@
             <el-input
               v-model="params.title"
               minlength="1"
-              maxlength="10"
+              maxlength="50"
               placeholder="请输入主标题"
               style="width: 220px;"
             ></el-input>
@@ -50,7 +50,7 @@
             <el-input
               v-model="params.subTitle"
               minlength="1"
-              maxlength="10"
+              maxlength="50"
               placeholder="请输入副标题"
               style="width: 220px;"
             ></el-input>
