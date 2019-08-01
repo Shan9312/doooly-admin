@@ -42,13 +42,13 @@ function filterAsyncRouter(routes, name = '') {
       item.url = item.url.replace(/^\//, '')
     }
     let route = {
-      path: item.url,
-      component: null,
-      hidden: !item.isShow,
-      name: capitalize(item.url),
-      meta: { icon: item.icon, title: item.name }
+      path: item.url, // 路由地址
+      component: null, 
+      hidden: !item.isShow, // 是否显示菜单
+      name: capitalize(item.url),  // 路由名称
+      meta: { icon: item.icon, title: item.name } // meta配置
     }
-    if (name) {
+    if (name) { // 此处需要创建的文件名称跟菜单配置的名称相同，并严格按照views/xxxx/index.vue此形式创建文件
       route['component'] = () => import(`@/views/${name}/${segmentation(item.url)}/index`)
     }
     if (item.children && item.children.length > 0) {
