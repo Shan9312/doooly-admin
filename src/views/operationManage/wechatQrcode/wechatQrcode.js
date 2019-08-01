@@ -1,6 +1,6 @@
 import { WechatQrcode } from '@/service'
 import VueQr from 'vue-qr'
-import logoSrc from '@/assets/image/operation/bg.png'
+import logoSrc from '@/assets/image/operation/logo.jpg'
 import {
   Message
 } from 'element-ui'

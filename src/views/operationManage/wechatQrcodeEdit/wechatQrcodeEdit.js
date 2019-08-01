@@ -104,8 +104,8 @@ export default {
       let msg = '';
       if (!this.params.title) {
         msg = '请输入主标题';
-      } else if(!this.params.dictKey) {
-        msg = '请输入活动编码';
+      } else if(!this.params.dictKey || (/.*[\u4e00-\u9fa5]+.*/.test(this.params.dictKey))) {
+        msg = '请输入正确的活动编码';
       } else if(!this.params.url){
         msg = '请输入跳转地址';
       } else if(!Validate.isUrl(this.params.url)) {
