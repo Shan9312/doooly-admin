@@ -49,6 +49,7 @@ export default {
         title: [{ required: true, validator: validateTitle, trigger: 'blur' }],
         codeType: [{ required: true }],
         url: [{ required: true, validator: validateLinkUrl, trigger: 'blur' }],
+        image: [{ required: true }],
         // startDate: [{ required: true, validator: validateDate, trigger: 'blur' }],
         // endDate: [{ required: true, validator: validateDate, trigger: 'blur' }],
         // imageUrl: [{ required: true, message: '请选择图片', trigger: 'change' }],
@@ -110,6 +111,8 @@ export default {
         msg = '请输入跳转地址';
       } else if(!Validate.isUrl(this.params.url)) {
         msg = '请输入正确的链接地址';
+      } else if(!this.params.image) {
+        msg = '请上传图片';
       }
       msg && this.$message({
         message: msg,

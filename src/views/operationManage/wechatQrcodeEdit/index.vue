@@ -60,9 +60,11 @@
       </el-row>
       <el-row class="dialog-con">
         <el-col :span="10" min-width="50%">
-          <p class="text">图片设置（图片600*600 支持PNG JPG）</p>
-          <el-form-item class="dialog-img" prop="image">
+          <!-- <p class="text">图片设置（图片600*600 支持PNG JPG）</p> -->
+          <el-form-item class="dialog-img" label="图片设置" prop="image">
+            <!-- <br> -->
             <el-upload
+              :disabled="this.id !== 'null'"
               class="avatar-uploader"
               v-loading="loading"
               :action="actionUrl"
