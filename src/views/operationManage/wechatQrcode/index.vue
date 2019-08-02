@@ -32,8 +32,8 @@
         <el-col :span="6">
           <pe-button
             label="查询"
-            perms="operation:ActivitySubject:search"
             type="primary"
+            perms="operationManage:wechatQrcode:pass"
             @click="handleSearch"
           />
         </el-col>
@@ -41,8 +41,8 @@
     </el-form>
     <pe-button
       label="新建二维码"
-      perms="operation:ActivitySubject:add"
       type="primary"
+      perms="operationManage:wechatQrcode:pass"
       @click="edit(null)"
     />
     <el-table stripe :data="tableData" border style="width: 100%">
@@ -59,7 +59,7 @@
           <pe-button
             label="查看"
             size="mini"
-            perms="operation:ActivitySubject:edit"
+            :perms="scope.row.expireTime === '永久' ? 'operationManage:wechatQrcode:download' : 'operationManage:wechatQrcode:pass'"
             @click="downloadQrcode(String(scope.row.id))"
           />
           <vue-qr v-if="scope.row.codeUrl" v-show="false" :logoSrc="logoSrc" :text="scope.row.codeUrl" :callback="handleQrcodeData" :qid="String(scope.row.id)" :size="200" :dotScale="1"></vue-qr>
@@ -70,13 +70,13 @@
           <pe-button
             label="编辑"
             size="mini"
-            perms="operation:ActivitySubject:edit"
+            perms="operationManage:wechatQrcode:pass"
             @click="edit(scope.row.id)"
           />
           <pe-button
             label="生成二维码"
             size="mini"
-            perms="operation:ActivitySubject:copy"
+            perms="operationManage:wechatQrcode:pass"
             @click="createQrcode(scope.row.id)"
           />
         </template>
