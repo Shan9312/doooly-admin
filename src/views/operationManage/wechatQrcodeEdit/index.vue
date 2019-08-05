@@ -19,7 +19,7 @@
             label="保存"
             type="primary"
             class="save-btn"
-            perms="operation:dialogEdit:save"
+            perms="operationManage:wechatQrcode:pass"
             @click="save"
           />
         </el-col>
