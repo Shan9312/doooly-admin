@@ -1,6 +1,6 @@
 <template>
   <div class="app-container page-edit">
-    <el-form label-width="85px" :model="params" :rules="editRules" ref="dialogRef">
+    <el-form label-width="100px" :model="params" :rules="editRules" ref="dialogRef">
       <el-row>
         <el-col :span="10">
           <el-form-item label="活动编码" prop="dictKey">
