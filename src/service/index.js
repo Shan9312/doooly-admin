@@ -16,6 +16,7 @@ import DialogService from './operationManage/dialog-manage'
 import SubjectService from './operationManage/activity-subject'
 import TransctChannelManage from './transctChannelManage/transct-channel-manage'
 import RebateIntegralService from './rebate/integral'
+import WechatQrcode from './wechatQrcode'
 
 export {
   LoginService,
@@ -36,4 +37,5 @@ export {
   DialogService,
   TransctChannelManage,
   RebateIntegralService,
+  WechatQrcode
 }

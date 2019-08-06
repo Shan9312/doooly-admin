@@ -87,13 +87,13 @@
         label="手机"
       >
       </el-table-column>
-      <el-table-column
+      <!-- <el-table-column
         prop="status"
         header-align="center"
         align="center"
         label="状态"
       >
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column
         fixed="right"
         header-align="center"
