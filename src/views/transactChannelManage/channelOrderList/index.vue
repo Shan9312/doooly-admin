@@ -141,7 +141,7 @@ const titleList = [
   { label: "订单编号", value: "merchantOrderNo", width: "100px" },
   { label: "商户名称", value: "merchantName", width: "80px" },
   { label: "支付方式", value: "payType", width: "80px" },
-  { label: "分期规格", value: "installNum", width: "80px" },
+  { label: "分期期数", value: "installNum", width: "80px" },
   { label: "第三方交易单号", value: "transactionId", width: "60px" },
   { label: "实付总金额", value: "payAmount", width: "60px" }
 ];
