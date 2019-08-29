@@ -210,7 +210,7 @@
       // 获取oss的参数
       async getOssMsg(file) {
         const res = await DialogService.getUploadMsg();
-        if (res.code == 1000) {
+        if (res.code == 200) {
           this.postOssImg(res.data,file)
         } else{
          this.$message.error("服务有误，无法上传图片");
@@ -242,7 +242,7 @@
             "content-type": "multipart/form-data"
           }
         }).then(res =>{
-          if (res.data.code == 1000) {
+          if (res.data.code == 200) {
            this.$set(this.formData, "url", res.data.data.filename);
            this.loading = false;
           } else {

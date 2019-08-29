@@ -55,7 +55,7 @@ export default {
   },
   // 获取后端的oss参数信息
    getUploadMsg(){
-    return Ajax.get('http://121.40.79.96:8904/upload/open/oss/policy')
+    return Ajax.post('/file/policy')
   },
   
 }
