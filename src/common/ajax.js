@@ -26,7 +26,7 @@ const ajax = (method, url, data, options = {}) => {
 
   return axios.request(options).then(res => {
     const data = res.data;
-    if (data.code == 200) {
+    if (data.code == 200 || data.code == 1000 ) {
       return Promise.resolve(data)
     } else if (data.code == 401) {
       Message({
