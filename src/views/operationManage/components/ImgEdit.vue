@@ -237,7 +237,7 @@
       postOssImg(obj,file){
         const formData = this.getFormData(obj, file);
         axios
-        .post(`http://${obj.host}`, formData, {
+        .post(`https://${obj.host}`, formData, {
           headers: {
             "content-type": "multipart/form-data"
           }
