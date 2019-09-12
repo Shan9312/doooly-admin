@@ -87,7 +87,6 @@
                 placeholder="请输入会员手机"
                 maxlength="40"
                 clearable
-                type="number"
                 @keyup.native="onKeyup"
               ></el-input>
             </el-form-item>
@@ -384,17 +383,17 @@ export default {
       }
       const res = await IntergralMoniterService.handleCheckOrder(arr);
       Message({
-        message: "已核对成功",
+        message: "已成功发送订单核对",
         type: "success",
         duration: 2 * 1000
       });
-      console.log(res);
+      this.getList();
     },
     // 批量核对
     handleChekckMore() {
       if (!this.multipleSelection.length) {
         Message({
-          message: "请选择重新核对的表单",
+          message: "请选择重新核对的订单",
           type: "warning",
           duration: 2 * 1000
         });
