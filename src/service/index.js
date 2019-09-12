@@ -7,6 +7,7 @@ import OrderDetailService from './accountManage/orderDetail'
 import MerchantsExcelService from './accountManage/merchantsExcel'
 import EnterExcelService from './accountManage/enterpriseExcel'
 import IntegralExchangeService from './accountManage/integralExchange'
+import IntergralMoniterService from './accountManage/integralMoniter'
 import RecycleGoodsService from './recycleGoods/recycle-goods'
 import DeptService from './system/dept/depy'
 import UserService from './system/user/user'
@@ -19,23 +20,24 @@ import RebateIntegralService from './rebate/integral'
 import WechatQrcode from './wechatQrcode'
 
 export {
-  LoginService,
-  AccountEntryService,
-  MerchantsOrderService,
-  OrderDetailService,
-  HomeService,
-  MerchantsExcelService,
-  EnterExcelService,
-  IntegralExchangeService,
-  RecycleGoodsService,
-  SubjectService,
-  PermissionService,
-  DeptService,
-  UserService,
-  RoleService,
-  MenuService,
-  DialogService,
-  TransctChannelManage,
-  RebateIntegralService,
-  WechatQrcode
+    LoginService,
+    AccountEntryService,
+    MerchantsOrderService,
+    OrderDetailService,
+    HomeService,
+    MerchantsExcelService,
+    EnterExcelService,
+    IntegralExchangeService,
+    RecycleGoodsService,
+    SubjectService,
+    PermissionService,
+    DeptService,
+    UserService,
+    RoleService,
+    MenuService,
+    DialogService,
+    TransctChannelManage,
+    RebateIntegralService,
+    WechatQrcode,
+    IntergralMoniterService
 }

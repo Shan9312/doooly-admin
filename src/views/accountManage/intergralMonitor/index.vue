@@ -23,7 +23,7 @@
             <el-form-item label="订单编号">
               <el-input
                 style="width: 100%"
-                v-model="formObj.orderNo"
+                v-model="formObj.orderId"
                 placeholder="请输入订单编号"
                 maxlength="40"
                 clearable
@@ -33,21 +33,32 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="企业名称">
-              <el-input
-                style="width: 100%"
+              <el-select
+                style="width: 145px;"
                 v-model="formObj.groupName"
-                placeholder="请输入商户名称"
-                maxlength="40"
+                filterable
+                remote
                 clearable
+                maxlength="15"
+                placeholder="请输入企业名称"
+                :remote-method="getEnterpriseName"
+                :loading="loading"
                 @keyup.native="onKeyup"
-              ></el-input>
+              >
+                <el-option
+                  v-for="item in enterpriseList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                ></el-option>
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="10">
             <el-form-item label="对账状态">
-              <el-select v-model="formObj.accoutStatus">
+              <el-select v-model="formObj.conciliateStatus">
                 <el-option
                   v-for="(item, index) in orderStateList"
                   :label="item.label"
@@ -59,7 +70,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="流水类型">
-              <el-select v-model="formObj.flowType">
+              <el-select v-model="formObj.transactionType">
                 <el-option
                   v-for="(item, index) in FlowList"
                   :label="item.label"
@@ -74,7 +85,7 @@
               <el-input
                 style="width: 100%"
                 v-model="formObj.tel"
-                placeholder="请输入商户名称"
+                placeholder="请输入会员手机"
                 maxlength="40"
                 clearable
                 type="number"
@@ -86,14 +97,27 @@
         <el-row>
           <el-col :span="6">
             <el-form-item label="商户名称">
-              <el-input
+              <el-select
                 style="width: 100%"
                 v-model="formObj.merchantName"
                 placeholder="请输入商户名称"
+                :remote-method="getbusinessName"
                 maxlength="40"
                 clearable
                 @keyup.native="onKeyup"
-              ></el-input>
+                multiple
+                reserve-keyword
+                :loading="loading"
+                filterable
+                remote
+              >
+                <el-option
+                  v-for="item in businessList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                ></el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="2">
@@ -112,7 +136,7 @@
               label="批量重新核对"
               perms="recycle:order:search"
               type="primary"
-              @click="handleGetListByMsg"
+              @click="handleChekckMore"
             />
           </el-col>
           <el-col :span="2">
@@ -152,8 +176,26 @@
           >
             <template slot-scope="scope">
               <div>
-                <span v-if="item.value == 'operat'" class="operat-title">重新核对</span>
-                <span v-else>{{scope.row[item.value]}}</span>
+                <span
+                  v-if="item.value == 'transactionType'"
+                >{{scope.row['transactionType'] == 'PAYMENT' ? '已支付':'退款'}}</span>
+                <span
+                  v-if="item.value == 'operat'"
+                  :class="{'operat-title': scope.row['status'] !='NORMAL'}"
+                >
+                  <el-button
+                    v-if="scope.row['status'] !='NORMAL'"
+                    @click="handleCheckOrder(scope.row)"
+                    type="primary"
+                    plain
+                  >重新核对</el-button>
+                  <el-button v-else type="info" plain disabled>暂无核对</el-button>
+                </span>
+                <span v-if="item.value == 'status'">{{scope.row['status']=='NORMAL' ?'正常' : '订单缺失'}}</span>
+                <span
+                  v-if="item.value !='transactionType' && 
+                item.value != 'operat' && item.value != 'status'"
+                >{{scope.row[item.value]}}</span>
               </div>
             </template>
           </el-table-column>
@@ -171,32 +213,33 @@
 </template>
 
 <script>
-import { IntegralExchangeService } from "@/service";
+import { IntergralMoniterService } from "@/service";
 import { Validate, Auth, Utils } from "@/common";
+import { Message } from "element-ui";
 
 // 对账状态
 const orderStateList = [
-  { label: "订单缺失", value: "0" },
-  { label: "补单成功", value: "1" },
-  { label: "正常", value: "2" }
+  { label: "订单缺失", value: "ORPHANED" },
+  // { label: "补单成功", value: "NORMAL" },
+  { label: "正常", value: "NORMAL" }
 ];
 // 流水类型
 const FlowList = [
-  { label: "全部", value: "0" },
-  { label: "支付", value: "1" },
-  { label: "退款", value: "2" }
+  { label: "全部", value: "" },
+  { label: "支付", value: "PAYMENT" },
+  { label: "退款", value: "REFUND" }
 ];
 const title = [
   // 表格title
-  { label: "流水发生时间", value: "orderDate", width: "120" },
-  { label: "积分流水编号", value: "orderId" },
-  { label: "流水类型", value: "memberId" },
-  { label: "订单编号", value: "memberName" },
-  { label: "商户名称", value: "groupName" },
-  { label: "会员id", value: "bizName" },
-  { label: "归属企业", value: "itemDetail" },
-  { label: "积分数", value: "totalAmount" },
-  { label: "对账状态", value: "paiedAmount" },
+  { label: "流水发生时间", value: "transactionOccurTime", width: "120" },
+  { label: "积分流水编号", value: "transactionId" },
+  { label: "流水类型", value: "transactionType" },
+  { label: "订单编号", value: "orderId" },
+  { label: "商户名称", value: "merchantName" },
+  { label: "会员id", value: "memberId" },
+  { label: "归属企业", value: "groupName" },
+  { label: "积分数", value: "transactionAmount" },
+  { label: "对账状态", value: "status" },
   { label: "操作", value: "operat" }
 ];
 
@@ -210,8 +253,11 @@ export default {
   },
   data() {
     return {
+      businessList: [], // 商户列表
+      enterpriseList: [], // 企业列表
       list: [], // 表格数据列表
       listLoading: false, // 表格数据加载的loading
+      loading: false,
       multipleSelection: [], // 需要导出的数据
       title, // 表头
       orderStateList,
@@ -220,10 +266,10 @@ export default {
       formObj: {
         startDate: "", // 订单开始时间
         endDate: "", // 订单结束时间
-        orderNo: "", // 订单号
+        orderId: "", // 订单号
         groupName: "", // 企业名称
-        accoutStatus: "", // 对账状态
-        flowType: "", // 流水类型
+        conciliateStatus: "", // 对账状态
+        transactionType: "", // 流水类型
         tel: "", // 手机号码
         merchantName: "", // 商户名称
         page: 1, // 分页
@@ -254,7 +300,7 @@ export default {
     // 初始化列表,获取数据展示表格
     async getList() {
       this.listLoading = true;
-      const { data } = await IntegralExchangeService.getIntegralExchangeList(
+      const { data } = await IntergralMoniterService.getIntegralExchangeList(
         this.formObj
       );
       this.listLoading = false;
@@ -285,10 +331,10 @@ export default {
       this.formObj = {
         startDate: "", // 订单开始时间
         endDate: "", // 订单结束时间
-        orderNo: "", // 订单号
+        orderId: "", // 订单号
         groupName: "", // 企业名称
-        accoutStatus: "", // 对账状态
-        flowType: "", // 流水类型
+        conciliateStatus: "", // 对账状态
+        transactionType: "", // 流水类型
         tel: "", // 手机号码
         merchantName: "", // 商户名称
         page: 1, // 分页
@@ -296,6 +342,73 @@ export default {
         total: 0 // 总数量
       };
       this.getList();
+    },
+    // 搜索企业
+    getEnterpriseName(query) {
+      if (query !== "") {
+        this.loading = true;
+        setTimeout(async () => {
+          const { data } = await IntergralMoniterService.getEnterpriseName(
+            query
+          );
+          this.loading = false;
+          this.enterpriseList = data;
+        }, 100);
+      } else {
+        this.enterpriseList = [];
+      }
+    },
+
+    // 搜索商户
+    getbusinessName(query) {
+      if (query !== "") {
+        this.loading = true;
+        setTimeout(async () => {
+          const { data } = await IntergralMoniterService.getbusinessName(query);
+          this.loading = false;
+          if (data.hits) {
+            this.businessList = data.hits;
+          }
+        }, 100);
+      } else {
+        this.businessList = [];
+      }
+    },
+
+    // 重新核对
+    async handleCheckOrder(item) {
+      let arr = [];
+      if (!Array.isArray(item)) {
+        arr.push(item.id);
+      } else {
+        arr = item;
+      }
+      const res = await IntergralMoniterService.handleCheckOrder(arr);
+      Message({
+        message: "已核对成功",
+        type: "success",
+        duration: 2 * 1000
+      });
+      console.log(res);
+    },
+    // 批量核对
+    handleChekckMore() {
+      if (!this.multipleSelection.length) {
+        Message({
+          message: "请选择重新核对的表单",
+          type: "warning",
+          duration: 2 * 1000
+        });
+        return;
+      } else {
+        let arr = [];
+        this.multipleSelection.forEach(child => {
+          if (child.status != "NORMAL") {
+            arr.push(child.id);
+          }
+        });
+        this.handleCheckOrder(arr);
+      }
     },
     // 选择需要导出的数据
     handleSelectionChange(val) {
@@ -317,6 +430,7 @@ export default {
           const tHeader = [
             "流水发生时间",
             "积分流水编号",
+            "流水类型",
             "订单编号",
             "商户名称",
             "会员ID",
@@ -325,14 +439,15 @@ export default {
             "对账状态"
           ];
           const filterVal = [
-            "orderDate",
+            "transactionOccurTime",
+            "transactionId",
+            "transactionType",
             "orderId",
+            "merchantName",
             "memberId",
-            "memberName",
             "groupName",
-            "bizName",
-            "itemDetail",
-            "totalAmount"
+            "transactionAmount",
+            "status"
           ];
           const list = this.multipleSelection;
           const data = this.formatJson(filterVal, list);
@@ -351,7 +466,7 @@ export default {
         this.downloadLoading = false;
         Object.assign(query, this.formObj);
         let params = Utils.obj2Param(query);
-        IntegralExchangeService.export(params);
+        IntergralMoniterService.export(params);
       }
     },
 
