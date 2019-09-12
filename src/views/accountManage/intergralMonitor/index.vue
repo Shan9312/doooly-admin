@@ -43,13 +43,12 @@
                 placeholder="请输入企业名称"
                 :remote-method="getEnterpriseName"
                 :loading="loading"
-                @keyup.native="onKeyup"
               >
                 <el-option
-                  v-for="item in enterpriseList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"
+                  v-for="(item,index) in enterpriseList"
+                  :key="index"
+                  :label="item.groupName"
+                  :value="item.groupName"
                 ></el-option>
               </el-select>
             </el-form-item>
@@ -112,10 +111,10 @@
                 remote
               >
                 <el-option
-                  v-for="item in businessList"
-                  :key="item.id"
+                  v-for="(item,index) in businessList"
+                  :key="index"
                   :label="item.name"
-                  :value="item.id"
+                  :value="item.name"
                 ></el-option>
               </el-select>
             </el-form-item>
@@ -352,7 +351,7 @@ export default {
             query
           );
           this.loading = false;
-          this.enterpriseList = data;
+          this.enterpriseList = data.hits;
         }, 100);
       } else {
         this.enterpriseList = [];
