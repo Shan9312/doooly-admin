@@ -381,12 +381,12 @@ export default {
       } else {
         arr = item;
       }
-      const res = await IntergralMoniterService.handleCheckOrder(arr);
       Message({
-        message: "已成功发送订单核对",
+        message: "已发送重新核对",
         type: "success",
         duration: 2 * 1000
       });
+      const res = await IntergralMoniterService.handleCheckOrder(arr);
       this.getList();
     },
     // 批量核对
@@ -405,6 +405,14 @@ export default {
             arr.push(child.id);
           }
         });
+        if (!arr.length) {
+          Message({
+            message: "暂无核对订单",
+            type: "warning",
+            duration: 2 * 1000
+          });
+          return;
+        }
         this.handleCheckOrder(arr);
       }
     },
