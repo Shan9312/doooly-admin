@@ -189,7 +189,10 @@
                   >重新核对</el-button>
                   <el-button v-else type="info" plain disabled>暂无核对</el-button>
                 </span>
-                <span v-if="item.value == 'status'">{{scope.row['status']=='NORMAL' ?'正常' : '订单缺失'}}</span>
+                <span
+                  v-if="item.value == 'status'"
+                  :class="{'red_text': scope.row['status'] != 'NORMAL'}"
+                >{{scope.row['status']=='NORMAL' ?'正常' : '订单缺失'}}</span>
                 <span
                   v-if="item.value !='transactionType' && 
                 item.value != 'operat' && item.value != 'status'"
@@ -499,5 +502,8 @@ export default {
 .operat-title {
   color: #409eff;
   cursor: pointer;
+}
+.red_text {
+  color: red;
 }
 </style>
