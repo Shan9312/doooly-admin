@@ -384,12 +384,20 @@ export default {
       } else {
         arr = item;
       }
-      Message({
-        message: "已发送重新核对",
-        type: "success",
-        duration: 2 * 1000
-      });
       const res = await IntergralMoniterService.handleCheckOrder(arr);
+      if (res.data[0].status != "NORMAL") {
+        Message({
+          message: "补单失败",
+          type: "error",
+          duration: 2 * 1000
+        });
+      } else {
+        Message({
+          message: "补单成功",
+          type: "success",
+          duration: 2 * 1000
+        });
+      }
       this.getList();
     },
     // 批量核对
