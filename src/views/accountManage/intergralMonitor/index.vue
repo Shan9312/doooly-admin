@@ -243,7 +243,34 @@ const title = [
   { label: "对账状态", value: "status" },
   { label: "操作", value: "operat" }
 ];
-
+const startDate = () => {
+  let year = new Date().getFullYear(),
+    month = new Date().getMonth(),
+    strDate = new Date().getDate();
+  if (month == 0) {
+    year -= 1;
+    month = 12;
+  }
+  if (month == 1) {
+    year -= 1;
+    month = 13;
+  }
+  if (month == 2) {
+    year -= 1;
+    month = 14;
+  }
+  return `${year}-${month - 2 < 10 ? "0" + String(month - 2) : month - 2}-${
+    strDate < 10 ? "0" + String(strDate) : strDate
+  } 00:00:00`;
+};
+const endDate = () => {
+  let year = new Date().getFullYear(),
+    month = new Date().getMonth(),
+    strDate = new Date().getDate();
+  return `${year}-${month + 1 < 10 ? 0 + String(month + 1) : month + 1}-${
+    strDate < 10 ? "0" + String(strDate) : strDate
+  } 23:59:59`;
+};
 export default {
   name: "",
   filters: {
@@ -263,10 +290,10 @@ export default {
       title, // 表头
       orderStateList,
       FlowList,
-      orderDate: [], // 流水时间
+      orderDate: [startDate(), endDate()], // 流水时间
       formObj: {
-        startDate: "", // 订单开始时间
-        endDate: "", // 订单结束时间
+        startDate: startDate(), // 订单开始时间
+        endDate: endDate(), // 订单结束时间
         orderId: "", // 订单号
         groupName: "", // 企业名称
         conciliateStatus: "", // 对账状态
@@ -468,6 +495,18 @@ export default {
           ];
           const list = this.multipleSelection;
           const data = this.formatJson(filterVal, list);
+          data.forEach(child => {
+            if (child[2] == "PAYMENT") {
+              child[2] = "已支付";
+            } else {
+              child[2] = "退款";
+            }
+            if (child[8] == "ORPHANED") {
+              child[8] = "订单缺失";
+            } else {
+              child[8] = "正常";
+            }
+          });
           excel.export_json_to_excel({
             header: tHeader,
             data,
