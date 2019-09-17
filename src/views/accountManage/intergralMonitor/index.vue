@@ -388,7 +388,7 @@ export default {
       if (res.data[0].status != "NORMAL") {
         Message({
           message: "补单失败",
-          type: "error",
+          type: "warning",
           duration: 2 * 1000
         });
       } else {
