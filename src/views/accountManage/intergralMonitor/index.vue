@@ -274,7 +274,7 @@ export default {
         tel: "", // 手机号码
         merchantName: "", // 商户名称
         page: 1, // 分页
-        limit: 5 // 每页显示条数
+        limit: 10 // 每页显示条数
       },
       downloadLoading: false, // 导出loading
       total: 0, // 总数量
