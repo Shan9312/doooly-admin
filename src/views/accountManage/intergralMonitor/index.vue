@@ -26,7 +26,7 @@
               ></el-date-picker>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="8">
             <el-form-item label="订单编号">
               <el-input
                 style="width: 100%"
@@ -38,7 +38,17 @@
               ></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="2">
+            <pe-button
+              label="查询"
+              perms="recycle:order:search"
+              type="primary"
+              @click="handleGetListByMsg"
+            />
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="10">
             <el-form-item label="企业名称">
               <el-select
                 v-model="formObj.groupName"
@@ -59,9 +69,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="10">
+          <el-col :span="8">
             <el-form-item label="对账状态">
               <el-select v-model="formObj.conciliateStatus">
                 <el-option
@@ -73,7 +81,12 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="2">
+            <pe-button label="重置" perms="recycle:order:search" type="primary" @click="handleReset" />
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="10">
             <el-form-item label="流水类型">
               <el-select v-model="formObj.transactionType">
                 <el-option
@@ -85,7 +98,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="8">
             <el-form-item label="会员手机" prop="tel">
               <el-input
                 style="width: 100%"
@@ -97,9 +110,17 @@
               ></el-input>
             </el-form-item>
           </el-col>
+          <el-col :span="6">
+            <pe-button
+              label="批量重新核对"
+              perms="recycle:order:search"
+              type="primary"
+              @click="handleChekckMore"
+            />
+          </el-col>
         </el-row>
         <el-row>
-          <el-col :span="6">
+          <el-col :span="10">
             <el-form-item label="商户名称">
               <el-select
                 v-model="formObj.merchantName"
@@ -123,26 +144,8 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="2">
-            <pe-button
-              label="查询"
-              perms="recycle:order:search"
-              type="primary"
-              @click="handleGetListByMsg"
-            />
-          </el-col>
-          <el-col :span="2">
-            <pe-button label="重置" perms="recycle:order:search" type="primary" @click="handleReset" />
-          </el-col>
-          <el-col :span="4">
-            <pe-button
-              label="批量重新核对"
-              perms="recycle:order:search"
-              type="primary"
-              @click="handleChekckMore"
-            />
-          </el-col>
-          <el-col :span="2">
+
+          <el-col :span="8">
             <pe-button
               :loading="downloadLoading"
               label="导出明细"
