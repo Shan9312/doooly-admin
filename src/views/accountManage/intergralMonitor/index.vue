@@ -2,8 +2,15 @@
   <div class="channel-warrpe app-container">
     <!-- 筛选条件 -->
     <section class="form-box">
-      <el-form ref="formObj" :model="formObj" :inline="true" :rules="rules" key="formObj">
-        <el-row :span="24">
+      <el-form
+        ref="formObj"
+        :model="formObj"
+        :inline="true"
+        :rules="rules"
+        key="formObj"
+        label-position="left"
+      >
+        <el-row>
           <el-col :span="10">
             <el-form-item label="流水时间">
               <el-date-picker
@@ -34,7 +41,6 @@
           <el-col :span="6">
             <el-form-item label="企业名称">
               <el-select
-                style="width: 145px;"
                 v-model="formObj.groupName"
                 filterable
                 remote
@@ -96,7 +102,6 @@
           <el-col :span="6">
             <el-form-item label="商户名称">
               <el-select
-                style="width: 100%"
                 v-model="formObj.merchantName"
                 placeholder="请输入商户名称"
                 :remote-method="getbusinessName"
