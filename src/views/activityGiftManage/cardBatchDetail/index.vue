@@ -4,7 +4,7 @@
 
 <script>
 export default {
-  name: "cardBatchList",
+  name: "cardBatchDetail",
   data() {
     return {};
   },
