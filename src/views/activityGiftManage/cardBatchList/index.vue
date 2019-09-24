@@ -1,6 +1,5 @@
 <template>
   <div class="app-container card-warrp">
-    <!-- <div class="title-top">礼包卡批次列表</div> -->
     <!-- 新建按钮 -->
     <div class="newBtn">
       <el-button type="success" plain @click="dialogVisibleAdd = true">新建卡批次</el-button>
@@ -90,21 +89,48 @@
     <!-- 新建卡批次弹窗 -->
     <div>
       <el-dialog title="新建卡批次" :visible.sync="dialogVisibleAdd" width="40%" center>
-        <el-form :model="formsAdd" key="form2" :rules="rules" ref="ruleForm">
+        <el-form :model="formsAdd" key="form2" :rules="rules" ref="formsAdd">
           <el-form-item label="礼包卡批次号:" label-width="100px">
             <el-input v-model="formsAdd.cardId" maxlength="10" disabled></el-input>
           </el-form-item>
           <el-form-item label="礼包卡数量" label-width="100px">
-            <el-input v-model="formsAdd.accout" maxlength="10" clearable></el-input>
+            <el-input v-model="formsAdd.accout" maxlength="10"></el-input>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="dialogVisibleAdd = false">取 消</el-button>
-          <el-button type="primary" @click="handleEditUserInfo">提交</el-button>
+          <el-button type="primary">提交</el-button>
         </span>
       </el-dialog>
     </div>
     <!-- 编辑弹窗 -->
+    <div>
+      <el-dialog title="礼包卡分配" :visible.sync="dialogVisibleEdit" width="40%" center>
+        <el-form :model="formsEdit" key="form3" :rules="rules" ref="formsEdit">
+          <el-form-item label="礼包卡批次号:" label-width="100px">
+            <el-input v-model="formsEdit.cardId" maxlength="10" disabled></el-input>
+          </el-form-item>
+          <el-form-item label="选择礼包:" label-width="100px">
+            <el-select v-model="formsEdit.giftName">
+              <el-option
+                v-for="(item, index) in giftList"
+                :label="item.name"
+                :value="item.value"
+                :key="index"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="分配卡数量:" label-width="100px">
+            <el-input v-model="formsEdit.accout" maxlength="10" clearable></el-input>张
+            <span>礼包卡最多分配数量：9000</span>
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="dialogVisibleEdit = false">取 消</el-button>
+          <el-button type="primary">提交</el-button>
+        </span>
+      </el-dialog>
+    </div>
   </div>
 </template>
 
@@ -123,6 +149,11 @@ const title = [
   { label: "未分配卡数量", value: "transactionAmount" },
   { label: "操作", value: "operat" }
 ];
+const giftList = [
+  { name: "所有礼包", value: "" },
+  { name: "大华礼包", value: "1" },
+  { name: "夏日礼包", value: "2" }
+];
 export default {
   name: "cardBatchList",
   data() {
@@ -133,24 +164,31 @@ export default {
       loading: false,
       title, // 表头
       total: 0,
-      formObj: {
-        startDate: "", // 订单开始时间
-        endDate: "", // 订单结束时间
-        orderId: "", // 订单号
-        page: 1, // 分页
-        limit: 5 // 每页显示条数
-      },
-      dialogVisibleAdd: false, // 新建弹窗
       pickerOptions: {
         // 设置日期范围
         disabledDate(time) {
           return time.getTime() > Date.now();
         }
       },
+      giftList,
+      formObj: {
+        startDate: "", // 订单开始时间
+        endDate: "", // 订单结束时间
+        orderNumber: "", // 订单号
+        page: 1, // 分页
+        limit: 5 // 每页显示条数
+      },
+      dialogVisibleAdd: false, // 新建弹窗
+      dialogVisibleEdit: false,
       formsAdd: {
         cardId: "10010522",
         accout: 100
       }, // 新建弹窗对象
+      formsEdit: {
+        cardId: "10010522",
+        giftName: "",
+        accout: 100
+      },
       rules: []
     };
   },
@@ -174,9 +212,7 @@ export default {
     handleCheckOrder(item, type) {
       if (type == 1) {
         // 分配
-        this.$router.push({
-          path: `/activityGiftManage/cardBatchDetail/${item.id}`
-        });
+        this.dialogVisibleEdit = true;
       } else {
         // 详情
         this.$router.push({
