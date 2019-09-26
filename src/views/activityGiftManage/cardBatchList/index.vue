@@ -5,7 +5,7 @@
       <el-button type="success" plain @click="dialogVisibleAdd = true">新建卡批次</el-button>
     </div>
     <!-- 模糊查询暂无 -->
-    <section class="form-box">
+    <!-- <section class="form-box">
       <el-form ref="formObj" :model="formObj" :inline="true" key="form1">
         <el-row :span="24">
           <el-col :span="6">
@@ -41,7 +41,7 @@
           </el-col>
         </el-row>
       </el-form>
-    </section>
+    </section>-->
     <!-- 列表 -->
     <section class="table-box">
       <div>
@@ -78,7 +78,7 @@
         <pagination
           v-show="total > 0"
           :total="total"
-          :page-sizes="[5,10,15,20]"
+          :page-sizes="[15,30,45,60]"
           :page.sync="formObj.page"
           :limit.sync="formObj.limit"
           @pagination="getList"
@@ -90,11 +90,11 @@
     <div>
       <el-dialog title="新建卡批次" :visible.sync="dialogVisibleAdd" width="40%" center>
         <el-form :model="formsAdd" key="form2" :rules="rules" ref="formsAdd">
-          <el-form-item label="礼包卡批次号:" label-width="100px">
+          <!-- <el-form-item label="礼包卡批次号:" label-width="100px">
             <el-input v-model="formsAdd.cardId" maxlength="10" disabled></el-input>
-          </el-form-item>
+          </el-form-item>-->
           <el-form-item label="礼包卡数量" label-width="100px">
-            <el-input v-model="formsAdd.accout" maxlength="10"></el-input>
+            <el-input v-model="formsAdd.accout" maxlength="10" clearable></el-input>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -176,7 +176,7 @@ export default {
         endDate: "", // 订单结束时间
         orderNumber: "", // 订单号
         page: 1, // 分页
-        limit: 5 // 每页显示条数
+        limit: 15 // 每页显示条数
       },
       dialogVisibleAdd: false, // 新建弹窗
       dialogVisibleEdit: false,
