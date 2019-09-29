@@ -41,7 +41,7 @@
           <el-col :span="2">
             <pe-button
               label="查询"
-              perms="recycle:order:search"
+              perms="intergal:monitor:search"
               type="primary"
               @click="handleGetListByMsg"
             />
@@ -82,7 +82,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="2">
-            <pe-button label="重置" perms="recycle:order:search" type="primary" @click="handleReset" />
+            <pe-button label="重置" perms="intergal:monitor:reset" type="primary" @click="handleReset" />
           </el-col>
         </el-row>
         <el-row>
@@ -113,7 +113,7 @@
           <el-col :span="6">
             <pe-button
               label="批量重新核对"
-              perms="recycle:order:search"
+              perms="intergal:monitor:checkall"
               type="primary"
               @click="handleChekckMore"
             />
@@ -150,7 +150,7 @@
               :loading="downloadLoading"
               label="导出明细"
               icon="el-icon-download"
-              perms="recycle:order:search"
+              perms="intergal:monitor:export"
               type="primary"
               @click="handleDownload"
             />
@@ -193,6 +193,7 @@
                     v-if="scope.row['status'] !='NORMAL'"
                     @click="handleCheckOrder(scope.row)"
                     type="primary"
+                    perms="intergal:monitor:check"
                     plain
                   >重新核对</el-button>
                   <el-button v-else type="info" plain disabled>暂无核对</el-button>
@@ -241,7 +242,7 @@ const FlowList = [
 const title = [
   // 表格title
   { label: "流水发生时间", value: "transactionOccurTime", width: "120" },
-  { label: "积分流水编号", value: "transactionId" },
+  { label: "积分流水编号", value: "pointTransactionSerialNumber" },
   { label: "流水类型", value: "transactionType" },
   { label: "订单编号", value: "orderId" },
   { label: "商户名称", value: "merchantName" },
