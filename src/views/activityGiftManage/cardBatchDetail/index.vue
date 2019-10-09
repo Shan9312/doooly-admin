@@ -29,7 +29,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="6">
             <el-form-item label="卡状态">
               <el-select v-model="formObj.cardStatus">
                 <el-option
@@ -41,7 +41,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="6">
             <el-form-item label="卡号">
               <el-input
                 style="width: 100%"
@@ -53,10 +53,12 @@
               ></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="2">
+        </el-row>
+        <el-row :span="24">
+          <el-col :span="6">
             <pe-button label="查询" perms="recycle:order:search" type="primary" />
           </el-col>
-          <el-col :span="2">
+          <el-col :span="6">
             <pe-button label="重置" perms="recycle:order:search" type="primary" />
           </el-col>
         </el-row>
@@ -168,7 +170,7 @@ export default {
       giftList,
       cardTypeList,
       cardStatusList,
-      rules: []
+      rules: {}
     };
   },
   created() {
@@ -214,6 +216,9 @@ export default {
     padding: 5px 0 10px 0;
     border-bottom: 1px solid #eee;
     margin-bottom: 20px;
+  }
+  .table-box {
+    margin-top: 20px;
   }
 }
 </style>

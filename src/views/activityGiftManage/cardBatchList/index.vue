@@ -69,7 +69,23 @@
                 >{{scope.row['status']=='NORMAL' ?'正常' : '订单缺失'}}</span>
                 <span
                   v-if="item.value !='transactionType' && 
-                item.value != 'operat' && item.value != 'status'"
+                  item.value != 'operat' &&
+                   item.value != 'status' &&
+                  item.value !='memberId' &&
+                  item.value !='orderId' &&
+                  item.value !='transactionAmount'"
+                >{{scope.row[item.value]}}</span>
+                <!-- 礼包卡数量  -->
+                <span v-if="item.value == 'memberId'" class="card-accout">{{scope.row[item.value]}}</span>
+                <!-- 已分配卡数量 -->
+                <span
+                  v-if="item.value == 'orderId'"
+                  class="card-allocated"
+                >{{scope.row[item.value]}}</span>
+                <!-- 未分配卡数量 -->
+                <span
+                  v-if="item.value == 'transactionAmount'"
+                  class="card-remain"
                 >{{scope.row[item.value]}}</span>
               </div>
             </template>
@@ -93,7 +109,7 @@
           <!-- <el-form-item label="礼包卡批次号:" label-width="100px">
             <el-input v-model="formsAdd.cardId" maxlength="10" disabled></el-input>
           </el-form-item>-->
-          <el-form-item label="礼包卡数量" label-width="100px">
+          <el-form-item label="礼包卡数量" label-width="100px" prop="accout">
             <el-input v-model="formsAdd.accout" maxlength="10" clearable></el-input>
           </el-form-item>
         </el-form>
@@ -109,6 +125,7 @@
         <el-form :model="formsEdit" key="form3" :rules="rules" ref="formsEdit">
           <el-form-item label="礼包卡批次号:" label-width="100px">
             <el-input v-model="formsEdit.cardId" maxlength="10" disabled></el-input>
+            <span>礼包卡可分配的范围：10311000～100319999</span>
           </el-form-item>
           <el-form-item label="选择礼包:" label-width="100px">
             <el-select v-model="formsEdit.giftName">
@@ -120,8 +137,8 @@
               ></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="分配卡数量:" label-width="100px">
-            <el-input v-model="formsEdit.accout" maxlength="10" clearable></el-input>张
+          <el-form-item label="分配卡数量:" label-width="100px" prop="accout">
+            <el-input v-model="formsEdit.accout" maxlength="10" clearable></el-input>
             <span>礼包卡最多分配数量：9000</span>
           </el-form-item>
         </el-form>
@@ -142,10 +159,10 @@ const title = [
   { label: "批次号", value: "transactionId", width: "120" },
   { label: "创建时间", value: "transactionOccurTime" },
   { label: "创建人", value: "transactionType" },
-  { label: "礼包卡开始卡号", value: "orderId" },
+  { label: "礼包卡开始卡号", value: "transactionType" },
   { label: "礼包卡结束卡号", value: "merchantName" },
   { label: "礼包卡数量", value: "memberId" },
-  { label: "已分配卡数量", value: "groupName" },
+  { label: "已分配卡数量", value: "orderId" },
   { label: "未分配卡数量", value: "transactionAmount" },
   { label: "操作", value: "operat" }
 ];
@@ -189,7 +206,9 @@ export default {
         giftName: "",
         accout: 100
       },
-      rules: []
+      rules: {
+        accout: [{ required: true, message: "请输入卡数量", trigger: "blur" }]
+      }
     };
   },
   created() {
@@ -232,6 +251,15 @@ export default {
   .title-top {
     padding: 5px 0 10px 0;
     border-bottom: 1px solid #eee;
+  }
+  .card-accout {
+    color: #409eff;
+  }
+  .card-allocated {
+    color: #85ce61;
+  }
+  .card-remain {
+    color: #e6a23c;
   }
 }
 </style>
