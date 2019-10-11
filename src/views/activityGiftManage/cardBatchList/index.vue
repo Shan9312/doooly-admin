@@ -106,11 +106,8 @@
     <div>
       <el-dialog title="新建卡批次" :visible.sync="dialogVisibleAdd" width="40%" center>
         <el-form :model="formsAdd" key="form2" :rules="rules" ref="formsAdd">
-          <!-- <el-form-item label="礼包卡批次号:" label-width="100px">
-            <el-input v-model="formsAdd.cardId" maxlength="10" disabled></el-input>
-          </el-form-item>-->
-          <el-form-item label="礼包卡数量" label-width="100px" prop="accout">
-            <el-input v-model="formsAdd.accout" maxlength="10" clearable></el-input>
+          <el-form-item label="礼包卡数量" label-width="100px" prop="cardNumber">
+            <el-input v-model="formsAdd.cardNumber" maxlength="4" clearable></el-input>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -153,6 +150,7 @@
 
 <script>
 import { IntergralMoniterService } from "@/service";
+import { Auth, Validate } from "@/common";
 
 const title = [
   // 表格title
@@ -198,8 +196,8 @@ export default {
       dialogVisibleAdd: false, // 新建弹窗
       dialogVisibleEdit: false,
       formsAdd: {
-        cardId: "10010522",
-        accout: 100
+        userName: JSON.parse(Auth.getUserInfo()).name,
+        cardNumber: ""
       }, // 新建弹窗对象
       formsEdit: {
         cardId: "10010522",
@@ -207,7 +205,13 @@ export default {
         accout: 100
       },
       rules: {
-        accout: [{ required: true, message: "请输入卡数量", trigger: "blur" }]
+        cardNumber: [
+          {
+            required: true,
+            trigger: "blur",
+            validator: Validate.numerbValid
+          }
+        ]
       }
     };
   },

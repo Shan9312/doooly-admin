@@ -67,7 +67,7 @@
           <el-col :span="8">
             <div class="grid-content bg-purple">手机号:{{userObj.tel}}</div>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="12">
             <div class="grid-content bg-purple">商户号:{{userObj.bizId}}</div>
           </el-col>
         </el-row>
@@ -75,7 +75,7 @@
           <el-col :span="8">
             <div class="grid-content bg-purple">验证码:{{userObj.code}}</div>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="12">
             <div class="grid-content bg-purple">类型:{{userObj.type =='GENERAL'? '通用验证码':'支付验证码'}}</div>
           </el-col>
         </el-row>
@@ -133,7 +133,6 @@
 
 <script>
 import { MobileCodeService, IntegralExchangeService } from "@/service";
-import { async } from "q";
 
 const title = [
   // 表格title
