@@ -12,5 +12,6 @@ export default {
   // 获取用户数据
   getUsers(query) {
     return Ajax.get(`/Users/Date/${query.startDate}/${query.endDate}`)
-  }
+  },
+ 
 }

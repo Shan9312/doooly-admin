@@ -1,5 +1,6 @@
 import { DialogService } from '@/service'
 import { Validate, Auth } from '@/common'
+import axios from 'axios'
 export default {
   name: 'DialogEdit',
   data() {
@@ -159,13 +160,57 @@ export default {
       return isJPG && isLt500k
     },
     beforeExcelUpload(file) {},
-    handleImgSuccess(res, file) {
-      if (res.data) {
-        this.$set(this.modalData, 'imageUrl', res.data[0])
-      } else {
-        this.$message.error(res.info)
+    // 获取oss的参数
+    async getOssMsg(file) {
+      const res = await DialogService.getUploadMsg();
+      if (res.code == 200) {
+        this.postOssImg(res.data,file)
+      } else{
+       this.$message.error("服务有误，无法上传图片");
       }
-      this.loading = false
+    },
+    // 参数
+    getFormData(obj = {}, file) {
+      const fd = new FormData();
+      const { policy, accessKeyId, signature, expire, callback, dir } = obj;
+      let content_len = Math.round((file.size * 100) / 1024) / 100;
+      fd.append("name", file.name);
+      fd.append("Content-Length", content_len);
+      fd.append("key", `${dir}${file.name}`);
+      fd.append("policy", policy);
+      fd.append("OSSAccessKeyId", accessKeyId);
+      fd.append("callback", callback);
+      fd.append("Signature", signature);
+      fd.append("success_action_status", 200);
+      fd.append("expire", parseInt(expire));
+      fd.append("file", file);
+      return fd;
+    },
+    // 发送到oss 
+    postOssImg(obj,file){
+      const formData = this.getFormData(obj, file);
+      axios
+      .post(`https://${obj.host}`, formData, {
+        headers: {
+          "content-type": "multipart/form-data"
+        }
+      }).then(res =>{
+        if (res.data.code == 200) {
+         this.$set(this.modalData, 'imageUrl', res.data.data.filename);
+         this.loading = false;
+        } else {
+          this.$message.error(res.data.msg);
+        }
+      })
+    },
+    handleImgSuccess(res, file) {
+      this.getOssMsg(file.raw);
+      // if (res.data) {
+      //   this.$set(this.modalData, 'imageUrl', res.data[0])
+      // } else {
+      //   this.$message.error(res.info)
+      // }
+      // this.loading = false
     },
     handleImgError(err, file) {
       this.loading = false

@@ -52,5 +52,10 @@ export default {
   },
   readExcel(formData) {
     return Ajax.post('/homepage/spread/readExcel/user', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
-  }
+  },
+  // 获取后端的oss参数信息
+   getUploadMsg(){
+    return Ajax.post('/file/policy')
+  },
+  
 }

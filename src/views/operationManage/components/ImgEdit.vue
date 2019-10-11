@@ -4,6 +4,11 @@
     :visible.sync="dialogModalVisible"
     :before-close="dialogCloseBack"
   >
+  <!-- <div id="ossfile">你的浏览器不支持flash,Silverlight或者HTML5！</div> -->
+    <!-- <div id="container">
+      <a id="selectfiles" href="javascript:void(0);" class="btn">选择文件</a>
+      <a id="postfiles" href="javascript:void(0);" class="btn">开始上传</a>
+    </div> -->
     <el-form
       label-width="85px"
       ref="editImgRef"
@@ -40,6 +45,7 @@
 
       <el-form-item prop="url" v-if="formData.type">
         <el-upload
+          id="selectfiles"
           class="avatar-uploader"
           v-loading="loading"
           :action="actionUrl"
@@ -126,7 +132,10 @@
   </el-dialog>
 </template>
 <script>
+  import axios from 'axios'
   import { Validate, Auth } from "@/common";
+  import { DialogService } from "@/service";
+  import { async } from 'q';
   export default {
     name: "ImgEdit",
     props: {
@@ -193,8 +202,54 @@
       };
     },
 
-    created() {},
+    created() {
+    },
+    mounted(){
+    },
     methods: {
+      // 获取oss的参数
+      async getOssMsg(file) {
+        const res = await DialogService.getUploadMsg();
+        if (res.code == 200) {
+          this.postOssImg(res.data,file)
+        } else{
+         this.$message.error("服务有误，无法上传图片");
+        }
+      },
+      // 参数
+      getFormData(obj = {}, file) {
+        const fd = new FormData();
+        const { policy, accessKeyId, signature, expire, callback, dir } = obj;
+        let content_len = Math.round((file.size * 100) / 1024) / 100;
+        fd.append("name", file.name);
+        fd.append("Content-Length", content_len);
+        fd.append("key", `${dir}${file.name}`);
+        fd.append("policy", policy);
+        fd.append("OSSAccessKeyId", accessKeyId);
+        fd.append("callback", callback);
+        fd.append("Signature", signature);
+        fd.append("success_action_status", 200);
+        fd.append("expire", parseInt(expire));
+        fd.append("file", file);
+        return fd;
+      },
+      // 发送到oss 
+      postOssImg(obj,file){
+        const formData = this.getFormData(obj, file);
+        axios
+        .post(`https://${obj.host}`, formData, {
+          headers: {
+            "content-type": "multipart/form-data"
+          }
+        }).then(res =>{
+          if (res.data.code == 200) {
+           this.$set(this.formData, "url", res.data.data.filename);
+           this.loading = false;
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        })
+      },
       dialogCloseBack() {
         this.$emit("click", {});
         this.$refs["editImgRef"].clearValidate();
@@ -228,12 +283,7 @@
         return isJPG && isLt100K;
       },
       handleImgSuccess(res, file) {
-        if (res.data) {
-          this.$set(this.formData, "url", res.data[0]);
-        } else {
-          this.$message.error(res.info);
-        }
-        this.loading = false;
+        this.getOssMsg(file.raw);
       },
       handleImgError(err, file) {
         this.loading = false;
