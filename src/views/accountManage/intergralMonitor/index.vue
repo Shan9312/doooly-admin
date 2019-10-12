@@ -82,7 +82,12 @@
             </el-form-item>
           </el-col>
           <el-col :span="2">
-            <pe-button label="重置" perms="intergal:monitor:reset" type="primary" @click="handleReset" />
+            <pe-button
+              label="重置"
+              perms="intergal:monitor:reset"
+              type="primary"
+              @click="handleReset"
+            />
           </el-col>
         </el-row>
         <el-row>
@@ -128,7 +133,6 @@
                 :remote-method="getbusinessName"
                 maxlength="40"
                 clearable
-                @keyup.native="onKeyup"
                 multiple
                 reserve-keyword
                 :loading="loading"

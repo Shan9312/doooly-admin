@@ -362,6 +362,9 @@
             let params = { id: row.id, email: row.email };
             const data = await UserService.resetPassword(params);
             if (data) {
+               this.$alert( data.data, '重置密码值如下', {
+                dangerouslyUseHTMLString: true
+              })
               this.findPage();
               this.$message({ message: "重置成功", type: "success" });
             }

@@ -18,6 +18,8 @@ import SubjectService from './operationManage/activity-subject'
 import TransctChannelManage from './transctChannelManage/transct-channel-manage'
 import RebateIntegralService from './rebate/integral'
 import WechatQrcode from './wechatQrcode'
+import MobileCodeService from './mobileCode/mobileCode.js'
+import CardBatchManageService from './cardBatchManage/cardBatchManage.js'
 
 export {
     LoginService,
@@ -39,5 +41,7 @@ export {
     TransctChannelManage,
     RebateIntegralService,
     WechatQrcode,
-    IntergralMoniterService
+    IntergralMoniterService,
+    MobileCodeService,
+    CardBatchManageService
 }
