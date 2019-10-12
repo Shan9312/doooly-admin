@@ -26,27 +26,21 @@
                   <el-button type="text" @click="handleCheckOrder(scope.row,2)">查看详情</el-button>
                 </span>
                 <span
-                  v-if="item.value == 'status'"
-                  :class="{'red_text': scope.row['status'] != 'NORMAL'}"
-                >{{scope.row['status']=='NORMAL' ?'正常' : '订单缺失'}}</span>
-                <span
-                  v-if="item.value !='transactionType' && 
+                  v-if="item.value !='totalNo' && 
                   item.value != 'operat' &&
-                   item.value != 'status' &&
-                  item.value !='memberId' &&
-                  item.value !='orderId' &&
-                  item.value !='transactionAmount'"
+                  item.value != 'hasAllocated' &&
+                  item.value !='hasNotAllocated'"
                 >{{scope.row[item.value]}}</span>
                 <!-- 礼包卡数量  -->
-                <span v-if="item.value == 'memberId'" class="card-accout">{{scope.row[item.value]}}</span>
+                <span v-if="item.value == 'totalNo'" class="card-accout">{{scope.row[item.value]}}</span>
                 <!-- 已分配卡数量 -->
                 <span
-                  v-if="item.value == 'orderId'"
+                  v-if="item.value == 'hasAllocated'"
                   class="card-allocated"
                 >{{scope.row[item.value]}}</span>
                 <!-- 未分配卡数量 -->
                 <span
-                  v-if="item.value == 'transactionAmount'"
+                  v-if="item.value == 'hasNotAllocated'"
                   class="card-remain"
                 >{{scope.row[item.value]}}</span>
               </div>
@@ -237,13 +231,13 @@ export default {
     border-bottom: 1px solid #eee;
   }
   .card-accout {
-    color: #409eff;
+    color: #1a6ec2;
   }
   .card-allocated {
-    color: #85ce61;
+    color: #65c53f;
   }
   .card-remain {
-    color: #e6a23c;
+    color: #e69a28;
   }
 }
 </style>
