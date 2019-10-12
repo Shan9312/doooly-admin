@@ -111,14 +111,23 @@
             </template>
           </el-table-column>
         </el-table>
-        <pagination
-          v-show="total > 0"
-          :total="total"
-          :page-sizes="[5,10,15,20]"
-          :page.sync="formObj.pageNum"
-          :limit.sync="formObj.pageSize"
-          @pagination="getList"
-        />
+        <el-row :span="24">
+          <el-col :span="18">
+            <pagination
+              v-show="total > 0"
+              :total="total"
+              :page-sizes="[5,10,15,20,25,30]"
+              :page.sync="formObj.pageNum"
+              :limit.sync="formObj.pageSize"
+              @pagination="getList"
+            />
+          </el-col>
+          <el-col :span="6" style="margin-top:32px;">
+            <router-link to="/activityGiftManage/cardBatchList">
+              <pe-button label="返回" perms="recycle:order:search" type="primary" />
+            </router-link>
+          </el-col>
+        </el-row>
       </div>
     </section>
   </div>

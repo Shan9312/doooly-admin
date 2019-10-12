@@ -94,9 +94,9 @@
         <pagination
           v-show="total > 0"
           :total="total"
-          :page-sizes="[15,30,45,60]"
-          :page.sync="formObj.pageSize"
-          :limit.sync="formObj.pageNum"
+          :page-sizes="[5,10,20,30,40,50]"
+          :page.sync="formObj.pageNum"
+          :limit.sync="formObj.pageSize"
           @pagination="getList"
         />
       </div>
@@ -154,8 +154,8 @@ import { Auth, Validate } from "@/common";
 
 const title = [
   // 表格title
-  { label: "批次号", value: "batchNo", width: "120" },
-  { label: "创建时间", value: "createdTime" },
+  { label: "批次号", value: "batchNo" },
+  { label: "创建时间", value: "createdTime", width: "120" },
   { label: "创建人", value: "createdBy" },
   { label: "礼包卡开始卡号", value: "startCardNo" },
   { label: "礼包卡结束卡号", value: "endCardNo" },
@@ -227,7 +227,14 @@ export default {
       }
       this.formsAdd.cardNumber = parseInt(this.formsAdd.cardNumber);
       const data = await CardBatchManageService.handleAddTelCode(this.formsAdd);
-      this.getList();
+      if (data.code == 200) {
+        this.$message({
+          message: "新建成功",
+          type: "success"
+        });
+        this.dialogVisibleAdd = false;
+        this.getList();
+      }
     },
     // 初始化列表,获取数据展示表格
     async getList() {
@@ -236,7 +243,6 @@ export default {
         this.formObj
       );
       this.listLoading = false;
-      console.log(data);
       if (data) {
         this.list = data.list;
         this.total = data.total;
