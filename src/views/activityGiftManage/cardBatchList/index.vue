@@ -4,44 +4,6 @@
     <div class="newBtn">
       <el-button type="success" plain @click="dialogVisibleAdd = true">新建卡批次</el-button>
     </div>
-    <!-- 模糊查询暂无 -->
-    <!-- <section class="form-box">
-      <el-form ref="formObj" :model="formObj" :inline="true" key="form1">
-        <el-row :span="24">
-          <el-col :span="6">
-            <el-form-item label="批次号">
-              <el-input
-                style="width: 100%"
-                v-model="formObj.orderNumber"
-                placeholder="请输入批次号"
-                maxlength="40"
-                clearable
-                @keyup.native="onKeyup"
-              ></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="10">
-            <el-form-item label="创建时间">
-              <el-date-picker
-                v-model="orderTimes"
-                type="daterange"
-                :picker-options="pickerOptions"
-                value-format="yyyy-MM-dd"
-                range-separator="至"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-              ></el-date-picker>
-            </el-form-item>
-          </el-col>
-          <el-col :span="2">
-            <pe-button label="查询" perms="recycle:order:search" type="primary" />
-          </el-col>
-          <el-col :span="2">
-            <pe-button label="重置" perms="recycle:order:search" type="primary" />
-          </el-col>
-        </el-row>
-      </el-form>
-    </section>-->
     <!-- 列表 -->
     <section class="table-box">
       <div>

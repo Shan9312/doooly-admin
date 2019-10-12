@@ -163,8 +163,9 @@ const cardStatusList = [
   { name: "已发货", value: "40" },
   { name: "已冻结", value: "50" }
 ];
+
+// 表格title
 const title = [
-  // 表格title
   { label: "礼包卡号", value: "cardNo" },
   // { label: "礼包卡密码", value: "orderId" },
   { label: "类型", value: "type" },
@@ -174,6 +175,7 @@ const title = [
   { label: "状态", value: "status" },
   { label: "操作", value: "operat" }
 ];
+
 export default {
   name: "cardBatchList",
   components: { CardState },
@@ -223,6 +225,7 @@ export default {
       };
       this.getList();
     },
+
     // 初始化列表,获取数据展示表格
     async getList() {
       this.listLoading = true;
@@ -233,6 +236,7 @@ export default {
         this.total = data.total;
       }
     },
+
     // 设置为测试卡
     async handleTestCard(obj) {
       const formObj = {
