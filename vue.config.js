@@ -30,7 +30,7 @@ module.exports = {
         open: true,
         proxy: {
             '/': {
-                target: 'https://admin.doooly.com/dev_doooly-admin/',
+                target: 'https://admin.doooly.com/test_doooly-admin/', //
                 ws: false,
                 changeOrigin: true,
                 // pathRewrite: { "^/pro_reconcili": "" }

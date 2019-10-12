@@ -19,7 +19,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="卡类型">
-              <el-select v-model="formObj.cardType">
+              <el-select v-model="formObj.type">
                 <el-option
                   v-for="(item, index) in cardTypeList"
                   :label="item.name"
@@ -31,7 +31,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="卡状态">
-              <el-select v-model="formObj.cardStatus">
+              <el-select v-model="formObj.status">
                 <el-option
                   v-for="(item, index) in cardStatusList"
                   :label="item.name"
@@ -45,7 +45,7 @@
             <el-form-item label="卡号">
               <el-input
                 style="width: 100%"
-                v-model="formObj.orderNumber"
+                v-model="formObj.cardNo"
                 placeholder="请输入卡号"
                 maxlength="40"
                 clearable
@@ -56,10 +56,10 @@
         </el-row>
         <el-row :span="24">
           <el-col :span="6">
-            <pe-button label="查询" perms="recycle:order:search" type="primary" />
+            <pe-button label="查询" perms="recycle:order:search" type="primary" @click="getList" />
           </el-col>
           <el-col :span="6">
-            <pe-button label="重置" perms="recycle:order:search" type="primary" />
+            <pe-button label="重置" perms="recycle:order:search" type="primary" @click="handleClear" />
           </el-col>
         </el-row>
       </el-form>
@@ -78,24 +78,33 @@
           >
             <template slot-scope="scope">
               <div>
+                <!-- 类型 -->
                 <span
-                  v-if="item.value == 'transactionType'"
-                >{{scope.row['transactionType'] == 'PAYMENT' ? '已支付':'退款'}}</span>
+                  v-if="item.value == 'type'"
+                  :class="{'red_text': scope.row['type'] == '0'}"
+                >{{scope.row['type'] == '0' ? '测试卡':'正常卡'}}</span>
+                <!-- 操纵按钮 -->
                 <span v-if="item.value == 'operat'">
-                  <el-button @click="handleCheckOrder(scope.row,1)" type="text">设置测试卡</el-button>
                   <el-button
-                    v-if=" scope.row['status'] != 'NORMAL'"
+                    @click="handleTestCard(scope.row)"
                     type="text"
-                    @click="handleCheckOrder(scope.row,2)"
+                  >{{ scope.row['type'] == '0'? '设置正常卡':"设置测试卡"}}</el-button>
+                  <!-- 设置冻结/正常 -->
+                  <el-button
+                    v-if=" scope.row['state'] == '0'"
+                    type="text"
+                    @click="handleStateCard(scope.row)"
                   >设置冻结</el-button>
-                  <el-button type="text" @click="handleCheckOrder(scope.row,2)">设置正常</el-button>
+                  <el-button type="text" v-else @click="handleStateCard(scope.row)">设置正常</el-button>
                 </span>
+                <!-- 状态 -->
+                <span v-if="item.value == 'status'">
+                  <CardState :cardState="scope.row['status']" />
+                </span>
+
+                <!-- 其他值 -->
                 <span
-                  v-if="item.value == 'status'"
-                  :class="{'red_text': scope.row['status'] != 'NORMAL'}"
-                >{{scope.row['status']=='NORMAL' ?'正常' : '订单缺失'}}</span>
-                <span
-                  v-if="item.value !='transactionType' && 
+                  v-if="item.value !='type' && 
                 item.value != 'operat' && item.value != 'status'"
                 >{{scope.row[item.value]}}</span>
               </div>
@@ -106,8 +115,8 @@
           v-show="total > 0"
           :total="total"
           :page-sizes="[5,10,15,20]"
-          :page.sync="formObj.page"
-          :limit.sync="formObj.limit"
+          :page.sync="formObj.pageNum"
+          :limit.sync="formObj.pageSize"
           @pagination="getList"
         />
       </div>
@@ -116,35 +125,48 @@
 </template>
 
 <script>
-import { IntergralMoniterService } from "@/service";
+import { CardBatchManageService } from "@/service";
+import CardState from "../components/CardState.vue";
+import { Auth, Validate } from "@/common";
+import { async } from "q";
 
+// 礼包
 const giftList = [
-  { name: "所有礼包", value: "" },
-  { name: "大华礼包", value: "1" },
-  { name: "夏日礼包", value: "2" }
+  { name: "所有礼包", value: "" }
+  // { name: "大华礼包", value: "1" },
+  // { name: "夏日礼包", value: "2" }
 ];
+
+// 卡类型
 const cardTypeList = [
   { name: "所有类型", value: "" },
-  { name: "礼包类型", value: "1" }
+  { name: "测试卡", value: "0" },
+  { name: "正常卡", value: "1" }
 ];
+
+// 卡状态
 const cardStatusList = [
   { name: "所有状态", value: "" },
-  { name: "已激活", value: "1" },
-  { name: "未激活", value: "2" }
+  { name: "已创建", value: "0" },
+  { name: "已分配", value: "10" },
+  { name: "已激活", value: "20" },
+  { name: "已下单", value: "30" },
+  { name: "已发货", value: "40" }
 ];
 const title = [
   // 表格title
-  { label: "礼包卡号", value: "merchantName" },
-  { label: "礼包卡密码", value: "orderId" },
-  { label: "类型", value: "transactionType" },
-  { label: "礼包名称", value: "transactionId", width: "120" },
-  { label: "分配时间", value: "transactionOccurTime" },
-  { label: "分配人", value: "memberId" },
-  { label: "状态", value: "groupName" },
+  { label: "礼包卡号", value: "cardNo" },
+  // { label: "礼包卡密码", value: "orderId" },
+  { label: "类型", value: "type" },
+  { label: "礼包名称", value: "name", width: "120" },
+  { label: "分配时间", value: "allocatedTime" },
+  { label: "分配人", value: "allocatedBy" },
+  { label: "状态", value: "status" },
   { label: "操作", value: "operat" }
 ];
 export default {
   name: "cardBatchList",
+  components: { CardState },
   data() {
     return {
       orderTimes: [],
@@ -155,11 +177,12 @@ export default {
       total: 0,
       formObj: {
         giftName: "",
-        cardType: "",
-        cardStatus: "", // 订单号
-        orderNumber: "864523961",
-        page: 1, // 分页
-        limit: 5 // 每页显示条数
+        type: "",
+        status: "", // 订单号
+        cardNo: "",
+        pageNum: 1, // 分页
+        pageSize: 10, // 每页显示条数
+        batchId: this.$route.params.id
       },
       pickerOptions: {
         // 设置日期范围
@@ -174,33 +197,63 @@ export default {
     };
   },
   created() {
-    // this.getList();
+    this.getList();
   },
   methods: {
+    // 重置
+    handleClear() {
+      this.formObj = {
+        giftName: "",
+        type: "",
+        status: "", // 订单号
+        cardNo: "",
+        pageNum: 1, // 分页
+        pageSize: 10, // 每页显示条数
+        batchId: this.$route.params.id
+      };
+      this.getList();
+    },
     // 初始化列表,获取数据展示表格
     async getList() {
       this.listLoading = true;
-      const { data } = await IntergralMoniterService.getIntegralExchangeList(
-        this.formObj
-      );
+      const { data } = await CardBatchManageService.getCardDetail(this.formObj);
       this.listLoading = false;
       if (data) {
         this.list = data.list;
         this.total = data.total;
       }
     },
-    // 操作 分配，详情
-    handleCheckOrder(item, type) {
-      if (type == 1) {
-        // 分配
-        this.$router.push({
-          path: `/activityGiftManage/cardBatchDetail/${item.id}`
+    // 设置为测试卡
+    async handleTestCard(obj) {
+      const formObj = {
+        id: obj.id,
+        user: JSON.parse(Auth.getUserInfo()).email,
+        type: obj.type == 1 ? 0 : 1
+      };
+      const data = await CardBatchManageService.handleTestCard(formObj);
+      if (data.code == 200) {
+        this.$message({
+          type: "success",
+          message: "设置成功"
         });
-      } else {
-        // 详情
-        this.$router.push({
-          path: `/activityGiftManage/cardBatchDetail/${item.id}`
+        this.getList();
+      }
+    },
+
+    // 设置为正常/冻结
+    async handleStateCard(obj) {
+      const formObj = {
+        id: obj.id,
+        user: JSON.parse(Auth.getUserInfo()).email,
+        type: obj.state == 1 ? 0 : 1
+      };
+      const data = await CardBatchManageService.handleStateCard(formObj);
+      if (data.code == 200) {
+        this.$message({
+          type: "success",
+          message: "设置成功"
         });
+        this.getList();
       }
     }
   }
@@ -209,6 +262,9 @@ export default {
 
 <style lang="less" scoped>
 .card-warrp {
+  .red_text {
+    color: red;
+  }
   .newBtn {
     margin-bottom: 20px;
   }

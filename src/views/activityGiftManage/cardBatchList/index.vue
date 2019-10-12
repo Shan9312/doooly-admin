@@ -95,8 +95,8 @@
           v-show="total > 0"
           :total="total"
           :page-sizes="[15,30,45,60]"
-          :page.sync="formObj.page"
-          :limit.sync="formObj.limit"
+          :page.sync="formObj.pageSize"
+          :limit.sync="formObj.pageNum"
           @pagination="getList"
         />
       </div>
@@ -112,7 +112,7 @@
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="dialogVisibleAdd = false">取 消</el-button>
-          <el-button type="primary">提交</el-button>
+          <el-button type="primary" @click="handleAddCard">提交</el-button>
         </span>
       </el-dialog>
     </div>
@@ -149,25 +149,25 @@
 </template>
 
 <script>
-import { IntergralMoniterService } from "@/service";
+import { CardBatchManageService } from "@/service";
 import { Auth, Validate } from "@/common";
 
 const title = [
   // 表格title
-  { label: "批次号", value: "transactionId", width: "120" },
-  { label: "创建时间", value: "transactionOccurTime" },
-  { label: "创建人", value: "transactionType" },
-  { label: "礼包卡开始卡号", value: "transactionType" },
-  { label: "礼包卡结束卡号", value: "merchantName" },
-  { label: "礼包卡数量", value: "memberId" },
-  { label: "已分配卡数量", value: "orderId" },
-  { label: "未分配卡数量", value: "transactionAmount" },
+  { label: "批次号", value: "batchNo", width: "120" },
+  { label: "创建时间", value: "createdTime" },
+  { label: "创建人", value: "createdBy" },
+  { label: "礼包卡开始卡号", value: "startCardNo" },
+  { label: "礼包卡结束卡号", value: "endCardNo" },
+  { label: "礼包卡数量", value: "totalNo" },
+  { label: "已分配卡数量", value: "hasAllocated" },
+  { label: "未分配卡数量", value: "hasNotAllocated" },
   { label: "操作", value: "operat" }
 ];
 const giftList = [
-  { name: "所有礼包", value: "" },
-  { name: "大华礼包", value: "1" },
-  { name: "夏日礼包", value: "2" }
+  { name: "所有礼包", value: "" }
+  // { name: "大华礼包", value: "1" },
+  // { name: "夏日礼包", value: "2" }
 ];
 export default {
   name: "cardBatchList",
@@ -187,16 +187,13 @@ export default {
       },
       giftList,
       formObj: {
-        startDate: "", // 订单开始时间
-        endDate: "", // 订单结束时间
-        orderNumber: "", // 订单号
-        page: 1, // 分页
-        limit: 15 // 每页显示条数
+        pageSize: 10, // 分页
+        pageNum: 1 // 每页显示条数
       },
       dialogVisibleAdd: false, // 新建弹窗
       dialogVisibleEdit: false,
       formsAdd: {
-        userName: JSON.parse(Auth.getUserInfo()).name,
+        user: JSON.parse(Auth.getUserInfo()).email,
         cardNumber: ""
       }, // 新建弹窗对象
       formsEdit: {
@@ -219,13 +216,27 @@ export default {
     this.getList();
   },
   methods: {
+    // 新建卡批次
+    async handleAddCard() {
+      if (!this.formsAdd.cardNumber) {
+        this.$message({
+          message: "请输入值",
+          type: "error"
+        });
+        return;
+      }
+      this.formsAdd.cardNumber = parseInt(this.formsAdd.cardNumber);
+      const data = await CardBatchManageService.handleAddTelCode(this.formsAdd);
+      this.getList();
+    },
     // 初始化列表,获取数据展示表格
     async getList() {
       this.listLoading = true;
-      const { data } = await IntergralMoniterService.getIntegralExchangeList(
+      const { data } = await CardBatchManageService.cardBatchNoList(
         this.formObj
       );
       this.listLoading = false;
+      console.log(data);
       if (data) {
         this.list = data.list;
         this.total = data.total;
@@ -239,7 +250,7 @@ export default {
       } else {
         // 详情
         this.$router.push({
-          path: `/activityGiftManage/cardBatchDetail/${item.id}`
+          path: `/activityGiftManage/cardBatchDetail/${item.batchId}`
         });
       }
     }
