@@ -160,7 +160,8 @@ const cardStatusList = [
   { name: "已分配", value: "10" },
   { name: "已激活", value: "20" },
   { name: "已下单", value: "30" },
-  { name: "已发货", value: "40" }
+  { name: "已发货", value: "40" },
+  { name: "已冻结", value: "50" }
 ];
 const title = [
   // 表格title

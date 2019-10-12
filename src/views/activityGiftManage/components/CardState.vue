@@ -2,7 +2,7 @@
   <div class="state-tag-wrapper">
     <span v-if="cardState == '0'" class="white">已创建</span>
     <span v-if="cardState == '10'" class="default">已分配</span>
-    <span v-if="cardState == '20'" class="warning">已取消</span>
+    <span v-if="cardState == '20'" class="warning">已激活</span>
     <span v-if="cardState == '30'" class="gray">已下单</span>
     <span v-if="cardState == '40'" class="success">已发货</span>
     <span v-if="cardState == '50'" class="error">已冻结</span>
