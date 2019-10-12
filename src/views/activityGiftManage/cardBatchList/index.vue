@@ -233,6 +233,7 @@ export default {
           type: "success"
         });
         this.dialogVisibleAdd = false;
+        this.formObj.pageNum = 1;
         this.getList();
       }
     },
